@@ -1,0 +1,44 @@
+.gradient-text {
+    background: linear-gradient(135deg, #0288d1, #29b6f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.form-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+}
+
+.input-field {
+    transition: border-color 0.3s ease;
+    border: 2px solid #e5e7eb;
+}
+
+.input-field:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+.service-option {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.service-option:hover {
+    border-color: #3b82f6;
+}
+
+.service-option.selected {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.success-message {
+    display: none;
+}
+
+.success-message.show {
+    display: block;
+}
