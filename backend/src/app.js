@@ -3,6 +3,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
+import productRoutes from './routes/productRoutes.js'
+import upload from './middlewares/multer.js';
 
 const app = express();
 
@@ -25,5 +27,8 @@ app.use("/api/user",userRoutes)
 
 //router for service booked by user
 app.use("/api/customer",contactRoutes)
+
+//router for adding products
+app.use("/api/product",upload.single('image'),productRoutes)
 
 export {app}

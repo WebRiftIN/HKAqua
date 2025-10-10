@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 
 const productSchema = new Schema({
     name:{
-        tpye:String,
+        type:String,
         required: true,
         trim:true
     },
@@ -23,14 +23,14 @@ const productSchema = new Schema({
         type:[String],
         default:[]
     },
-    isNew:{
+    isNewProduct:{
         type:Boolean,
         default:false
     },
     image:{
         type:String,
-        required:false
+        required:true
     }
 },{timestamps:true})
 
-export const Product = new mongoose.Schema("Product",productSchema)
+export const Product =  mongoose.model("Product",productSchema)

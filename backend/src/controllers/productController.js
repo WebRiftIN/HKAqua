@@ -2,8 +2,8 @@ import { Product } from "../models/productModel.js";
 import {v2 as cloudinary} from "cloudinary"
 
 const addProduct = async(req,res) =>{
-    const{name,category,price,orignalPrice,features,isNew} = req.body;
-    if([name,category,price,orignalPrice,features,isNew].some(field => !field)){
+    const{name,category,price,orignalPrice,features,isNewProduct} = req.body;
+    if([name,category,price,orignalPrice,features,isNewProduct].some(field => !field)){
         return res.json({success:false,message:"All fields are required"})
     }
     let image = ''
@@ -19,7 +19,7 @@ const addProduct = async(req,res) =>{
         price,
         orignalPrice,
         features,
-        isNew,
+        isNewProduct,
         image
     })
     const productCreated = await Product.findById(product._id).select("-name -category")
