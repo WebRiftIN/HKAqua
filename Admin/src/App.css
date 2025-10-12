@@ -1,0 +1,13 @@
+.water-gradient {
+    background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #0284c7 100%);
+}
+.card-hover {
+    transition: all 0.3s ease;
+}
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15);
+}
+.stat-icon {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+}
