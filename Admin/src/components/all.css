@@ -1,0 +1,103 @@
+/* Water Gradient */
+.water-gradient {
+    background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #0284c7 100%);
+}
+
+/* Upload Area Styles */
+.upload-area {
+    border: 2px dashed #0ea5e9;
+    transition: all 0.3s ease;
+}
+.upload-area:hover {
+    border-color: #0284c7;
+    background-color: #f0f9ff;
+}
+.upload-area.dragover {
+    border-color: #0284c7;
+    background-color: #e0f2fe;
+}
+
+/* Form Input Styles */
+.form-input:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* Custom Checkbox Styles */
+.checkbox-custom {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #0ea5e9;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.checkbox-custom:checked {
+    background-color: #0ea5e9;
+    border-color: #0ea5e9;
+}
+.checkbox-custom:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Orange Checkbox (Limited Stock) */
+.checkbox-orange {
+    border-color: #fb923c;
+}
+.checkbox-orange:checked {
+    background-color: #fb923c;
+    border-color: #fb923c;
+}
+
+/* Red Checkbox (Out of Stock) */
+.checkbox-red {
+    border-color: #f87171;
+}
+.checkbox-red:checked {
+    background-color: #f87171;
+    border-color: #f87171;
+}
+
+/* Gray Checkbox (Inactive) */
+.checkbox-gray {
+    border-color: #9ca3af;
+}
+.checkbox-gray:checked {
+    background-color: #9ca3af;
+    border-color: #9ca3af;
+}
+
+/* Custom Water Colors */
+.text-water-blue {
+    color: #0ea5e9;
+}
+
+.bg-water-blue {
+    background-color: #0ea5e9;
+}
+
+.bg-water-gradient {
+    background-color: #38bdf8;
+}
+
+.bg-deep-water {
+    background-color: #0284c7;
+}
+
+.bg-light-water {
+    background-color: #e0f2fe;
+}
+
+/* Body styles */
+body {
+    box-sizing: border-box;
+}
