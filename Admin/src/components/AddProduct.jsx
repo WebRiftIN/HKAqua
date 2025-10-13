@@ -53,6 +53,7 @@ const AddProduct = () => {
         if (files.length > 0) {
             const file = files[0];
             if (file.type.startsWith('image/')) {
+                
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     setImagePreview(e.target.result);
