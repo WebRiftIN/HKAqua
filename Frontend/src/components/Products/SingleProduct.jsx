@@ -18,10 +18,6 @@ function SingleProduct() {
     specifications: [
       { label: 'Storage Capacity', value: '7 Liters' },
       { label: 'Purification Rate', value: '15 LPH' },
-      { label: 'Power Consumption', value: '25W' },
-      { label: 'Input Water Pressure', value: '0.3-2.0 kg/cm²' },
-      { label: 'Dimensions', value: '32 x 25 x 48 cm' },
-      { label: 'Weight', value: '8.5 kg' },
       { label: 'Warranty', value: '2 Years Comprehensive' },
       { label: 'Installation', value: 'Wall Mount/Counter Top' }
     ],
@@ -73,7 +69,7 @@ function SingleProduct() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="w-full">
-            <div className="bg-white rounded-2xl shadow-lg p-8 overflow-hidden">
+            <div className="overflow-hidden">
               <img src={product.image} alt={product.name} className="product-image-main w-full h-96 object-contain" />
             </div>
           </div>
@@ -133,7 +129,6 @@ function SingleProduct() {
                 { icon: 'fas fa-shield-alt text-green-500', text: '100% Original Product' },
                 { icon: 'fas fa-truck text-blue-500', text: 'Free Delivery & Installation' },
                 { icon: 'fas fa-money-bill-wave text-green-500', text: 'Cash on Delivery Available' },
-                { icon: 'fas fa-undo text-blue-500', text: 'Easy 30-Day Returns' },
               ].map(({ icon, text }) => (
                 <div key={text} className="flex items-center space-x-3">
                   <i className={icon}></i>
