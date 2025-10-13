@@ -28,7 +28,7 @@ app.use("/api/user",userRoutes)
 //router for service booked by user
 app.use("/api/customer",contactRoutes)
 
-//router for adding products
-app.use("/api/product",upload.single('image'),productRoutes)
+//router for adding products (middleware applied at route level, not here)
+app.use("/api/product",productRoutes)
 
 export {app}

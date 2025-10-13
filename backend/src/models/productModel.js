@@ -11,7 +11,11 @@ const productSchema = new Schema({
         type:String,
         required:true,
     },
-    price:{
+    description:{
+        type:String,
+        required:true
+    },
+    discountedPrice:{
         type:Number,
         required:true
     },
@@ -19,7 +23,7 @@ const productSchema = new Schema({
         type:Number,
         required:true
     },
-    features:{
+    specifications:{
         type:[String],
         default:[]
     },
@@ -27,9 +31,21 @@ const productSchema = new Schema({
         type:Boolean,
         default:false
     },
+    isLimited:{
+        type:Boolean,
+        default:false
+    },
+    isOutOfStock:{
+        type:Boolean,
+        default:false
+    },
+    isInactive:{
+        type:Boolean,
+        default:false
+    },
     image:{
         type:String,
-        required:true
+        required:false
     }
 },{timestamps:true})
 
