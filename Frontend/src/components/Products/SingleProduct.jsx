@@ -1,13 +1,43 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import hktry1 from '../../assets/hktry1.jpg' // Adjust path if needed
 
 function SingleProduct() {
-  const productImages = useMemo(() => ([
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect fill='%23f0f9ff' width='400' height='400'/%3E%3Crect fill='%230277bd' x='50' y='50' width='300' height='300' rx='30'/%3E%3Crect fill='%234fc3f7' x='80' y='80' width='240' height='240' rx='20'/%3E%3Ccircle fill='%23ffffff' cx='200' cy='160' r='30'/%3E%3Crect fill='%23ffffff' x='170' y='220' width='60' height='80' rx='8'/%3E%3Ctext x='200' y='340' text-anchor='middle' fill='%23ffffff' font-size='16' font-weight='bold'%3EAquaPure%3C/text%3E%3C/svg%3E",
-   
-  ]), [])
+  // Product object
+  const product = {
+    name: 'AquaPure RO Elite 7L',
+    category: 'RO Systems',
+    image: hktry1,
+    description: 'Premium 7-Stage Water Purification System',
+    price: 18999,
+    originalPrice: 24999,
+    discount: '24% OFF',
+    features: 'Experience pure, healthy water with our advanced 7-stage purification system. Combining RO, UV, and Alkaline technologies, this premium water purifier removes 99.9% of contaminants while retaining essential minerals for your family\'s health.',
+    rating: 4.8,
+    reviewsCount: 1250,
+    specifications: [
+      { label: 'Storage Capacity', value: '7 Liters' },
+      { label: 'Purification Rate', value: '15 LPH' },
+      { label: 'Power Consumption', value: '25W' },
+      { label: 'Input Water Pressure', value: '0.3-2.0 kg/cm²' },
+      { label: 'Dimensions', value: '32 x 25 x 48 cm' },
+      { label: 'Weight', value: '8.5 kg' },
+      { label: 'Warranty', value: '2 Years Comprehensive' },
+      { label: 'Installation', value: 'Wall Mount/Counter Top' }
+    ],
+    technologies: [
+      { icon: 'fas fa-water text-blue-500', title: 'RO Membrane', desc: 'Removes dissolved salts, heavy metals, and microscopic contaminants' },
+      { icon: 'fas fa-sun text-yellow-500', title: 'UV Sterilization', desc: 'Eliminates bacteria, viruses, and other microorganisms' },
+      { icon: 'fas fa-leaf text-green-500', title: 'Alkaline Enhancement', desc: 'Balances pH levels and adds beneficial minerals' },
+    ],
+    related: [
+      { name: 'Related Product 1', image: hktry1, price: 12999 },
+      { name: 'Related Product 2', image: hktry1, price: 12999 },
+      { name: 'Related Product 3', image: hktry1, price: 12999 },
+      { name: 'Related Product 4', image: hktry1, price: 12999 },
+    ]
+  }
 
-  // Showing only one image; no thumbnail selection needed
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState('description')
   const [selectedRating, setSelectedRating] = useState(0)
@@ -34,9 +64,9 @@ function SingleProduct() {
           <span className="mx-2">/</span>
           <Link to="/products" className="hover:text-blue-600">Water Purifiers</Link>
           <span className="mx-2">/</span>
-          <span className="hover:text-blue-600">RO Systems</span>
+          <span className="hover:text-blue-600">{product.category}</span>
           <span className="mx-2">/</span>
-          <span className="text-gray-800">AquaPure RO Elite 7L</span>
+          <span className="text-gray-800">{product.name}</span>
         </nav>
       </div>
 
@@ -44,14 +74,14 @@ function SingleProduct() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="w-full">
             <div className="bg-white rounded-2xl shadow-lg p-8 overflow-hidden">
-              <img src={productImages[0]} alt="AquaPure RO Elite 7L" className="product-image-main w-full h-96 object-contain" />
+              <img src={product.image} alt={product.name} className="product-image-main w-full h-96 object-contain" />
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">AquaPure RO Elite 7L</h1>
-              <p className="text-lg text-gray-600">Premium 7-Stage Water Purification System</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{product.name}</h1>
+              <p className="text-lg text-gray-600">{product.description}</p>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -62,22 +92,21 @@ function SingleProduct() {
                 <i className="fas fa-star"></i>
                 <i className="fas fa-star-half-alt"></i>
               </div>
-              <span className="text-gray-600">(4.8)</span>
-              <span className="text-blue-600 hover:underline cursor-pointer">1,250 Reviews</span>
+              <span className="text-gray-600">({product.rating})</span>
+              <span className="text-blue-600 hover:underline cursor-pointer">{product.reviewsCount} Reviews</span>
             </div>
 
             <div className="flex items-center space-x-4">
-              <span className="text-4xl font-bold water-blue">₹18,999</span>
-              <span className="text-2xl text-gray-400 line-through">₹24,999</span>
-              <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">24% OFF</span>
+              <span className="text-4xl font-bold water-blue">₹{product.price}</span>
+              <span className="text-2xl text-gray-400 line-through">₹{product.originalPrice}</span>
+              <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">{product.discount}</span>
             </div>
 
             <div className="bg-blue-50 rounded-xl p-6">
               <p className="text-gray-700 leading-relaxed">
-                Experience pure, healthy water with our advanced 7-stage purification system. Combining RO, UV, and Alkaline technologies, this premium water purifier removes 99.9% of contaminants while retaining essential minerals for your family's health.
+                {product.features}
               </p>
             </div>
-
 
             <div className="flex items-center space-x-4">
               <span className="text-gray-700 font-medium">Quantity:</span>
@@ -122,7 +151,7 @@ function SingleProduct() {
                 Description
               </button>
               <button className={`py-4 px-2 font-medium text-lg ${activeTab === 'reviews' ? 'tab-active' : 'text-gray-500'}`} onClick={() => setActiveTab('reviews')}>
-                Reviews (1,250)
+                Reviews ({product.reviewsCount})
               </button>
             </nav>
           </div>
@@ -133,11 +162,7 @@ function SingleProduct() {
                 <div className="prose max-w-none">
                   <h4 className="text-xl font-semibold water-blue mb-4">Key Technologies:</h4>
                   <ul className="space-y-3 mb-6">
-                    {[
-                      { icon: 'fas fa-water text-blue-500', title: 'RO Membrane', desc: 'Removes dissolved salts, heavy metals, and microscopic contaminants' },
-                      { icon: 'fas fa-sun text-yellow-500', title: 'UV Sterilization', desc: 'Eliminates bacteria, viruses, and other microorganisms' },
-                      { icon: 'fas fa-leaf text-green-500', title: 'Alkaline Enhancement', desc: 'Balances pH levels and adds beneficial minerals' },
-                    ].map(({ icon, title, desc }) => (
+                    {product.technologies.map(({ icon, title, desc }) => (
                       <li key={title} className="flex items-start space-x-3">
                         <i className={icon + ' mt-1'}></i>
                         <div>
@@ -149,16 +174,14 @@ function SingleProduct() {
                   <h4 className="text-xl font-semibold water-blue mb-4">Specifications:</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <p><strong>Storage Capacity:</strong> 7 Liters</p>
-                      <p><strong>Purification Rate:</strong> 15 LPH</p>
-                      <p><strong>Power Consumption:</strong> 25W</p>
-                      <p><strong>Input Water Pressure:</strong> 0.3-2.0 kg/cm²</p>
+                      {product.specifications.slice(0, 4).map((spec, idx) => (
+                        <p key={idx}><strong>{spec.label}:</strong> {spec.value}</p>
+                      ))}
                     </div>
                     <div className="space-y-2">
-                      <p><strong>Dimensions:</strong> 32 x 25 x 48 cm</p>
-                      <p><strong>Weight:</strong> 8.5 kg</p>
-                      <p><strong>Warranty:</strong> 2 Years Comprehensive</p>
-                      <p><strong>Installation:</strong> Wall Mount/Counter Top</p>
+                      {product.specifications.slice(4).map((spec, idx) => (
+                        <p key={idx}><strong>{spec.label}:</strong> {spec.value}</p>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -178,7 +201,7 @@ function SingleProduct() {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center space-x-2 mb-2">
-                        <span className="text-3xl font-bold water-blue">4.8</span>
+                        <span className="text-3xl font-bold water-blue">{product.rating}</span>
                         <div className="flex items-center star-rating">
                           <i className="fas fa-star"></i>
                           <i className="fas fa-star"></i>
@@ -187,7 +210,7 @@ function SingleProduct() {
                           <i className="fas fa-star-half-alt"></i>
                         </div>
                       </div>
-                      <p className="text-gray-600">Based on 1,250 reviews</p>
+                      <p className="text-gray-600">Based on {product.reviewsCount} reviews</p>
                     </div>
                     <div className="text-right">
                       <p className="text-green-600 font-semibold">96% Recommended</p>
@@ -248,11 +271,11 @@ function SingleProduct() {
         <div className="mt-16">
           <h3 className="text-2xl font-bold water-blue mb-8">Related Products</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1,2,3,4].map((i) => (
+            {product.related.map((rel, i) => (
               <div key={i} className="related-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer">
-                <img src={productImages[(i-1) % productImages.length]} alt="Related" className="w-full h-48 object-cover" />
+                <img src={rel.image} alt={rel.name} className="w-full h-48 object-cover" />
                 <div className="p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Related Product {i}</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">{rel.name}</h4>
                   <div className="flex items-center star-rating mb-2">
                     <i className="fas fa-star text-sm"></i>
                     <i className="fas fa-star text-sm"></i>
@@ -261,7 +284,7 @@ function SingleProduct() {
                     <i className="fas fa-star-half-alt text-sm"></i>
                     <span className="text-gray-500 text-sm ml-1">(100)</span>
                   </div>
-                  <p className="text-xl font-bold water-blue">₹12,999</p>
+                  <p className="text-xl font-bold water-blue">₹{rel.price}</p>
                 </div>
               </div>
             ))}
