@@ -1,7 +1,11 @@
 import React, { useState, useRef } from 'react';
 import './all.css';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+import { backend } from '../App';
 
 const AddProduct = () => {
+
     const [imagePreview, setImagePreview] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [isDragOver, setIsDragOver] = useState(false);
@@ -26,10 +30,10 @@ const AddProduct = () => {
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
+            setImageFile(file);
             const reader = new FileReader();
             reader.onload = (e) => {
                 setImagePreview(e.target.result);
-                setImageFile(file);
             };
             reader.readAsDataURL(file);
         }
@@ -53,11 +57,9 @@ const AddProduct = () => {
         if (files.length > 0) {
             const file = files[0];
             if (file.type.startsWith('image/')) {
-                
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     setImagePreview(e.target.result);
-                    setImageFile(file);
                 };
                 reader.readAsDataURL(file);
             }
@@ -68,44 +70,55 @@ const AddProduct = () => {
         fileInputRef.current.click();
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        const strSpecifications = [spec1, spec2, spec3, spec4].filter(Boolean)
+        if(!imageFile){
+            toast.error('Please select a product image');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('name', name)
+        formData.append('category', category)
+        formData.append('description', features)
+        formData.append('discountedPrice', price)
+        formData.append('orignalPrice', originalPrice)
+        formData.append('specifications', JSON.stringify(strSpecifications))
+        formData.append('isNewProduct', isNew)
+        formData.append('isLimited', limitedStock)
+        formData.append('isOutOfStock', outOfStock)
+        formData.append('isInactive', inactive)
+        formData.append('image', imageFile)
 
-        const productData = {
-            name,
-            category,
-            discountedPrice: price,
-            originalPrice,
-            description: features,
-            specifications: [spec1, spec2, spec3, spec4],
-            status: {
-                isNew,
-                limitedStock,
-                outOfStock,
-                inactive
-            },
-            image: imageFile
-        };
-
-        alert(`🎉 Product added successfully to your inventory!\n\nProduct: ${productData.name}\nCategory: ${productData.category}\nPrice: ₹${productData.discountedPrice}`);
-
-        // Reset form and state
-        setName('');
-        setCategory('under-sink');
-        setPrice('');
-        setOriginalPrice('');
-        setFeatures('');
-        setSpec1('');
-        setSpec2('');
-        setSpec3('');
-        setSpec4('');
-        setIsNew(false);
-        setLimitedStock(false);
-        setOutOfStock(false);
-        setInactive(false);
-        setImagePreview(null);
-        setImageFile(null);
-        setIsDragOver(false);
+        try {
+            const response = await axios.post(backend+"/api/product/addProduct", formData)
+            if (response.data.success) {
+                toast.success(response.data.message)
+                alert(`🎉 Product added successfully to your inventory!\n\nProduct: ${formData.name}\nCategory: ${formData.category}\nPrice: ₹${formData.price}`);
+            } else {
+                toast.error(response.data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        } finally {
+            // Reset form and state
+            setName('');
+            setCategory('under-sink');
+            setPrice('');
+            setOriginalPrice('');
+            setFeatures('');
+            setSpec1('');
+            setSpec2('');
+            setSpec3('');
+            setSpec4('');
+            setIsNew(false);
+            setLimitedStock(false);
+            setOutOfStock(false);
+            setInactive(false);
+            setImagePreview(null);
+            setImageFile(null);
+            setIsDragOver(false);
+        }
     };
 
     return (
