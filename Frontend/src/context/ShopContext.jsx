@@ -10,7 +10,8 @@ const AppContext = createContext()
 export const AppProvider = ({ children }) => {
 
     // const navigate = useNavigate()
-    const [token, setToken] = useState(() => localStorage.getItem('token') || undefined)
+    const [token, setToken] = useState()
+    const [products,setProducts] = useState([])
     const [user, setUser] = useState(() => {
         try {
             const stored = localStorage.getItem('user')
@@ -20,7 +21,19 @@ export const AppProvider = ({ children }) => {
         }
     })
 
+    const fetchProducts = async()=>{
+        try {
+            const {data} = await axios.post('/api/product/allProducts')
+            if(data.success){
+                setProducts(data.products)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     useEffect(() => {
+        fetchProducts()
         if (token) {
             axios.defaults.headers.common['Authorization'] = token
         } else {

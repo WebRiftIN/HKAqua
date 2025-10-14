@@ -55,4 +55,27 @@ const addProduct = async(req,res) =>{
     return res.json({success:true,message:"Product added successfuly"})
 }
 
-export default addProduct
+const getAllProducts = async(req,res) =>{
+    try {
+        const products = await Product.find({})
+        res.json({success:true,products})
+    } catch (error) {
+        res.json({success:false,message:"Something went wrong"})
+    }
+}
+
+const getProductById = async(req,res) =>{
+    try{
+        const{productId} = req.params;
+        const product = await Product.findById(productId)
+        if(!product){
+            return res.json({success:false,message:"product not found"})
+        }
+
+        res.json({success:true,product})
+    }catch{
+        res.json({success:false,message:"something went wrong"})
+    }
+}
+
+export {addProduct,getAllProducts,getProductById}
