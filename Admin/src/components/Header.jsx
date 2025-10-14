@@ -22,12 +22,10 @@ const Header = () => {
     const navigationItems = [
         { name: 'Dashboard', path: '/', active: location.pathname === '/' },
         { name: 'Add Product', path: '/add-product', active: location.pathname === '/add-product' },
-        { name: 'Product List', path: '/product-list', active: location.pathname === '/product-list' },
-        { name: 'Reviews', path: '/reviews', active: location.pathname === '/reviews' },
+        { name: 'Product List', path: '/listed-product', active: location.pathname === '/listed-product' },
         { name: 'Orders', path: '/orders', active: location.pathname === '/orders' },
         { name: 'Contact', path: '/contact', active: location.pathname === '/contact' },
         { name: 'Services', path: '/services', active: location.pathname === '/services' },
-        { name: 'Users', path: '/users', active: location.pathname === '/users' }
     ];
 
     const handleNavigation = (path) => {
