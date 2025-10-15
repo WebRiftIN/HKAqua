@@ -83,7 +83,7 @@ const AddProduct = () => {
         formData.append('category', category)
         formData.append('description', features)
         formData.append('discountedPrice', price)
-        formData.append('orignalPrice', originalPrice)
+        formData.append('originalPrice', originalPrice)
         formData.append('specifications', JSON.stringify(strSpecifications))
         formData.append('isNewProduct', isNew)
         formData.append('isLimited', limitedStock)

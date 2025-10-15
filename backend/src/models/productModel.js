@@ -19,7 +19,7 @@ const productSchema = new Schema({
         type:Number,
         required:true
     },
-    orignalPrice:{
+    originalPrice:{
         type:Number,
         required:true
     },

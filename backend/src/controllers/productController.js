@@ -3,8 +3,8 @@ import {v2 as cloudinary} from "cloudinary"
 import fs from "fs";
 
 const addProduct = async(req,res) =>{
-    const{name,category,description,discountedPrice,orignalPrice,specifications,isNewProduct,isLimited,isOutOfStock,isInactive} = req.body;
-    if([name,category,description,discountedPrice,orignalPrice,specifications].some(field => field === undefined || field === null || field === "")){
+    const{name,category,description,discountedPrice,originalPrice,specifications,isNewProduct,isLimited,isOutOfStock,isInactive} = req.body;
+    if([name,category,description,discountedPrice,originalPrice,specifications].some(field => field === undefined || field === null || field === "")){
         return res.json({success:false,message:"All fields are required"})
     }
     let image = ''
@@ -29,7 +29,7 @@ const addProduct = async(req,res) =>{
     }
 
     const discountedPriceNum = Number(discountedPrice)
-    const orignalPriceNum = Number(orignalPrice)
+    const originalPriceNum = Number(originalPrice)
     const isNewProductBool = String(isNewProduct) === 'true'
     const isLimitedBool = String(isLimited) === 'true'
     const isOutOfStockBool = String(isOutOfStock) === 'true'
@@ -40,7 +40,7 @@ const addProduct = async(req,res) =>{
         category,
         description,
         discountedPrice: discountedPriceNum,
-        orignalPrice: orignalPriceNum,
+        originalPrice: originalPriceNum,
         specifications:parsedSpecifications,
         isNewProduct: isNewProductBool,
         isLimited: isLimitedBool,
