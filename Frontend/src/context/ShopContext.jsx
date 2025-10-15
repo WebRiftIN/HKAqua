@@ -23,7 +23,7 @@ export const AppProvider = ({ children }) => {
 
     const fetchProducts = async()=>{
         try {
-            const {data} = await axios.post('/api/product/allProducts')
+            const {data} = await axios.get('/api/product/allProducts')
             if(data.success){
                 setProducts(data.products)
             }
@@ -31,6 +31,8 @@ export const AppProvider = ({ children }) => {
             toast.error(error.message)
         }
     }
+    console.log(products);
+    
 
     useEffect(() => {
         fetchProducts()
@@ -53,7 +55,7 @@ export const AppProvider = ({ children }) => {
     }
 
     const value = {
-        axios, token, setToken, user, setUser, logout
+        axios, token, setToken, user, setUser, logout, products
     }
     return (
         <AppContext.Provider value={value}>
