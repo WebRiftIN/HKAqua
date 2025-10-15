@@ -1,56 +1,67 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import hktry1 from '../../assets/hktry1.jpg' // Adjust path if needed
+import React, { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useAppContext } from '../../context/ShopContext';
 
 function SingleProduct() {
-  // Product object
-  const product = {
-    name: 'AquaPure RO Elite 7L',
-    category: 'RO Systems',
-    image: hktry1,
-    description: 'Premium 7-Stage Water Purification System',
-    price: 18999,
-    originalPrice: 24999,
-    discount: '24% OFF',
-    features: 'Experience pure, healthy water with our advanced 7-stage purification system. Combining RO, UV, and Alkaline technologies, this premium water purifier removes 99.9% of contaminants while retaining essential minerals for your family\'s health.',
-    rating: 4.8,
-    reviewsCount: 1250,
-    specifications: [
-      { label: 'Storage Capacity', value: '7 Liters' },
-      { label: 'Purification Rate', value: '15 LPH' },
-      { label: 'Warranty', value: '2 Years Comprehensive' },
-      { label: 'Installation', value: 'Wall Mount/Counter Top' }
-    ],
-    technologies: [
-      { icon: 'fas fa-water text-blue-500', title: 'RO Membrane', desc: 'Removes dissolved salts, heavy metals, and microscopic contaminants' },
-      { icon: 'fas fa-sun text-yellow-500', title: 'UV Sterilization', desc: 'Eliminates bacteria, viruses, and other microorganisms' },
-      { icon: 'fas fa-leaf text-green-500', title: 'Alkaline Enhancement', desc: 'Balances pH levels and adds beneficial minerals' },
-    ],
-    related: [
-      { name: 'Related Product 1', image: hktry1, price: 12999 },
-      { name: 'Related Product 2', image: hktry1, price: 12999 },
-      { name: 'Related Product 3', image: hktry1, price: 12999 },
-      { name: 'Related Product 4', image: hktry1, price: 12999 },
-    ]
-  }
+  const { id } = useParams();
+  console.log('SingleProduct page ID:', id);
+  const { products } = useAppContext();
+  const product = products.find(p => p._id === id || p.id === id);
 
-  const [quantity, setQuantity] = useState(1)
-  const [activeTab, setActiveTab] = useState('description')
-  const [selectedRating, setSelectedRating] = useState(0)
-  const [reviewText, setReviewText] = useState('')
+  const [quantity, setQuantity] = useState(1);
+  const [activeTab, setActiveTab] = useState('description');
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [reviewText, setReviewText] = useState('');
 
   const changeQuantity = (delta) => {
-    setQuantity(q => Math.max(1, q + delta))
-  }
+    setQuantity(q => Math.max(1, q + delta));
+  };
 
   const submitReview = (e) => {
-    e.preventDefault()
-    if (selectedRating === 0) return
-    if (!reviewText.trim()) return
-    setReviewText('')
-    setSelectedRating(0)
-    setActiveTab('reviews')
+    e.preventDefault();
+    if (selectedRating === 0) return;
+    if (!reviewText.trim()) return;
+    setReviewText('');
+    setSelectedRating(0);
+    setActiveTab('reviews');
+  };
+
+  if (!products.length) {
+    return <div className="text-center py-20">Loading...</div>;
   }
+
+  if (!product) {
+    return <div className="text-center py-20 text-red-500">Product not found.</div>;
+  }
+
+  // Fallbacks for missing fields
+  const image = product.image;
+  const features = product.features || product.description || '';
+  const specifications = product.specifications || [];
+  const technologies = [
+    { icon: 'fas fa-water', title: 'RO+UV+UF', desc: 'Advanced multi-stage purification.' },
+    { icon: 'fas fa-bolt', title: 'Low Power', desc: 'Energy efficient operation.' },
+    // ...add more
+  ];
+  const normalize = str => (str || '').toLowerCase().trim();
+  const currentId = product._id || product.id;
+
+  const related = products.filter(p =>
+    normalize(p.category) === normalize(product.category) &&
+    (p._id || p.id) !== currentId
+  );
+
+  console.log('Current category:', product.category);
+  console.log('All categories:', products.map(p => p.category));
+  console.log('Related:', related);
+
+  const rating = product.rating || 4.8;
+  const reviewsCount = product.reviewsCount || 1250;
+  const price = product.discountedPrice || product.price || 0;
+  const originalPrice = product.originalPrice || 0;
+  const discount = originalPrice
+    ? `${Math.round(((originalPrice - price) / originalPrice) * 100)}% OFF`
+    : '';
 
   return (
     <div className="pt-10 pb-16">
@@ -70,14 +81,14 @@ function SingleProduct() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="w-full">
             <div className="overflow-hidden">
-              <img src={product.image} alt={product.name} className="product-image-main w-full h-96 object-contain" />
+              <img src={image} alt={product.name} className="product-image-main w-full h-96 object-contain" />
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{product.name}</h1>
-              <p className="text-lg text-gray-600">{product.description}</p>
+              <p className="text-lg text-gray-600">{product.category}</p>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -88,19 +99,30 @@ function SingleProduct() {
                 <i className="fas fa-star"></i>
                 <i className="fas fa-star-half-alt"></i>
               </div>
-              <span className="text-gray-600">({product.rating})</span>
-              <span className="text-blue-600 hover:underline cursor-pointer">{product.reviewsCount} Reviews</span>
+              <span className="text-gray-600">({rating})</span>
+              <span className="text-blue-600 hover:underline cursor-pointer">{reviewsCount} Reviews</span>
             </div>
 
             <div className="flex items-center space-x-4">
-              <span className="text-4xl font-bold water-blue">₹{product.price}</span>
-              <span className="text-2xl text-gray-400 line-through">₹{product.originalPrice}</span>
-              <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">{product.discount}</span>
+              {!product.isOutOfStock && (
+                <>
+                  <span className="text-4xl font-bold water-blue">₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}</span>
+                  <span className="text-2xl text-gray-400 line-through">₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}</span>
+                  <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">
+                    {product.originalPrice
+                      ? `${Math.round(((product.originalPrice - (product.discountedPrice ?? 0)) / product.originalPrice) * 100)}% OFF`
+                      : ''}
+                  </span>
+                </>
+              )}
             </div>
+            {product.isOutOfStock && (
+              <div className="text-red-600 text-lg font-semibold mt-2">Out of Stock</div>
+            )}
 
             <div className="bg-blue-50 rounded-xl p-6">
               <p className="text-gray-700 leading-relaxed">
-                {product.features}
+                {features}
               </p>
             </div>
 
@@ -146,7 +168,7 @@ function SingleProduct() {
                 Description
               </button>
               <button className={`py-4 px-2 font-medium text-lg ${activeTab === 'reviews' ? 'tab-active' : 'text-gray-500'}`} onClick={() => setActiveTab('reviews')}>
-                Reviews ({product.reviewsCount})
+                Reviews ({reviewsCount})
               </button>
             </nav>
           </div>
@@ -157,7 +179,7 @@ function SingleProduct() {
                 <div className="prose max-w-none">
                   <h4 className="text-xl font-semibold water-blue mb-4">Key Technologies:</h4>
                   <ul className="space-y-3 mb-6">
-                    {product.technologies.map(({ icon, title, desc }) => (
+                    {technologies.map(({ icon, title, desc }) => (
                       <li key={title} className="flex items-start space-x-3">
                         <i className={icon + ' mt-1'}></i>
                         <div>
@@ -169,13 +191,13 @@ function SingleProduct() {
                   <h4 className="text-xl font-semibold water-blue mb-4">Specifications:</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      {product.specifications.slice(0, 4).map((spec, idx) => (
-                        <p key={idx}><strong>{spec.label}:</strong> {spec.value}</p>
+                      {specifications.slice(0, 4).map((spec, idx) => (
+                        <p key={idx}>{spec}</p>
                       ))}
                     </div>
                     <div className="space-y-2">
-                      {product.specifications.slice(4).map((spec, idx) => (
-                        <p key={idx}><strong>{spec.label}:</strong> {spec.value}</p>
+                      {specifications.slice(4).map((spec, idx) => (
+                        <p key={idx}>{spec}</p>
                       ))}
                     </div>
                   </div>
@@ -196,7 +218,7 @@ function SingleProduct() {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center space-x-2 mb-2">
-                        <span className="text-3xl font-bold water-blue">{product.rating}</span>
+                        <span className="text-3xl font-bold water-blue">{rating}</span>
                         <div className="flex items-center star-rating">
                           <i className="fas fa-star"></i>
                           <i className="fas fa-star"></i>
@@ -205,7 +227,7 @@ function SingleProduct() {
                           <i className="fas fa-star-half-alt"></i>
                         </div>
                       </div>
-                      <p className="text-gray-600">Based on {product.reviewsCount} reviews</p>
+                      <p className="text-gray-600">Based on {reviewsCount} reviews</p>
                     </div>
                     <div className="text-right">
                       <p className="text-green-600 font-semibold">96% Recommended</p>
@@ -266,8 +288,15 @@ function SingleProduct() {
         <div className="mt-16">
           <h3 className="text-2xl font-bold water-blue mb-8">Related Products</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {product.related.map((rel, i) => (
-              <div key={i} className="related-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer">
+            {related.length === 0 && (
+              <div className="text-gray-500 col-span-4">No related products found.</div>
+            )}
+            {related.map((rel, i) => (
+              <Link
+                key={rel._id || rel.id || i}
+                to={`/single-product/${rel._id || rel.id}`}
+                className="related-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer block hover:shadow-xl transition"
+              >
                 <img src={rel.image} alt={rel.name} className="w-full h-48 object-cover" />
                 <div className="p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">{rel.name}</h4>
@@ -279,17 +308,22 @@ function SingleProduct() {
                     <i className="fas fa-star-half-alt text-sm"></i>
                     <span className="text-gray-500 text-sm ml-1">(100)</span>
                   </div>
-                  <p className="text-xl font-bold water-blue">₹{rel.price}</p>
+                  <p className="text-xl font-bold water-blue">
+                    ₹{rel.discountedPrice ? Number(rel.discountedPrice).toLocaleString() : '0'}
+                  </p>
+                  <span className="text-gray-400 line-through ml-2">
+                    ₹{rel.originalPrice ? Number(rel.originalPrice).toLocaleString() : '0'}
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default SingleProduct
+export default SingleProduct;
 
 
