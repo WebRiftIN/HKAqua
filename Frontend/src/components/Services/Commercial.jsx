@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import commercial_ro from '../../assets/commercial-ro-system.jpg'
 
 
 function Commercial() {
@@ -8,18 +9,12 @@ function Commercial() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div className="commercial-image">
-            <div className="service-image h-64 sm:h-80 lg:h-96 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f0f9ff, #dbeafe)' }}>
-              <div className="text-center z-10 relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-2xl">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 3a1 1 0 100 2h.01a1 1 0 100-2H10zm-4 1a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1zm1-4a1 1 0 100 2h.01a1 1 0 100-2H7zm2 0a1 1 0 100 2h.01a1 1 0 100-2H9zm2 0a1 1 0 100 2h.01a1 1 0 100-2H11z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-blue-600 mb-2">Commercial Solutions</h3>
-                <p className="text-blue-500 text-sm sm:text-base">Large Scale Systems</p>
-              </div>
+            <div className="service-image h-64 sm:h-80 lg:h-96 flex items-center justify-center">
+              <img
+                src={commercial_ro}
+                alt="commercial ro"
+                className="w-full h-full object-cover rounded-xl shadow-lg"
+              />
             </div>
           </div>
           <div className="commercial-content">
@@ -38,8 +33,7 @@ function Commercial() {
               {[
                 'High-capacity systems (500-5000 LPH)',
                 'Custom design and installation',
-                '24/7 monitoring and maintenance',
-                'Energy-efficient operation',
+                '3 free Services and Regular maintenance',
               ].map((text) => (
                 <div key={text} className="flex items-center space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">

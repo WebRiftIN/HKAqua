@@ -6,6 +6,7 @@ import Commercial from '../components/Services/Commercial'
 import Maintenance from '../components/Services/Maintenance'
 import CTA from '../components/Services/CTA'
 import '../components/Services/services.css'
+import Repair from '../components/Services/Repair'
 
 function Services() {
   useEffect(() => {
@@ -40,7 +41,7 @@ function Services() {
       <Overview />
       <Installation />
       <Commercial />
-      <Installation />
+      <Repair />
       <Maintenance />
       <CTA />
     </div>

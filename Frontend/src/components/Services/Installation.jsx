@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Hk_mission from '../../assets/hk_mission.jpg'
+import Ro_installtion from '../../assets/Ro-installtion.jpg'
 
 function Installation() {
   return (
@@ -21,9 +21,8 @@ function Installation() {
             </p>
             <div className="space-y-4 mb-8">
               {[
-                'Free site inspection and consultation',
+                'Proffesional installtion',
                 'Same-day installation available',
-                '2-year comprehensive warranty',
                 'Post-installation support and training',
               ].map((text) => (
                 <div key={text} className="flex items-center space-x-3">
@@ -44,7 +43,7 @@ function Installation() {
           <div className="installation-image order-1 lg:order-2">
             <div className="service-image h-64 sm:h-80 lg:h-96 flex items-center justify-center">
               <img
-                src={Hk_mission}
+                src={Ro_installtion}
                 alt="HK Mission"
                 className="w-full h-full object-cover rounded-xl shadow-lg"
               />

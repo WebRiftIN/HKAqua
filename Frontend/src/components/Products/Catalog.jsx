@@ -1,89 +1,28 @@
 import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import hktry1 from '../../assets/hi.png'
+import { useAppContext } from '../../context/ShopContext'
 
 function Catalog() {
+  const { products: dbProducts } = useAppContext();
+
+  // Add static reviews/rating/image to each product
+  const products = useMemo(() => {
+    return dbProducts.map((p, i) => ({
+      ...p,
+      reviews: p.reviews || [1250, 890, 567, 1100, 234, 678][i % 6],
+      rating: p.rating || [4.8, 4.6, 4.9, 4.5, 4.7, 4.8][i % 6],
+      image: p.image || hktry1,
+      features: p.features || [],
+      isNew: p.isNew || false
+    }));
+  }, [dbProducts]);
+
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('name')
   const [expanded, setExpanded] = useState({ 'ro-systems': true, 'uv-systems': false, 'alkaline': false })
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [priceFilters, setPriceFilters] = useState([])
   const [view, setView] = useState('grid')
-
-  const products = useMemo(() => ([
-    {
-      id: 1,
-      name: 'AquaPure RO Elite 7L',
-      category: 'under-sink',
-      price: 18999,
-      originalPrice: 24999,
-      rating: 4.8,
-      reviews: 1250,
-      image: {hktry1},
-      features: ['7-Stage Purification', 'UV + RO + Alkaline', '7L Storage'],
-      isNew: true
-    },
-    {
-      id: 2,
-      name: 'AquaPure UV Pro 10L',
-      category: 'uv-basic',
-      price: 12999,
-      originalPrice: 16999,
-      rating: 4.6,
-      reviews: 890,
-      image: {hktry1},
-      features: ['UV Sterilization', '10L Capacity', 'Auto Shut-off'],
-      isNew: false
-    },
-    {
-      id: 3,
-      name: 'AquaPure Alkaline Max 12L',
-      category: 'alkaline-premium',
-      price: 35999,
-      originalPrice: 42999,
-      rating: 4.9,
-      reviews: 567,
-      image: {hktry1},
-      features: ['Alkaline Enhancement', '12L Storage', 'Smart Display'],
-      isNew: true
-    },
-    {
-      id: 4,
-      name: 'AquaPure Compact RO 5L',
-      category: 'countertop',
-      price: 14999,
-      originalPrice: 18999,
-      rating: 4.5,
-      reviews: 1100,
-      image: {hktry1},
-      features: ['Compact Design', '5L Capacity', 'Easy Installation'],
-      isNew: false
-    },
-    {
-      id: 5,
-      name: 'AquaPure Whole House System',
-      category: 'whole-house',
-      price: 65999,
-      originalPrice: 79999,
-      rating: 4.7,
-      reviews: 234,
-      image: {hktry1},
-      features: ['Whole House Coverage', 'High Flow Rate', 'Professional Installation'],
-      isNew: true
-    },
-    {
-      id: 6,
-      name: 'AquaPure UV Advanced 8L',
-      category: 'uv-advanced',
-      price: 22999,
-      originalPrice: 28999,
-      rating: 4.8,
-      reviews: 678,
-      image: {hktry1},
-      features: ['Advanced UV Technology', '8L Storage', 'Digital Display'],
-      isNew: false
-    }
-  ]), [])
 
   const starIcons = (rating) => {
     const full = Math.floor(rating)
@@ -278,16 +217,29 @@ function Catalog() {
 
           <div className={view === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6' : 'space-y-4'}>
             {filteredAndSorted.map(product => {
-              const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+              const discount = product.originalPrice
+                ? Math.round(((product.originalPrice - (product.discountedPrice ?? 0)) / product.originalPrice) * 100)
+                : 0;
               return (
-                <div key={product.id} className={`product-card bg-white rounded-2xl shadow-lg overflow-hidden ${view === 'list' ? 'grid grid-cols-1 md:grid-cols-3' : ''}`}>
+                <Link
+                  key={product._id || product.id}
+                  to={`/single-product/${product._id || product.id}`}
+                  className={`product-card bg-white rounded-2xl shadow-lg overflow-hidden block hover:shadow-xl transition-all ${view === 'list' ? 'grid grid-cols-1 md:grid-cols-3' : ''}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
                   <div className={view === 'list' ? 'relative overflow-hidden h-96 md:h-full' : 'relative overflow-hidden h-96'}>
-                    <img src={hktry1} alt={product.name} className="w-full h-full object-cover" />
-                    {product.isNew && <span className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>}
+                    <img
+                      src={product.image ? product.image : hktry1}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                    {(product.isNewProduct || product.isNew) && (
+                      <span className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
+                    )}
                     <span className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">{discount}% OFF</span>
-                    <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100">
-                      <Link to="/single-product/1" className="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold transform translate-y-4 hover:translate-y-0 transition-all">Quick View</Link>
-                    </div>
+                    {product.isOutOfStock && (
+                      <span className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Out of Stock</span>
+                    )}
                   </div>
                   <div className="p-6 md:col-span-2">
                     <h3 className="font-bold text-lg text-gray-800 mb-2">{product.name}</h3>
@@ -295,12 +247,23 @@ function Catalog() {
                       <div className="flex items-center star-rating text-yellow-400">{starIcons(product.rating)}</div>
                       <span className="text-gray-500 text-sm ml-2">({product.reviews})</span>
                     </div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <span className="text-2xl font-bold water-blue">₹{product.price.toLocaleString()}</span>
-                        <span className="text-gray-400 line-through ml-2">₹{product.originalPrice.toLocaleString()}</span>
+                    {/* Only show price if NOT out of stock */}
+                    {!product.isOutOfStock && (
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <span className="text-2xl font-bold water-blue">
+                            ₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}
+                          </span>
+                          <span className="text-gray-400 line-through ml-2">
+                            ₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    )}
+                    {/* Limited Product text */}
+                    {product.isLimited && (
+                      <div className="text-red-600 text-sm font-semibold mt-1">Limited Product</div>
+                    )}
                     <div className="mb-4">
                       <div className="flex flex-wrap gap-1">
                         {product.features.map((feature) => (
@@ -308,20 +271,19 @@ function Catalog() {
                         ))}
                       </div>
                     </div>
-                    <button className="ripple-effect w-full water-bg text-white py-3 rounded-xl font-semibold bg-blue-700 transition-all transform hover:scale-105" onClick={() => addToCart(product)}>
+                    <button
+                      className="ripple-effect w-full water-bg text-white py-3 rounded-xl font-semibold bg-blue-700 transition-all transform hover:scale-105"
+                      onClick={e => { e.preventDefault(); addToCart(product); }}
+                    >
                       Add to Cart
                     </button>
                   </div>
-                </div>
+                </Link>
               )
             })}
           </div>
 
-          <div className="text-center mt-12">
-            <button className="ripple-effect water-bg text-white px-8 py-3 rounded-xl font-semibold bg-blue-700 transition-all transform hover:scale-105">
-              Load More Products
-            </button>
-          </div>
+        
         </div>
       </div>
     </main>

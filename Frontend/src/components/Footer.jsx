@@ -39,7 +39,7 @@ function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-6">Quick Links</h3>
             <ul className="space-y-3">
-              <li><Link to="#home" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
+              <li><Link to="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
               <li><Link to="/products" className="text-gray-400 hover:text-white transition-colors">Products</Link></li>
               <li><Link to="/services" className="text-gray-400 hover:text-white transition-colors">Services</Link></li>
               <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
@@ -69,7 +69,7 @@ function Footer() {
         </div>
 
         <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 HK Aquafresh. All rights reserved. | Privacy Policy | Terms of Service</p>
+          <p>&copy; 2025 Webrift. All rights reserved. | Privacy Policy | Terms of Service</p>
         </div>
       </div>
     </footer>
