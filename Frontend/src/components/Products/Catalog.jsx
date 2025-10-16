@@ -283,11 +283,7 @@ function Catalog() {
             })}
           </div>
 
-          <div className="text-center mt-12">
-            <button className="ripple-effect water-bg text-white px-8 py-3 rounded-xl font-semibold bg-blue-700 transition-all transform hover:scale-105">
-              Load More Products
-            </button>
-          </div>
+        
         </div>
       </div>
     </main>

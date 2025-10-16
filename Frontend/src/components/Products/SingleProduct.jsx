@@ -126,14 +126,7 @@ function SingleProduct() {
               </p>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-700 font-medium">Quantity:</span>
-              <div className="flex items-center border border-gray-300 rounded-lg">
-                <button className="px-3 py-2 border-r border-gray-300" onClick={() => changeQuantity(-1)}>-</button>
-                <span className="px-4 py-2 font-medium">{quantity}</span>
-                <button className="px-3 py-2 border-l border-gray-300" onClick={() => changeQuantity(1)}>+</button>
-              </div>
-            </div>
+      
 
             <div className="space-y-4">
               <button className="btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg">

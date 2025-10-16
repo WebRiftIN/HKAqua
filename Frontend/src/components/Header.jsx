@@ -26,10 +26,6 @@ function Header() {
             </div>
 
             <div className="flex items-center space-x-4">
-              <Link to="/wishlist" className="text-gray-700 hover:text-sky-600 transition-colors">
-                <i className="fas fa-heart text-xl"></i>
-                <span className="sr-only">Wishlist</span>
-              </Link>
               <Link to="/cart" className="text-gray-700 hover:text-sky-600 transition-colors relative">
                 <i className="fas fa-shopping-cart text-xl"></i>
                 <span className="absolute -top-2 -right-2 bg-sky-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>

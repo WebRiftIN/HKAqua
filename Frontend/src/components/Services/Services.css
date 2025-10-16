@@ -83,7 +83,7 @@
 }
 
 .service-image {
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    /* background: linear-gradient(135deg, #e3f2fd, #bbdefb); */
     border-radius: 20px;
     overflow: hidden;
     position: relative;
@@ -96,7 +96,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(33, 150, 243, 0.1), rgba(3, 169, 244, 0.1));
+    /* background: linear-gradient(45deg, rgba(33, 150, 243, 0.1), rgba(3, 169, 244, 0.1)); */
     z-index: 1;
 }
 

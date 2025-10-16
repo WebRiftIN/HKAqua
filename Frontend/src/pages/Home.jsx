@@ -7,6 +7,8 @@ import {
   Testimonials,
   HowItWorks
 } from '../components/Home';
+import Waves from '../components/Waves'
+
 
 const Home = () => {
   useEffect(() => {
@@ -61,6 +63,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
+      <Waves />
       <Hero />
       <TopDeals />
       <WhyChoose />

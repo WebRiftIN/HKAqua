@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const HowItWorks = () => {
   return (
@@ -68,9 +69,12 @@ const HowItWorks = () => {
         </div>
         
         <div className="text-center mt-12">
-          <button className="bg-sky-500 text-white hover:bg-sky-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 ripple-effect">
+          <Link
+            to="/products"
+            className="bg-sky-500 text-white hover:bg-sky-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 ripple-effect inline-block"
+          >
             Start Your Journey
-          </button>
+          </Link>
         </div>
       </div>
     </section>

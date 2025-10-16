@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Hk_mission from '../../assets/hk_mission.jpg'
+import ro_Maintenance from '../../assets/ro_maintaince.jpg'
 
 function Maintenance() {
   return (
@@ -10,7 +10,7 @@ function Maintenance() {
           <div className="maintenance-image">
             <div className="service-image h-64 sm:h-80 lg:h-96 flex items-center justify-center">
               <img
-                src={Hk_mission}
+                src={ro_Maintenance}
                 alt="HK Mission"
                 className="w-full h-full object-cover rounded-xl shadow-lg"
               />
@@ -32,7 +32,6 @@ function Maintenance() {
               {[
                 'Scheduled filter replacements',
                 'System sanitization and cleaning',
-                'Performance testing and optimization',
                 'Annual maintenance contracts available',
               ].map((text) => (
                 <div key={text} className="flex items-center space-x-3">
