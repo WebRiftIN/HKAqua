@@ -199,6 +199,7 @@ function Booking() {
                       </div>
                       <p className="text-gray-600 text-sm">{card.desc}</p>
                       <div className={`mt-4 text-${card.color}-600 font-semibold`}>{card.price}</div>
+                      <p className="text-gray-600 text-sm">* All prices are Starting Price and may vary depending on the complexity of the service</p>
                     </div>
                   ))}
                 </div>
@@ -218,7 +219,7 @@ function Booking() {
                 </svg>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Booking Confirmed!</h3>
-              <p className="text-gray-600 mb-6">Thank you for choosing AquaPure. Our team will contact you shortly to confirm your appointment.</p>
+              <p className="text-gray-600 mb-6">Thank you for choosing hK aquafresh. Our team will contact you shortly to confirm your appointment.</p>
               <button onClick={resetForm} className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">Book Another Service</button>
             </div>
           )}

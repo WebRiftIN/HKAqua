@@ -24,6 +24,41 @@ function Catalog() {
   const [priceFilters, setPriceFilters] = useState([])
   const [view, setView] = useState('grid')
 
+  const normalize = (value) => (value || '').toString().toLowerCase().trim()
+
+  const getEffectivePrice = (p) => {
+    const discounted = p.discountedPrice != null ? Number(p.discountedPrice) : null
+    if (discounted != null && !Number.isNaN(discounted)) return discounted
+    const original = p.originalPrice != null ? Number(p.originalPrice) : null
+    if (original != null && !Number.isNaN(original)) return original
+    const base = p.price != null ? Number(p.price) : 0
+    return Number.isNaN(base) ? 0 : base
+  }
+
+  const subcategoryKeywords = {
+    nexusrosystem: ['nexus'],
+    applerosystem: ['apple'],
+    livepurerosystem: ['livepure', 'live pure'],
+    '50lphro': ['50 lph', '50lph'],
+    '100lphro': ['100 lph', '100lph'],
+    '250lphro': ['250 lph', '250lph'],
+    'alkaline-basic': ['alkaline basic', 'basic alkaline'],
+    'alkaline-premium': ['alkaline premium', 'premium alkaline']
+  }
+
+  const matchesSelectedCategory = (product, selected) => {
+    const sel = normalize(selected)
+    if (sel === 'all') return true
+    const nameNorm = normalize(product.name)
+    const catNorm = normalize(product.category)
+    // keyword match on product name
+    const keywords = subcategoryKeywords[sel]
+    const keywordHit = Array.isArray(keywords) && keywords.some(kw => nameNorm.includes(kw))
+    // fallback to category exact match
+    const categoryHit = catNorm === sel
+    return Boolean(keywordHit || categoryHit)
+  }
+
   const starIcons = (rating) => {
     const full = Math.floor(rating)
     const half = rating % 1 !== 0
@@ -46,11 +81,14 @@ function Catalog() {
     }
 
     if (selectedCategory !== 'all') {
-      list = list.filter(p => p.category === selectedCategory)
+      list = list.filter(p => matchesSelectedCategory(p, selectedCategory))
     }
 
     if (priceFilters.length > 0) {
-      list = list.filter(p => priceFilters.some(({ min, max }) => p.price >= min && p.price <= max))
+      list = list.filter(p => {
+        const price = getEffectivePrice(p)
+        return priceFilters.some(({ min, max }) => price >= min && price <= max)
+      })
     }
 
     const sorted = [...list]
@@ -120,6 +158,7 @@ function Catalog() {
           <div className="flex items-center space-x-4">
             <label className="text-gray-700 font-medium">Sort by:</label>
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+            <option value="default">Default</option>
               <option value="name">Name</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
@@ -145,38 +184,40 @@ function Catalog() {
                 </button>
               </div>
               <div className="category-group">
-                <button className={`category-pill w-full text-left px-4 py-3 rounded-xl ${expanded['ro-systems'] ? 'bg-blue-50 water-blue' : 'bg-gray-50 text-gray-700'} font-medium flex items-center justify-between`} onClick={() => onToggleCategoryGroup('ro-systems')}>
-                  <span>RO Systems</span>
-                  <i className={`fas fa-chevron-down transition-transform ${expanded['ro-systems'] ? 'rotate-180' : ''}`}></i>
+                <button className={`category-pill w-full text-left px-4 py-3 rounded-xl ${expanded['domesticRoSystems'] ? 'bg-blue-50 water-blue' : 'bg-gray-50 text-gray-700'} font-medium flex items-center justify-between`} onClick={() => onToggleCategoryGroup('domesticRoSystems')}>
+                  <span>Domestic Water Purifiers</span>
+                  <i className={`fas fa-chevron-down transition-transform ${expanded['domesticRoSystems'] ? 'rotate-180' : ''}`}></i>
                 </button>
-                {expanded['ro-systems'] && (
+                {expanded['domesticRoSystems'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'under-sink' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('under-sink')}>Under Sink</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'countertop' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('countertop')}>Countertop</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'whole-house' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('whole-house')}>Whole House</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'NexusRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('NexusRoSystem')}>Nexus RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'AppleRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('AppleRoSystem')}>Apple RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'LivePureRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('LivePureRoSystem')}>LivePure RO</button>
                   </div>
                 )}
               </div>
 
               <div className="category-group">
-                <button className={`category-pill w-full text-left px-4 py-3 rounded-xl ${expanded['uv-systems'] ? 'bg-blue-50 water-blue' : 'bg-gray-50 text-gray-700'} font-medium flex items-center justify-between`} onClick={() => onToggleCategoryGroup('uv-systems')}>
-                  <span>UV Systems</span>
-                  <i className={`fas fa-chevron-down transition-transform ${expanded['uv-systems'] ? 'rotate-180' : ''}`}></i>
+                <button className={`category-pill w-full text-left px-4 py-3 rounded-xl ${expanded['commercialRoSystems'] ? 'bg-blue-50 water-blue' : 'bg-gray-50 text-gray-700'} font-medium flex items-center justify-between`} onClick={() => onToggleCategoryGroup('commercialRoSystems')}>
+                  <span>Commercial Water Purifiers</span>
+                  <i className={`fas fa-chevron-down transition-transform ${expanded['commercialRoSystems'] ? 'rotate-180' : ''}`}></i>
                 </button>
-                {expanded['uv-systems'] && (
+                {expanded['commercialRoSystems'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'uv-basic' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('uv-basic')}>Basic UV</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'uv-advanced' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('uv-advanced')}>Advanced UV</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '50LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('50LPHRO')}>50 LPH RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '100LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('100LPHRO')}>100 LPH RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '250LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('250LPHRO')}>250 LPH RO</button>
+
                   </div>
                 )}
               </div>
 
               <div className="category-group">
-                <button className={`category-pill w-full text-left px-4 py-3 rounded-xl ${expanded['alkaline'] ? 'bg-blue-50 water-blue' : 'bg-gray-50 text-gray-700'} font-medium flex items-center justify-between`} onClick={() => onToggleCategoryGroup('alkaline')}>
-                  <span>Alkaline Systems</span>
-                  <i className={`fas fa-chevron-down transition-transform ${expanded['alkaline'] ? 'rotate-180' : ''}`}></i>
+                <button className={`category-pill w-full text-left px-4 py-3 rounded-xl ${expanded['waterPurifiersSpareParts'] ? 'bg-blue-50 water-blue' : 'bg-gray-50 text-gray-700'} font-medium flex items-center justify-between`} onClick={() => onToggleCategoryGroup('waterPurifiersSpareParts')}>
+                  <span>Water Purifiers Spare Parts</span>
+                  <i className={`fas fa-chevron-down transition-transform ${expanded['waterPurifiersSpareParts'] ? 'rotate-180' : ''}`}></i>
                 </button>
-                {expanded['alkaline'] && (
+                {expanded['waterPurifiersSpareParts'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
                     <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-basic' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-basic')}>Basic Alkaline</button>
                     <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-premium' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-premium')}>Premium Alkaline</button>
@@ -188,7 +229,7 @@ function Catalog() {
             <div className="mt-8">
               <h4 className="font-semibold water-blue mb-4">Price Range</h4>
               <div className="space-y-3">
-                {[{ min: 0, max: 15000, label: 'Under ₹15,000' }, { min: 15000, max: 30000, label: '₹15,000 - ₹30,000' }, { min: 30000, max: 50000, label: '₹30,000 - ₹50,000' }, { min: 50000, max: 999999, label: 'Above ₹50,000' }].map(({ min, max, label }) => {
+                {[{ min: 0, max: 6000, label: 'Under ₹6,000' }, { min: 6000, max: 8000, label: '₹6,000 - ₹8,000' }, { min: 8000, max: 10000, label: '₹8,000 - ₹10,000' }, { min: 10000, max: Infinity, label: 'Above ₹10,000' }].map(({ min, max, label }) => {
                   const checked = priceFilters.some(r => r.min === min && r.max === max)
                   return (
                     <label key={`${min}-${max}`} className="flex items-center">

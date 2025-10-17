@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import heroservicesimg from '../../assets/heroservicesimg.webp'
+import heroservicesimg from '../../assets/homepageimg.png'
 
 function Hero() {
 

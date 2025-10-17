@@ -49,7 +49,7 @@ function Header() {
                       {user ? (
                         <>
                           <Link to="#" className="block px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-600">My Profile</Link>
-                          <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-600">My Orders</Link>
+                          <Link to="/my-orders" className="block px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-600">My Orders</Link>
                           <hr className="my-1" />
                           <button onClick={() => { setShowAccount(false); logout(); }} className="w-full text-left px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-600">Logout</button>
                         </>
@@ -57,7 +57,7 @@ function Header() {
                         <>
                           <Link to="/login" className="block px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-600">Login</Link>
                           <Link to="/register" className="block px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-600">Register</Link>
-                          <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-600">My Orders</Link>
+                          <Link to="/my-orders" className="block px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-600">My Orders</Link>
                         </>
                       )}
                     </div>

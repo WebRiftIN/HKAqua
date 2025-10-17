@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../pages/Home.css'
 import { Link } from 'react-router-dom';
-import homepageimg from '../../assets/homepageimg.png';
+import homepageimg from '../../assets/heroservicesimg.webp';
 
 const Hero = () => {
   return (
@@ -37,7 +37,7 @@ const Hero = () => {
               <img
                 src={homepageimg}
                 alt="Homepage hero"
-                className="w-full h-96 object-contain"
+                className="w-full h-100 object-contain"
               />
             </div>
           </div>

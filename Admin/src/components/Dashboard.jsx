@@ -54,7 +54,7 @@ const Dashboard = () => {
     const recentOrders = [
         {
             id: "#12345",
-            product: "AquaPure RO Premium",
+            product: "hK aquafresh RO Premium",
             customer: "Amit Patel",
             status: "Delivered",
             statusColor: "bg-green-100 text-green-800",
@@ -63,7 +63,7 @@ const Dashboard = () => {
         },
         {
             id: "#12346",
-            product: "AquaPure UV Filter",
+            product: "hK aquafresh UV Filter",
             customer: "Sunita Gupta",
             status: "Processing",
             statusColor: "bg-yellow-100 text-yellow-800",
@@ -72,7 +72,7 @@ const Dashboard = () => {
         },
         {
             id: "#12347",
-            product: "AquaPure UF System",
+            product: "hK aquafresh UF System",
             customer: "Rajesh Kumar",
             status: "Shipped",
             statusColor: "bg-blue-100 text-blue-800",
@@ -113,7 +113,7 @@ const Dashboard = () => {
             {/* Welcome Section */}
             <div className="mb-8">
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
-                <p className="text-gray-600 text-lg">Welcome to AquaPure RO Admin Panel - Monitor your water purification business</p>
+                <p className="text-gray-600 text-lg">Welcome to hK aquafresh RO Admin Panel - Monitor your water purification business</p>
             </div>
 
             {/* Stats Cards */}

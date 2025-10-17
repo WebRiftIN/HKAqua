@@ -1,6 +1,6 @@
-# AquaPure Admin Panel
+# hK aquafresh Admin Panel
 
-This is the admin panel for AquaPure water purifier business, built with React and Tailwind CSS.
+This is the admin panel for hK aquafresh water purifier business, built with React and Tailwind CSS.
 
 ## Features
 

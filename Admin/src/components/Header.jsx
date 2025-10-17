@@ -41,7 +41,7 @@ const Header = () => {
                         <div className="flex-shrink-0 flex items-center">
                             <img
                                 src={logo}
-                                alt="AquaPure Logo"
+                                alt="hK aquafresh Logo"
                                 className="w-auto h-13  shadow-md object-cover"
                             />
                         </div>

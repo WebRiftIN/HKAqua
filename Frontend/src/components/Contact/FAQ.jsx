@@ -31,7 +31,7 @@ function FAQ() {
 
         <div className="max-w-4xl mx-auto space-y-6">
           <FAQItem question="How often should I replace the filters?">
-            <p>Filter replacement frequency depends on your water usage and quality. Generally, we recommend replacing filters every 6-12 months for optimal performance. Our systems include filter change indicators to notify you when replacement is needed.</p>
+            <p>Filter replacement frequency depends on your water usage and quality. Generally, we recommend replacing filters every 3-4 months for optimal performance. Our systems include filter bottle with free 3 services for chaning water filters. We also provide a free water filter service for our customers.</p>
           </FAQItem>
 
           <FAQItem question="Do you provide installation services?">
@@ -39,7 +39,7 @@ function FAQ() {
           </FAQItem>
 
           <FAQItem question="What warranty do you offer?">
-            <p>We offer comprehensive warranty coverage: 5 years on the system, 2 years on electrical components, and 1 year on filters. Our warranty includes free repairs, replacement parts, and technical support. Extended warranty options are also available.</p>
+            <p>We offer comprehensive warranty coverage: 1 year on the system, 1 year on electrical components, and 1 year on filters. Our warranty includes free repairs, replacement parts, and technical support. Extended warranty options are also available.</p>
           </FAQItem>
 
           <FAQItem question="How much water does the system waste?">

@@ -14,10 +14,105 @@ function ContactForm() {
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
   const [sent,setSent] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
 
+  // Validation functions
+  const validateName = (name) => {
+    if (!name.trim()) return 'Name is required'
+    if (name.trim().length < 2) return 'Name must be at least 2 characters'
+    if (name.trim().length > 50) return 'Name must be less than 50 characters'
+    if (!/^[a-zA-Z\s]+$/.test(name.trim())) return 'Name can only contain letters and spaces'
+    return ''
+  }
+
+  const validatePhone = (phone) => {
+    if (!phone.trim()) return 'Phone number is required'
+    // Remove all non-digit characters for validation
+    const cleanPhone = phone.replace(/\D/g, '')
+    if (cleanPhone.length !== 10) return 'Phone number must be exactly 10 digits'
+    if (!/^[6-9]/.test(cleanPhone)) return 'Phone number must start with 6, 7, 8, or 9'
+    return ''
+  }
+
+  const validateEmail = (email) => {
+    if (!email.trim()) return '' // Email is optional
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) return 'Please enter a valid email address'
+    return ''
+  }
+
+  const validateMessage = (message) => {
+    if (!message.trim()) return 'Message is required'
+    if (message.trim().length < 10) return 'Message must be at least 10 characters'
+    if (message.trim().length > 1000) return 'Message must be less than 1000 characters'
+    return ''
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+    
+    newErrors.name = validateName(name)
+    newErrors.phoneNumber = validatePhone(phoneNumber)
+    newErrors.email = validateEmail(email)
+    newErrors.message = validateMessage(message)
+    
+    setErrors(newErrors)
+    return !Object.values(newErrors).some(error => error !== '')
+  }
+
+  const handleInputChange = (field, value, setter) => {
+    setter(value)
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }))
+    }
+  }
+
+  const handleInputBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }))
+    
+    // Validate field on blur
+    let error = ''
+    switch (field) {
+      case 'name':
+        error = validateName(name)
+        break
+      case 'phoneNumber':
+        error = validatePhone(phoneNumber)
+        break
+      case 'email':
+        error = validateEmail(email)
+        break
+      case 'message':
+        error = validateMessage(message)
+        break
+      default:
+        break
+    }
+    
+    if (error) {
+      setErrors(prev => ({ ...prev, [field]: error }))
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    // Mark all fields as touched
+    setTouched({
+      name: true,
+      phoneNumber: true,
+      email: true,
+      message: true
+    })
+    
+    if (!validateForm()) {
+      toast.error('Please fix the errors before submitting')
+      return
+    }
+    
     setSubmitted(true)
     try {
       const response = await axios.post('/api/customer/contact', { name, phoneNumber, email, subject, message })
@@ -29,6 +124,8 @@ function ContactForm() {
         setEmail('')
         setSubject('')
         setMessage('')
+        setErrors({})
+        setTouched({})
         setTimeout(()=>setSent(false),10000)
       } else {
         toast.error(response.data.message)
@@ -53,17 +150,77 @@ function ContactForm() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-3">Full Name *</label>
-                  <input onChange={e => setName(e.target.value)} value={name} type="text" name="name" className="form-input w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent" placeholder="Enter your full name" required />
+                  <input 
+                    onChange={e => handleInputChange('name', e.target.value, setName)} 
+                    onBlur={() => handleInputBlur('name')}
+                    value={name} 
+                    type="text" 
+                    name="name" 
+                    className={`form-input w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent ${
+                      touched.name && errors.name 
+                        ? 'border-red-500 focus:ring-red-500' 
+                        : 'border-gray-200'
+                    }`} 
+                    placeholder="Enter your full name" 
+                  />
+                  {touched.name && errors.name && (
+                    <div className="text-red-500 text-sm mt-2 flex items-center">
+                      <i className="fas fa-exclamation-circle mr-2"></i>
+                      {errors.name}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-gray-700 font-semibold mb-3">Phone Number *</label>
-                  <input onChange={e => setPhoneNumber(e.target.value)} value={phoneNumber} type="tel" name="phoneNumber" className="form-input w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent" placeholder="Enter your phone number" required />
+                  <input 
+                    onChange={e => handleInputChange('phoneNumber', e.target.value, setPhoneNumber)} 
+                    onBlur={() => handleInputBlur('phoneNumber')}
+                    value={phoneNumber} 
+                    type="tel" 
+                    name="phoneNumber" 
+                    maxLength="10"
+                    className={`form-input w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent ${
+                      touched.phoneNumber && errors.phoneNumber 
+                        ? 'border-red-500 focus:ring-red-500' 
+                        : 'border-gray-200'
+                    }`} 
+                    placeholder="Enter 10-digit mobile number" 
+                  />
+                  {touched.phoneNumber && errors.phoneNumber && (
+                    <div className="text-red-500 text-sm mt-2 flex items-center">
+                      <i className="fas fa-exclamation-circle mr-2"></i>
+                      {errors.phoneNumber}
+                    </div>
+                  )}
+                  {!touched.phoneNumber && !errors.phoneNumber && (
+                    <div className="text-gray-500 text-sm mt-1">
+                      Enter 10-digit mobile number (e.g., 9876543210)
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-gray-700 font-semibold mb-3">Email Address </label>
-                <input onChange={e => setEmail(e.target.value)} value={email} type="email" name="email" className="form-input w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent" placeholder="Enter your email address" />
+                <label className="block text-gray-700 font-semibold mb-3">Email Address</label>
+                <input 
+                  onChange={e => handleInputChange('email', e.target.value, setEmail)} 
+                  onBlur={() => handleInputBlur('email')}
+                  value={email} 
+                  type="email" 
+                  name="email" 
+                  className={`form-input w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent ${
+                    touched.email && errors.email 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-gray-200'
+                  }`} 
+                  placeholder="Enter your email address" 
+                />
+                {touched.email && errors.email && (
+                  <div className="text-red-500 text-sm mt-2 flex items-center">
+                    <i className="fas fa-exclamation-circle mr-2"></i>
+                    {errors.email}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -86,7 +243,31 @@ function ContactForm() {
 
               <div>
                 <label className="block text-gray-700 font-semibold mb-3">Message *</label>
-                <textarea onChange={e => setMessage(e.target.value)} value={message} name="message" rows={6} className="form-input w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none" placeholder="Tell us how we can help you..." required></textarea>
+                <textarea 
+                  onChange={e => handleInputChange('message', e.target.value, setMessage)} 
+                  onBlur={() => handleInputBlur('message')}
+                  value={message} 
+                  name="message" 
+                  rows={6} 
+                  className={`form-input w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none ${
+                    touched.message && errors.message 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-gray-200'
+                  }`} 
+                  placeholder="Tell us how we can help you..." 
+                />
+                <div className="flex justify-between items-center mt-2">
+                  {touched.message && errors.message ? (
+                    <div className="text-red-500 text-sm flex items-center">
+                      <i className="fas fa-exclamation-circle mr-2"></i>
+                      {errors.message}
+                    </div>
+                  ) : (
+                    <div className="text-gray-500 text-sm">
+                      {message.length}/1000 characters
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-start space-x-3">
@@ -94,8 +275,21 @@ function ContactForm() {
                 <label htmlFor="newsletter" className="text-gray-600">I would like to receive updates about new products and special offers</label>
               </div>
 
-              <button disabled={submitted} type="submit" className="w-full bg-sky-500 text-white py-4 rounded-xl font-semibold text-lg hover:bg-sky-600 transition-all transform hover:scale-105 shadow-lg">
-                {submitted ? 'Sending...' : (
+              <button 
+                disabled={submitted || Object.values(errors).some(error => error !== '')} 
+                type="submit" 
+                className={`w-full py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg ${
+                  submitted || Object.values(errors).some(error => error !== '')
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-sky-500 hover:bg-sky-600'
+                }`}
+              >
+                {submitted ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin mr-2"></i>
+                    Sending...
+                  </>
+                ) : (
                   <>
                     <i className="fas fa-paper-plane mr-2"></i>
                     Send Message
@@ -144,9 +338,9 @@ function ContactForm() {
                   </div>
                   <div>
                     <div className="font-semibold text-gray-800 mb-1">Email Addresses</div>
-                    <div className="text-gray-600">General: hkaquafresh@gmail.com</div>
+                    <div className="text-gray-600">General: hkaquafreshro@gmail.com</div>
                     <div className="text-gray-600">Support: luxmitrders54@gmail.com</div>
-                    <div className="text-gray-600">Sales: bgambhir9@gmial.com</div>
+                    <div className="text-gray-600">Sales: bgambhir9@gmail.com</div>
                   </div>
                 </div>
 
@@ -179,7 +373,7 @@ function ContactForm() {
               </div>
               <div className="mt-4 text-center">
                 <button
-                  onClick={() => window.open('https://maps.google.com/?q=123+Water+Street,+Pure+City,+PC+12345', '_blank', 'noopener,noreferrer')}
+                  onClick={() => window.open('https://maps.app.goo.gl/buJwoaJsByXbrcoJ7', '_blank', 'noopener,noreferrer')}
                   className="bg-sky-500 text-white px-6 py-3 rounded-lg hover:bg-sky-600 transition-colors"
                 >
                   <i className="fas fa-directions mr-2"></i>
@@ -195,5 +389,3 @@ function ContactForm() {
 }
 
 export default ContactForm
-
-

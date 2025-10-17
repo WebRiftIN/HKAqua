@@ -30,7 +30,7 @@ function ContactMethods() {
             <h3 className="text-xl font-bold text-gray-800 mb-3">Email Support</h3>
             <p className="text-gray-600 mb-4">Send us your questions anytime</p>
             <div className="space-y-2">
-              <div className="font-semibold text-sky-600">hkaquafresh@gmail.com</div>
+              <div className="font-semibold text-sky-600">hkaquafreshro@gmail.com</div>
               <div className="text-sm text-gray-500">Response within 12 hours</div>
               <div className="text-sm text-gray-500">Available 24/7</div>
             </div>
