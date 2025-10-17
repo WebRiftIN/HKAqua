@@ -126,6 +126,39 @@ function SingleProduct() {
               </p>
             </div>
 
+            {/* Main perks below description */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <i className="fas fa-tools text-green-600"></i>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-800">RO Installation is Free</div>
+                  <div className="text-sm text-gray-600">Professional doorstep setup included</div>
+                </div>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <i className="fas fa-gift text-blue-600"></i>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-800">Filter bottle and candle free</div>
+                  <div className="text-sm text-gray-600">Complimentary essentials with purchase</div>
+                </div>
+              </div>
+              {price >= 4499 && (
+                <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                    <i className="fas fa-concierge-bell text-purple-600"></i>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-800">3 services free</div>
+                    <div className="text-sm text-gray-600">Free scheduled maintenance visits</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
       
 
             <div className="space-y-4">

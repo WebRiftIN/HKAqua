@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 const initialProducts = [
   {
     id: 1,
-    name: "AquaPure RO Premium 7-Stage",
+    name: "hK aquafresh RO Premium 7-Stage",
     category: "ro-premium",
     categoryText: "RO Premium Series",
     discountedPrice: 15999,
@@ -15,7 +15,7 @@ const initialProducts = [
   },
   {
                 id: 2,
-                name: "AquaPure UV Filter Pro",
+                name: "hK aquafresh UV Filter Pro",
                 category: "uv-filter",
                 categoryText: "UV Water Filter",
                 discountedPrice: 8999,
@@ -27,7 +27,7 @@ const initialProducts = [
             },
             {
                 id: 3,
-                name: "AquaPure UF Standard",
+                name: "hK aquafresh UF Standard",
                 category: "uf-purifier",
                 categoryText: "UF Water Purifier",
                 discountedPrice: 6999,
@@ -39,7 +39,7 @@ const initialProducts = [
             },
             {
                 id: 4,
-                name: "AquaPure Alkaline Plus",
+                name: "hK aquafresh Alkaline Plus",
                 category: "alkaline",
                 categoryText: "Alkaline Water Purifier",
                 discountedPrice: 22999,
@@ -51,7 +51,7 @@ const initialProducts = [
             },
             {
                 id: 5,
-                name: "AquaPure Gravity Filter",
+                name: "hK aquafresh Gravity Filter",
                 category: "gravity-based",
                 categoryText: "Gravity Based Filter",
                 discountedPrice: 3999,
@@ -63,7 +63,7 @@ const initialProducts = [
             },
             {
                 id: 6,
-                name: "AquaPure Commercial RO",
+                name: "hK aquafresh Commercial RO",
                 category: "commercial",
                 categoryText: "Commercial RO System",
                 discountedPrice: 45999,
@@ -419,7 +419,7 @@ export default function ListedProduct() {
                         value={form.name}
                         onChange={handleChange}
                         className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200"
-                        placeholder="e.g., AquaPure RO Premium 7-Stage"
+                        placeholder="e.g., hK aquafresh RO Premium 7-Stage"
                       />
                     </div>
                     {/* Product Category */}

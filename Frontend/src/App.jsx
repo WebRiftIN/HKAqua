@@ -11,6 +11,11 @@ import Login from './components/account/Login'
 import Register from './components/account/Register'
 import Products from './pages/Products'
 import SingleProduct from './pages/SingleProduct'
+import NotFound from './pages/NotFound'
+import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import OrderConfirmation from './pages/OrderConfirmation'
+import MyOrders from './pages/MyOrders'
 
 function App() {
   return (
@@ -23,9 +28,14 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/products" element={<Products />} />
         <Route path="/single-product/:id" element={<SingleProduct />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/confirmation" element={<OrderConfirmation />} />
+        <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </>

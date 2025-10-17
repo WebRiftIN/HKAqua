@@ -10,7 +10,7 @@ function CTA() {
           Contact us today for a free consultation and let our experts help you choose the perfect water purification solution for your needs.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to='tel:8168171942' className="bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-blue-50 transition-all ripple-effect transform hover:scale-105">Call Now: 81-681-HKAQUAPURE</Link>
+          <Link to='tel:8168171942' className="bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-blue-50 transition-all ripple-effect transform hover:scale-105">Call Now: 81-681-HKhK aquafresh</Link>
           <Link to='/contact' className="border-2 border-blue-600 text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105">Get Free Quote</Link>
         </div>
       </div>

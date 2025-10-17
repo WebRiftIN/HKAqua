@@ -181,7 +181,7 @@ const AddProduct = () => {
                                     value={name}
                                     onChange={e => setName(e.target.value)}
                                     className="form-input w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition-all duration-200"
-                                    placeholder="e.g., AquaPure RO Premium 7-Stage"
+                                    placeholder="e.g., hK aquafresh RO Premium 7-Stage"
                                 />
                             </div>
 
