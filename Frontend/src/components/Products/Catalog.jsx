@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useAppContext } from '../../context/ShopContext'
 
 function Catalog() {
-  const { products: dbProducts } = useAppContext();
+  const { products: dbProducts,addToCart } = useAppContext();
+  const {productId} = useParams()
 
   // Add static reviews/rating/image to each product
   const products = useMemo(() => {
@@ -124,13 +125,6 @@ function Catalog() {
       if (checked) return [...prev, { min, max }]
       return prev.filter(r => !(r.min === min && r.max === max))
     })
-  }
-
-  const addToCart = (product) => {
-    // Placeholder action; integrate with cart context later
-    // Visual feedback could be added with a toast component
-    // eslint-disable-next-line no-console
-    console.log(`Added ${product.name} to cart`)
   }
 
   return (
@@ -304,7 +298,7 @@ function Catalog() {
                       </div>
                     </div>
                     <button
-                      className="ripple-effect w-full water-bg text-white py-3 rounded-lg font-semibold bg-blue-700 transition-all transform hover:scale-105 text-base shadow-md"
+                      className="ripple-effect w-full water-bg text-white py-2 rounded-lg font-semibold bg-blue-700 transition-all transform hover:scale-105 text-sm"
                       onClick={e => { e.preventDefault(); addToCart(product); }}
                     >
                       Add to Cart
