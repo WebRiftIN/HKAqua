@@ -19,8 +19,9 @@ const userSchema = new Schema({
         type: String,
         required: [true,"password is required"]
     },
-    cartdata:{
-        type: Object
+    cartData:{
+        type: Object,
+        default:{}
     }
 },{timestamps:true})
 

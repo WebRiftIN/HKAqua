@@ -5,6 +5,7 @@ import userRoutes from './routes/userRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import upload from './middlewares/multer.js';
+import cartRoutes from './routes/cartRoutes.js'
 
 const app = express();
 
@@ -30,5 +31,8 @@ app.use("/api/customer",contactRoutes)
 
 //router for adding products (middleware applied at route level, not here)
 app.use("/api/product",productRoutes)
+
+//router for user cart
+app.use("/api/cart",cartRoutes)
 
 export {app}

@@ -4,8 +4,7 @@ import { useAppContext } from '../../context/ShopContext';
 
 function SingleProduct() {
   const { id } = useParams();
-  console.log('SingleProduct page ID:', id);
-  const { products } = useAppContext();
+  const { products,addToCart,user } = useAppContext();
   const product = products.find(p => p._id === id || p.id === id);
 
   const [quantity, setQuantity] = useState(1);
@@ -50,10 +49,6 @@ function SingleProduct() {
     normalize(p.category) === normalize(product.category) &&
     (p._id || p.id) !== currentId
   );
-
-  console.log('Current category:', product.category);
-  console.log('All categories:', products.map(p => p.category));
-  console.log('Related:', related);
 
   const rating = product.rating || 4.8;
   const reviewsCount = product.reviewsCount || 1250;
@@ -162,7 +157,7 @@ function SingleProduct() {
       
 
             <div className="space-y-4">
-              <button className="btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg">
+              <button onClick={()=>addToCart(user._id,id)} className="btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg">
                 <i className="fas fa-shopping-cart mr-2"></i>
                 Add to Cart
               </button>
