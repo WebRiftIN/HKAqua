@@ -5,8 +5,9 @@ import { useAppContext } from '../../context/ShopContext';
 const TopDeals = () => {
   const { products: dbProducts = [] } = useAppContext();
 
-  // pick last 3 products (most recently added assuming backend pushes newest to end)
-  const recent = dbProducts.slice(-3).reverse();
+  // pick last 4 products that are available (exclude out-of-stock and limited items)
+  const available = dbProducts.filter(p => !p.isOutOfStock && !p.isLimited);
+  const recent = available.slice(-4).reverse();
 
   const starText = (rating = 4.8) => {
     // simple star string fallback (you can replace with icons)
@@ -36,7 +37,7 @@ const TopDeals = () => {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">Discover our most popular RO water purifiers with unbeatable prices and premium quality</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {recent.map((p) => {
             const id = p._id || p.id;
             const image = p.image || hktry1;
@@ -48,40 +49,33 @@ const TopDeals = () => {
               <Link
                 key={id}
                 to={`/single-product/${id}`}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-gray-100 block hover:shadow-xl transition"
+                className="bg-white rounded-xl shadow-md overflow-hidden card-hover border border-gray-100 block hover:shadow-lg transition"
               >
-                <div className="p-6 flex flex-col h-full">
+                <div className="p-4 flex flex-col h-full">
                   <div className="flex-1 flex flex-col">
-                    <div className="rounded-lg overflow-hidden mb-4 flex-1 flex items-center justify-center bg-gray-50">
-                      <img src={image} alt={p.name} className="object-contain h-full w-full" />
+                     {/* image container fills available vertical space and shows small "New" badge */}
+                    <div className="rounded-lg overflow-hidden mb-3 relative flex-1 flex items-center justify-center ">
+                      <img src={image} alt={p.name} className="max-h-70 w-auto object-contain" />
                     </div>
 
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{p.name}</h3>
-                    <p className="text-gray-600 mb-3 line-clamp-2">{p.description}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">{p.name}</h3>
+                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">{p.description}</p>
 
-                    <div className="flex items-center mb-3">
-                      <div className="star-rating text-yellow-400 mr-3">{starText(rating)}</div>
-                      <span className="text-sm text-gray-500">({reviews})</span>
+                    <div className="flex items-center mb-2">
+                      <div className="star-rating text-yellow-400 mr-2 text-sm">{starText(rating)}</div>
+                      <span className="text-xs text-gray-500">({reviews})</span>
                     </div>
 
-                    {!p.isOutOfStock ? (
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-3xl font-bold text-sky-600">₹{Number(discounted).toLocaleString()}</span>
-                        {original ? <span className="text-sm text-gray-500 line-through">₹{Number(original).toLocaleString()}</span> : null}
-                      </div>
-                    ) : (
-                      <div className="mb-4 text-red-600 font-semibold">Out of Stock</div>
-                    )}
-
-                    {p.isLimited && !p.isOutOfStock && (
-                      <div className="text-red-600 text-sm font-semibold mt-1">Limited Product</div>
-                    )}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xl font-bold text-sky-600">₹{Number(discounted).toLocaleString()}</span>
+                      {original ? <span className="text-xs text-gray-500 line-through">₹{Number(original).toLocaleString()}</span> : null}
+                    </div>
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-3">
                     <button
                       onClick={(e) => addToCart(e, p)}
-                      className="w-full bg-sky-500 text-white hover:bg-sky-600 py-3 rounded-lg font-semibold transition-colors"
+                      className="w-full bg-sky-500 text-white hover:bg-sky-600 py-2 rounded-lg font-semibold text-sm transition-colors"
                     >
                       Add to Cart
                     </button>
