@@ -1,6 +1,4 @@
 import React, { useState, useMemo } from 'react'
-import OrderStats from '../components/Orders/OrderStats'
-import OrderFilters from '../components/Orders/OrderFilters'
 import OrderCard from '../components/Orders/OrderCard'
 import Waves from '../components/Waves'
 import '../App.css'
@@ -113,33 +111,10 @@ function MyOrders() {
     }
   ])
 
-  const [activeFilter, setActiveFilter] = useState('all')
   const [notification, setNotification] = useState(null)
+  // For now, no filters applied — show all orders
+  const filteredOrders = useMemo(() => orders, [orders])
 
-  // Filter orders based on active filter
-  const filteredOrders = useMemo(() => {
-    if (activeFilter === 'all') {
-      return orders
-    }
-    return orders.filter(order => order.status === activeFilter)
-  }, [orders, activeFilter])
-
-  // Calculate statistics
-  const stats = useMemo(() => {
-    const totalOrders = orders.length
-    const deliveredOrders = orders.filter(order => order.status === 'delivered').length
-    const transitOrders = orders.filter(order => order.status === 'shipped').length
-    const totalSpent = orders
-      .filter(order => order.status !== 'cancelled')
-      .reduce((sum, order) => sum + order.pricing.total, 0)
-
-    return {
-      totalOrders,
-      deliveredOrders,
-      transitOrders,
-      totalSpent
-    }
-  }, [orders])
 
   // Action handlers
   const handleCancelOrder = (orderId) => {
@@ -173,20 +148,6 @@ function MyOrders() {
           <h1 className="text-4xl font-bold text-gray-800 mb-2">My Orders</h1>
           <p className="text-gray-600">Track and manage all your AquaPure water purifier orders</p>
         </div>
-
-        {/* Order Statistics */}
-        <OrderStats
-          totalOrders={stats.totalOrders}
-          deliveredOrders={stats.deliveredOrders}
-          transitOrders={stats.transitOrders}
-          totalSpent={stats.totalSpent}
-        />
-
-        {/* Filter Buttons */}
-        <OrderFilters
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-        />
 
         {/* Orders List */}
         <div className="space-y-6">

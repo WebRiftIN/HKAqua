@@ -9,12 +9,16 @@ const TopDeals = () => {
   const available = dbProducts.filter(p => !p.isOutOfStock && !p.isLimited);
   const recent = available.slice(-4).reverse();
 
-  const starText = (rating = 4.8) => {
-    // simple star string fallback (you can replace with icons)
-    const full = Math.floor(rating);
-    const half = rating - full >= 0.5 ? 1 : 0;
-    return '★'.repeat(full) + (half ? '½' : '') + '☆☆☆☆'.slice(0, 5 - full - half);
-  };
+  const renderStars = (rating = 4.8) => {
+    const full = Math.floor(rating)
+    return Array.from({ length: 5 }).map((_, i) => (
+      <i
+        key={i}
+        className={`fas fa-star mr-0.5 ${i < full ? 'text-yellow-400' : 'text-gray-300'}`}
+        aria-hidden="true"
+      />
+    ))
+  }
 
   const addToCart = (e, product) => {
     e.preventDefault();
@@ -62,7 +66,7 @@ const TopDeals = () => {
                     <p className="text-sm text-gray-600 mb-2 line-clamp-2">{p.description}</p>
 
                     <div className="flex items-center mb-2">
-                      <div className="star-rating text-yellow-400 mr-2 text-sm">{starText(rating)}</div>
+                      <div className="flex items-center mr-2 text-sm">{renderStars(rating)}</div>
                       <span className="text-xs text-gray-500">({reviews})</span>
                     </div>
 

@@ -6,6 +6,7 @@ import contactRoutes from './routes/contactRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import upload from './middlewares/multer.js';
 
+
 const app = express();
 
 app.use(cors({

@@ -251,7 +251,7 @@ function Catalog() {
             </div>
           </div>
 
-          <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-5' : 'space-y-4'}>
+          <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 px-3' : 'space-y-4'}>
             {filteredAndSorted.map(product => {
               const discount = product.originalPrice
                 ? Math.round(((product.originalPrice - (product.discountedPrice ?? 0)) / product.originalPrice) * 100)
@@ -263,7 +263,7 @@ function Catalog() {
                   className={`product-card bg-white rounded-2xl shadow-lg overflow-hidden block hover:shadow-xl transition-all ${view === 'list' ? 'grid grid-cols-1 md:grid-cols-3' : ''}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  <div className={view === 'list' ? 'relative overflow-hidden h-72 md:h-full flex items-center justify-center ' : 'relative overflow-hidden h-48 flex items-center justify-center '}>
+                  <div className={view === 'list' ? 'relative overflow-hidden h-80 md:h-full flex items-center justify-center ' : 'relative overflow-hidden h-64 w-full flex items-center justify-center '}>
                       <img
                           src={product.image ? product.image : hktry1}
                           alt={product.name}
@@ -277,18 +277,18 @@ function Catalog() {
                       <span className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Out of Stock</span>
                     )}
                   </div>
-                  <div className="p-4 md:col-span-2">
-                    <h3 className="font-semibold text-base text-gray-800 mb-2">{product.name}</h3>
+                  <div className="p-6 md:col-span-2">
+                    <h3 className="font-semibold text-lg text-gray-800 mb-3">{product.name}</h3>
                     <div className="flex items-center mb-3">
                       <div className="flex items-center star-rating text-yellow-400">{starIcons(product.rating)}</div>
                       <span className="text-gray-500 text-sm ml-2">({product.reviews})</span>
                     </div>
                     {/* Only show price if NOT out of stock */}
                     {!product.isOutOfStock && (
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-3">
                           <div>
-                            <span className="text-xl font-bold water-blue">₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}</span>
-                            <span className="text-gray-400 line-through ml-2 text-sm">₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}</span>
+                            <span className="text-2xl font-extrabold water-blue">₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}</span>
+                            <span className="text-gray-400 line-through ml-3 text-sm">₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}</span>
                           </div>
                         </div>
                     )}
@@ -304,7 +304,7 @@ function Catalog() {
                       </div>
                     </div>
                     <button
-                      className="ripple-effect w-full water-bg text-white py-2 rounded-lg font-semibold bg-blue-700 transition-all transform hover:scale-105 text-sm"
+                      className="ripple-effect w-full water-bg text-white py-3 rounded-lg font-semibold bg-blue-700 transition-all transform hover:scale-105 text-base shadow-md"
                       onClick={e => { e.preventDefault(); addToCart(product); }}
                     >
                       Add to Cart
