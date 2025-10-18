@@ -134,12 +134,7 @@ function Catalog() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold water-blue mb-4">Premium Water Purifiers</h1>
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">Discover our range of advanced RO water purification systems designed to provide you with the purest, healthiest water for your family.</p>
-      </div>
-
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
       <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
         <div className="flex flex-col lg:flex-row gap-6 items-center">
           <div className="search-container flex-1 w-full lg:w-auto">
@@ -147,7 +142,7 @@ function Catalog() {
               <input
                 type="text"
                 placeholder="Search water purifiers..."
-                className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full pl-12 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -256,7 +251,7 @@ function Catalog() {
             </div>
           </div>
 
-          <div className={view === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6' : 'space-y-4'}>
+          <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-5' : 'space-y-4'}>
             {filteredAndSorted.map(product => {
               const discount = product.originalPrice
                 ? Math.round(((product.originalPrice - (product.discountedPrice ?? 0)) / product.originalPrice) * 100)
@@ -268,12 +263,12 @@ function Catalog() {
                   className={`product-card bg-white rounded-2xl shadow-lg overflow-hidden block hover:shadow-xl transition-all ${view === 'list' ? 'grid grid-cols-1 md:grid-cols-3' : ''}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  <div className={view === 'list' ? 'relative overflow-hidden h-96 md:h-full' : 'relative overflow-hidden h-96'}>
-                    <img
-                      src={product.image ? product.image : hktry1}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className={view === 'list' ? 'relative overflow-hidden h-72 md:h-full flex items-center justify-center ' : 'relative overflow-hidden h-48 flex items-center justify-center '}>
+                      <img
+                          src={product.image ? product.image : hktry1}
+                          alt={product.name}
+                          className="max-h-full w-auto object-contain"
+                        />
                     {(product.isNewProduct || product.isNew) && (
                       <span className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
                     )}
@@ -282,8 +277,8 @@ function Catalog() {
                       <span className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Out of Stock</span>
                     )}
                   </div>
-                  <div className="p-6 md:col-span-2">
-                    <h3 className="font-bold text-lg text-gray-800 mb-2">{product.name}</h3>
+                  <div className="p-4 md:col-span-2">
+                    <h3 className="font-semibold text-base text-gray-800 mb-2">{product.name}</h3>
                     <div className="flex items-center mb-3">
                       <div className="flex items-center star-rating text-yellow-400">{starIcons(product.rating)}</div>
                       <span className="text-gray-500 text-sm ml-2">({product.reviews})</span>
@@ -291,15 +286,11 @@ function Catalog() {
                     {/* Only show price if NOT out of stock */}
                     {!product.isOutOfStock && (
                       <div className="flex items-center justify-between mb-2">
-                        <div>
-                          <span className="text-2xl font-bold water-blue">
-                            ₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}
-                          </span>
-                          <span className="text-gray-400 line-through ml-2">
-                            ₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}
-                          </span>
+                          <div>
+                            <span className="text-xl font-bold water-blue">₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}</span>
+                            <span className="text-gray-400 line-through ml-2 text-sm">₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}</span>
+                          </div>
                         </div>
-                      </div>
                     )}
                     {/* Limited Product text */}
                     {product.isLimited && (
@@ -313,7 +304,7 @@ function Catalog() {
                       </div>
                     </div>
                     <button
-                      className="ripple-effect w-full water-bg text-white py-3 rounded-xl font-semibold bg-blue-700 transition-all transform hover:scale-105"
+                      className="ripple-effect w-full water-bg text-white py-2 rounded-lg font-semibold bg-blue-700 transition-all transform hover:scale-105 text-sm"
                       onClick={e => { e.preventDefault(); addToCart(product); }}
                     >
                       Add to Cart

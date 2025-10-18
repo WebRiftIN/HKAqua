@@ -2,6 +2,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import ScrollTopButton from './components/ScrollTopButton'
 import Home from './pages/Home'
 import Contact from './pages/Contact'
 import Services from './pages/Services'
@@ -38,6 +39,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
+      <ScrollTopButton />
     </>
   )
 }
