@@ -4,14 +4,17 @@ import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
 import productRoutes from './routes/productRoutes.js'
-import upload from './middlewares/multer.js';
 import cartRoutes from './routes/cartRoutes.js'
+import dotenv from 'dotenv';
 
 
 const app = express();
+dotenv.config();
 
 app.use(cors({
-    origon: process.env.CORS_ORIGIN,
+    origin: [process.env.FRONTEND_URL,
+        process.env.ADMIN_URL
+    ],
     credentials: true,
     optionsSuccessStatus: 200
 }));

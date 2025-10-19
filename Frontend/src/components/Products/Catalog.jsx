@@ -4,7 +4,6 @@ import { useAppContext } from '../../context/ShopContext'
 
 function Catalog() {
   const { products: dbProducts } = useAppContext();
-  const {productId} = useParams()
 
   // Add static reviews/rating/image to each product
   const products = useMemo(() => {
