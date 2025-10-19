@@ -121,10 +121,10 @@ function Cart() {
     }
   }, [products, cartData])
 
-  // Calculate subtotal based on original prices (before discount)
+    // Calculate subtotal using original price (oldPrice) if available, otherwise price
   const subtotal = useMemo(() => {
     return items.reduce((sum, item) => {
-      const price = Number(item.price || 0)
+        const price = item.oldPrice != null && !isNaN(item.oldPrice) ? Number(item.oldPrice) : Number(item.price || 0)
       const qty = Number(item.qty || 0)
       return sum + (price * qty)
     }, 0)

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAppContext } from '../../context/ShopContext'
+import hktry1 from '../../assets/hi.png'
 
 function Catalog() {
   const { products: dbProducts } = useAppContext();
@@ -12,7 +13,7 @@ function Catalog() {
       ...p,
       reviews: p.reviews || [1250, 890, 567, 1100, 234, 678][i % 6],
       rating: p.rating || [4.8, 4.6, 4.9, 4.5, 4.7, 4.8][i % 6],
-      image: p.image || hktry1,
+      image: p.image,
       features: p.features || [],
       isNew: p.isNew || false
     }));
@@ -251,15 +252,19 @@ function Catalog() {
                 ? Math.round(((product.originalPrice - (product.discountedPrice ?? 0)) / product.originalPrice) * 100)
                 : 0;
               return (
-                <Link
+                // Use a div and navigate on click to avoid nested anchor tags
+                <div
                   key={product._id || product.id}
-                  to={`/single-product/${product._id || product.id}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => window.location.href = `/single-product/${product._id || product.id}`}
+                  onKeyDown={(e) => { if (e.key === 'Enter') window.location.href = `/single-product/${product._id || product.id}` }}
                   className={`product-card bg-white rounded-2xl shadow-lg overflow-hidden block hover:shadow-xl transition-all ${view === 'list' ? 'grid grid-cols-1 md:grid-cols-3' : ''}`}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
                 >
                   <div className={view === 'list' ? 'relative overflow-hidden h-80 md:h-full flex items-center justify-center ' : 'relative overflow-hidden h-64 w-full flex items-center justify-center '}>
                       <img
-                          src={product.image ? product.image : hktry1}
+                          src={product.image ? product.image : product.image}
                           alt={product.name}
                           className="max-h-full w-auto object-contain"
                         />
@@ -299,14 +304,14 @@ function Catalog() {
                     </div>
                     <Link
                       to={`/single-product/${product._id || product.id}`}
-                      className="ripple-effect w-full water-bg text-white py-2 rounded-lg font-semibold bg-blue-700 transition-all transform text-sm hover:scale-105 flex items-center justify-center"
+                      className="ripple-effect w-full water-bg text-white py-2 rounded-lg font-semibold bg-sky-600 transition-all transform text-sm hover:scale-105 flex items-center justify-center"
                       onClick={e => e.stopPropagation()}
                     >
                       <i className="fas fa-eye mr-2"></i>
                       View Details
                     </Link>
                   </div>
-                </Link>
+                </div>
               )
             })}
           </div>

@@ -11,6 +11,10 @@ function SingleProduct() {
   const [activeTab, setActiveTab] = useState('description');
   const [selectedRating, setSelectedRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
+  const [selectedAddons, setSelectedAddons] = useState({
+    warranty: false,
+    maintenance5: false
+  });
 
   const changeQuantity = (delta) => {
     setQuantity(q => Math.max(1, q + delta));
@@ -61,7 +65,7 @@ function SingleProduct() {
   const showWarranty = price >= 5000
 
   return (
-    <div className="pt-10 pb-16">
+    <div className="pt-6 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <nav className="text-sm text-gray-500">
           <Link to="/" className="hover:text-blue-600">Home</Link>
@@ -74,21 +78,21 @@ function SingleProduct() {
         </nav>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           <div className="w-full">
-            <div className="overflow-hidden">
-              <img src={image} alt={product.name} className="product-image-main w-full h-96 object-contain" />
+            <div className="overflow-hidden rounded-xl bg-white p-4 flex items-center justify-center">
+              <img src={image} alt={product.name} className="product-image-main w-full max-h-[60vh] sm:max-h-[50vh] md:max-h-[40vh] object-contain" />
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{product.name}</h1>
-              <p className="text-lg text-gray-600">{product.category}</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1">{product.name}</h1>
+              <p className="text-sm sm:text-base text-gray-600">{product.category}</p>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 flex-wrap">
               <div className="flex items-center star-rating">
                 <i className="fas fa-star"></i>
                 <i className="fas fa-star"></i>
@@ -100,21 +104,22 @@ function SingleProduct() {
               <span className="text-blue-600 hover:underline cursor-pointer">{reviewsCount} Reviews</span>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-between sm:justify-start gap-4 flex-wrap">
               {!product.isOutOfStock && (
                 <>
-                  <span className="text-4xl font-bold water-blue">₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}</span>
-                  <span className="text-2xl text-gray-400 line-through">₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}</span>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold water-blue">₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}</span>
+                    <span className="text-sm sm:text-base text-gray-400 line-through">₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}</span>
+                  </div>
                   <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">
                     {product.originalPrice
                       ? `${Math.round(((product.originalPrice - (product.discountedPrice ?? 0)) / product.originalPrice) * 100)}% OFF`
                       : ''}
                   </span>
-                  {/* Main feature: warranty */}
                   {showWarranty && (
-                    <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-semibold ml-2 flex items-center">
+                    <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-semibold ml-0 flex items-center">
                       <i className="fas fa-shield-alt mr-2 text-green-600"></i>
-                      {warrantyText}
+                      <span className="text-sm">{warrantyText}</span>
                     </span>
                   )}
                 </>
@@ -124,14 +129,14 @@ function SingleProduct() {
               <div className="text-red-600 text-lg font-semibold mt-2">Out of Stock</div>
             )}
 
-            <div className="bg-blue-50 rounded-xl p-6">
+            <div className="bg-blue-50 rounded-xl p-4 sm:p-6">
               <p className="text-gray-700 leading-relaxed">
                 {features}
               </p>
             </div>
 
             {/* Main perks below description */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <i className="fas fa-tools text-green-600"></i>
@@ -165,30 +170,69 @@ function SingleProduct() {
 
       
 
+            {/* Addon Selection */}
+            <div className="bg-gray-50 rounded-xl p-4 mb-4">
+              <h4 className="font-semibold text-gray-800 mb-3">Add-ons (Optional)</h4>
+              <div className="space-y-3">
+                <label className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedAddons.warranty}
+                      onChange={(e) => setSelectedAddons(prev => ({ ...prev, warranty: e.target.checked }))}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <div>
+                      <div className="font-medium text-gray-800">Extended Warranty (1 year)</div>
+                      <div className="text-sm text-gray-600">Add 1 year extended warranty</div>
+                    </div>
+                  </div>
+                  <div className="text-lg font-bold text-blue-600">₹899</div>
+                </label>
+                
+                <label className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedAddons.maintenance5}
+                      onChange={(e) => setSelectedAddons(prev => ({ ...prev, maintenance5: e.target.checked }))}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <div>
+                      <div className="font-medium text-gray-800">5 Maintenance Free</div>
+                      <div className="text-sm text-gray-600">Five free maintenance visits</div>
+                    </div>
+                  </div>
+                  <div className="text-lg font-bold text-blue-600">₹499</div>
+                </label>
+              </div>
+            </div>
+
             <div className="space-y-4">
-              <button 
-                onClick={()=>addToCart(user._id,id)} 
-                disabled={addingToCart[id]}
-                className={`btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg transition-all ${
-                  addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
-                }`}
-              >
-                {addingToCart[id] ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin mr-2"></i>
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-shopping-cart mr-2"></i>
-                    Add to Cart
-                  </>
-                )}
-              </button>
-              <button className="btn-secondary w-full py-4 font-semibold rounded-xl text-lg">
-                <i className="fas fa-bolt mr-2"></i>
-                Buy Now
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button 
+                  onClick={()=>addToCart(user._id, id, { addons: selectedAddons })} 
+                  disabled={addingToCart[id]}
+                  className={`btn-primary bg-sky-600 w-full py-3 sm:py-4 text-white font-semibold rounded-xl text-base sm:text-lg transition-all ${
+                    addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
+                  }`}>
+                  {addingToCart[id] ? (
+                    <>
+                      <i className="fas fa-spinner fa-spin mr-2"></i>
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-shopping-cart mr-2"></i>
+                      Add to Cart
+                    </>
+                  )}
+                </button>
+                <button className="btn-secondary bg-white border border-sky-600 text-sky-600 w-full py-3 sm:py-4 font-semibold rounded-xl text-base sm:text-lg hover:bg-sky-50">
+                  <i className="fas fa-bolt mr-2"></i>
+                  Buy Now
+                </button>
+              </div>
             </div>
 
             <div className="bg-gray-50 rounded-xl p-6 space-y-3">
@@ -206,7 +250,7 @@ function SingleProduct() {
           </div>
         </div>
 
-        <div className="mt-16">
+          <div className="mt-12 lg:mt-16">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8">
               <button className={`py-4 px-2 font-medium text-lg ${activeTab === 'description' ? 'tab-active' : 'text-gray-500'}`} onClick={() => setActiveTab('description')}>
@@ -330,9 +374,9 @@ function SingleProduct() {
           </div>
         </div>
 
-        <div className="mt-16">
-          <h3 className="text-2xl font-bold water-blue mb-8">Related Products</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mt-10 lg:mt-16">
+          <h3 className="text-xl sm:text-2xl font-bold water-blue mb-6">Related Products</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {related.length === 0 && (
               <div className="text-gray-500 col-span-4">No related products found.</div>
             )}
@@ -342,7 +386,7 @@ function SingleProduct() {
                 to={`/single-product/${rel._id || rel.id}`}
                 className="related-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer block hover:shadow-xl transition"
               >
-                <img src={rel.image} alt={rel.name} className="w-full h-48 object-cover" />
+                <img src={rel.image} alt={rel.name} className="w-full h-36 sm:h-40 md:h-44 object-cover" />
                 <div className="p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">{rel.name}</h4>
                   <div className="flex items-center star-rating mb-2">

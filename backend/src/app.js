@@ -10,8 +10,10 @@ import cartRoutes from './routes/cartRoutes.js'
 
 const app = express();
 
+// Allow CORS from frontend origin. Use env var when set, fallback to Vite default dev origin.
+const allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:5174'
 app.use(cors({
-    origon: process.env.CORS_ORIGIN,
+    origin: allowedOrigin,
     credentials: true,
     optionsSuccessStatus: 200
 }));
