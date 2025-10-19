@@ -1,70 +1,113 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import ProgressBar from '../components/Cart/ProgressBar'
 import CartItem from '../components/Cart/CartItem'
 import OrderSummary from '../components/Cart/OrderSummary'
 import Waves from '../components/Waves'
+import { useAppContext } from '../context/ShopContext'
 
 function Cart() {
-  const [items, setItems] = useState([
-    {
-      id: 'ro-pro',
-      title: 'hK aquafresh Pro 7-Stage RO',
-      description: 'Advanced 7-stage purification with UV sterilization',
-      price: 12999,
-      oldPrice: 15999,
-      discountLabel: '19% OFF',
-      qty: 1,
-      iconClass: 'fas fa-tint',
-      colorClass: 'text-blue-600',
-      badges: [
-        { label: '7-Stage', className: 'bg-blue-100 text-blue-800' },
-        { label: 'UV Protection', className: 'bg-blue-100 text-blue-800' },
-        { label: '10L Storage', className: 'bg-blue-100 text-blue-800' }
-      ]
-    },
-    {
-      id: 'filter-set',
-      title: 'Replacement Filter Set',
-      description: 'Complete filter replacement set for 7-stage RO systems',
-      price: 2499,
-      oldPrice: 2999,
-      discountLabel: '17% OFF',
-      qty: 2,
-      iconClass: 'fas fa-filter',
-      colorClass: 'text-cyan-600',
-      badges: [
-        { label: '6 Month Life', className: 'bg-cyan-100 text-cyan-800' },
-        { label: 'Complete Set', className: 'bg-cyan-100 text-cyan-800' }
-      ]
-    }
-  ])
-
+  const { products, cartData, user, updateCartQuantity, removeFromCart, clearUserCart } = useAppContext()
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
   const [couponApplied, setCouponApplied] = useState(false)
 
-  const subtotal = useMemo(() => items.reduce((sum, it) => sum + it.price * it.qty, 0), [items])
-  const [baseDiscount, setBaseDiscount] = useState(3499)
-  const discount = baseDiscount
-  const gst = Math.round(subtotal * 0.18)
+  // Calculate cart items from products and cartData
+  useEffect(() => {
+    if (products.length > 0 && cartData.cartData) {
+      const cartItems = []
+      Object.entries(cartData.cartData).forEach(([productId, quantity]) => {
+        const product = products.find(p => p._id === productId)
+        if (product) {
+          cartItems.push({
+            id: product._id,
+            title: product.name,
+            description: product.description,
+            price: product.discountedPrice,
+            oldPrice: product.originalPrice,
+            discountLabel: product.originalPrice > product.discountedPrice ? 
+              `${Math.round(((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100)}% OFF` : null,
+            qty: quantity,
+            iconClass: 'fas fa-tint',
+            colorClass: 'text-blue-600',
+            image: product.image,
+            badges: [
+              { label: product.category, className: 'bg-blue-100 text-blue-800' },
+              ...(product.isNewProduct ? [{ label: 'New', className: 'bg-green-100 text-green-800' }] : []),
+              ...(product.isLimited ? [{ label: 'Limited', className: 'bg-red-100 text-red-800' }] : [])
+            ],
+            stockLabel: product.isOutOfStock ? 'Out of Stock' : 'In Stock',
+            deliveryLabel: 'Free delivery',
+            warrantyLabel: '2 year warranty'
+          })
+        }
+      })
+      setItems(cartItems)
+      setLoading(false)
+    }
+  }, [products, cartData])
 
-  function updateQuantity(id, qty) {
+  // Calculate subtotal based on original prices (before discount)
+  const subtotal = useMemo(() => {
+    return items.reduce((sum, item) => {
+      // Use original price if available, otherwise use discounted price
+      const price = item.oldPrice || item.price
+      return sum + (price * item.qty)
+    }, 0)
+  }, [items])
+  
+  const [couponDiscount, setCouponDiscount] = useState(0)
+  
+  // Calculate actual discount from price differences
+  const priceDiscount = useMemo(() => {
+    return items.reduce((sum, item) => {
+      if (item.oldPrice && item.oldPrice > item.price) {
+        return sum + ((item.oldPrice - item.price) * item.qty)
+      }
+      return sum
+    }, 0)
+  }, [items])
+  
+  const totalDiscount = priceDiscount + couponDiscount
+  // Remove GST calculation
+  const gst = 0
+
+  const updateQuantity = async (id, qty) => {
     const clamped = Math.max(1, Math.min(10, qty || 1))
+    // Update local state immediately for better UX
     setItems(prev => prev.map(it => (it.id === id ? { ...it, qty: clamped } : it)))
+    
+    // Update backend using context function
+    await updateCartQuantity(user._id, id, clamped)
   }
 
-  function increase(id) {
-    setItems(prev => prev.map(it => (it.id === id ? { ...it, qty: Math.min(10, it.qty + 1) } : it)))
+  const increase = async (id) => {
+    const currentItem = items.find(it => it.id === id)
+    if (currentItem && currentItem.qty < 10) {
+      await updateQuantity(id, currentItem.qty + 1)
+    }
   }
 
-  function decrease(id) {
-    setItems(prev => prev.map(it => (it.id === id ? { ...it, qty: Math.max(1, it.qty - 1) } : it)))
+  const decrease = async (id) => {
+    const currentItem = items.find(it => it.id === id)
+    if (currentItem && currentItem.qty > 1) {
+      await updateQuantity(id, currentItem.qty - 1)
+    }
   }
 
-  function removeItem(id) {
+  const removeItem = async (id) => {
+    // Update local state immediately
     setItems(prev => prev.filter(it => it.id !== id))
+    
+    // Update backend using context function
+    await removeFromCart(user._id, id)
   }
 
-  function clearCart() {
+  const clearCart = async () => {
+    // Update local state immediately
     setItems([])
+    
+    // Update backend using context function
+    await clearUserCart(user._id)
   }
 
   function applyCoupon(code) {
@@ -72,8 +115,24 @@ function Cart() {
     const pct = coupons[(code || '').toUpperCase()]
     if (!pct || couponApplied) return
     const additional = Math.round(subtotal * pct / 100)
-    setBaseDiscount(d => d + additional)
+    setCouponDiscount(additional)
     setCouponApplied(true)
+  }
+
+  if (loading) {
+    return (
+      <>
+        <Waves />
+        <ProgressBar currentStep={1} />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center py-16">
+            <div className="water-drop w-24 h-24 mx-auto mb-6 opacity-50 animate-pulse"></div>
+            <h2 className="text-3xl font-bold text-gray-600 mb-4">Loading your cart...</h2>
+            <p className="text-gray-500">Please wait while we fetch your items</p>
+          </div>
+        </main>
+      </>
+    )
   }
 
   return (
@@ -156,7 +215,9 @@ function Cart() {
             <div className="lg:col-span-1">
               <OrderSummary
                 subtotal={subtotal}
-                discount={discount}
+                discount={totalDiscount}
+                priceDiscount={priceDiscount}
+                couponDiscount={couponDiscount}
                 gst={gst}
                 couponApplied={couponApplied}
                 onApplyCoupon={applyCoupon}
@@ -170,6 +231,7 @@ function Cart() {
 }
 
 export default Cart
+
 
 
 

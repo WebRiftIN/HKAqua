@@ -4,7 +4,7 @@ import { useAppContext } from '../../context/ShopContext';
 
 function SingleProduct() {
   const { id } = useParams();
-  const { products,addToCart,user } = useAppContext();
+  const { products,addToCart,user,addingToCart } = useAppContext();
   const product = products.find(p => p._id === id || p.id === id);
 
   const [quantity, setQuantity] = useState(1);
@@ -157,9 +157,24 @@ function SingleProduct() {
       
 
             <div className="space-y-4">
-              <button onClick={()=>addToCart(user._id,id)} className="btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg">
-                <i className="fas fa-shopping-cart mr-2"></i>
-                Add to Cart
+              <button 
+                onClick={()=>addToCart(user._id,id)} 
+                disabled={addingToCart[id]}
+                className={`btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg transition-all ${
+                  addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
+                }`}
+              >
+                {addingToCart[id] ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin mr-2"></i>
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-shopping-cart mr-2"></i>
+                    Add to Cart
+                  </>
+                )}
               </button>
               <button className="btn-secondary w-full py-4 font-semibold rounded-xl text-lg">
                 <i className="fas fa-bolt mr-2"></i>

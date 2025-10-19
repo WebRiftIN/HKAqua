@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useAppContext } from '../../context/ShopContext'
 
 function Catalog() {
-  const { products: dbProducts,addToCart } = useAppContext();
+  const { products: dbProducts } = useAppContext();
   const {productId} = useParams()
 
   // Add static reviews/rating/image to each product
@@ -297,12 +297,14 @@ function Catalog() {
                         ))}
                       </div>
                     </div>
-                    <button
-                      className="ripple-effect w-full water-bg text-white py-2 rounded-lg font-semibold bg-blue-700 transition-all transform hover:scale-105 text-sm"
-                      onClick={e => { e.preventDefault(); addToCart(product); }}
+                    <Link
+                      to={`/single-product/${product._id || product.id}`}
+                      className="ripple-effect w-full water-bg text-white py-2 rounded-lg font-semibold bg-blue-700 transition-all transform text-sm hover:scale-105 flex items-center justify-center"
+                      onClick={e => e.stopPropagation()}
                     >
-                      Add to Cart
-                    </button>
+                      <i className="fas fa-eye mr-2"></i>
+                      View Details
+                    </Link>
                   </div>
                 </Link>
               )

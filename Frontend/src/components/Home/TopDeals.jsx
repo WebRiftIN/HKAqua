@@ -77,12 +77,14 @@ const TopDeals = () => {
                   </div>
 
                   <div className="mt-3">
-                    <button
-                      onClick={(e) => addToCart(e, p)}
-                      className="w-full bg-sky-500 text-white hover:bg-sky-600 py-2 rounded-lg font-semibold text-sm transition-colors"
+                    <Link
+                      to={`/single-product/${p._id || p.id}`}
+                      className="w-full py-2 rounded-lg font-semibold text-sm transition-colors bg-sky-500 text-white hover:bg-sky-600 flex items-center justify-center"
+                      onClick={e => e.stopPropagation()}
                     >
-                      Add to Cart
-                    </button>
+                      <i className="fas fa-eye mr-2"></i>
+                      View Details
+                    </Link>
                   </div>
                 </div>
               </Link>

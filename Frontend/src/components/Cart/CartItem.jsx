@@ -13,7 +13,15 @@ function CartItem({
     <div className="cart-item border-b border-gray-200 pb-6">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-32 h-32 water-bg rounded-lg flex items-center justify-center">
-          <i className={`text-4xl ${colorClass} ${iconClass || ''}`}></i>
+          {item.image ? (
+            <img 
+              src={item.image} 
+              alt={title}
+              className="w-full h-full object-cover rounded-lg"
+            />
+          ) : (
+            <i className={`text-4xl ${colorClass} ${iconClass || ''}`}></i>
+          )}
         </div>
         <div className="flex-1">
           <div className="flex justify-between items-start mb-2">
@@ -62,6 +70,7 @@ function CartItem({
 }
 
 export default CartItem
+
 
 
 

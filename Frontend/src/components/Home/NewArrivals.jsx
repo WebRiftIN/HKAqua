@@ -82,12 +82,14 @@ const NewArrivals = () => {
                   </div>
 
                   <div className="mt-4">
-                    <button
-                      onClick={e => addToCart(e, p)}
-                      className="w-full bg-sky-500 text-white hover:bg-sky-600 py-3 rounded-lg font-semibold transition-colors"
+                    <Link
+                      to={`/single-product/${p._id || p.id}`}
+                      className="w-full py-3 rounded-lg font-semibold transition-colors bg-sky-500 text-white hover:bg-sky-600 flex items-center justify-center"
+                      onClick={e => e.stopPropagation()}
                     >
-                      Add to Cart
-                    </button>
+                      <i className="fas fa-eye mr-2"></i>
+                      View Details
+                    </Link>
                   </div>
                 </div>
               </Link>

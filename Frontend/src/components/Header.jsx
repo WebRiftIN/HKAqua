@@ -6,7 +6,11 @@ import { useAppContext } from '../context/ShopContext'
 function Header() {
   const [showAccount, setShowAccount] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
-  const { user, logout } = useAppContext()
+  const { user, logout, cartData } = useAppContext()
+
+  // Calculate total items in cart
+  const cartItemCount = cartData?.cartData ? 
+    Object.values(cartData.cartData).reduce((total, quantity) => total + quantity, 0) : 0
 
   return (
     <>
@@ -28,8 +32,12 @@ function Header() {
             <div className="flex items-center space-x-4">
               <Link to="/cart" className="text-gray-700 hover:text-sky-600 transition-colors relative">
                 <i className="fas fa-shopping-cart text-xl"></i>
-                <span className="absolute -top-2 -right-2 bg-sky-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
-                <span className="sr-only">Cart</span>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-sky-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                    {cartItemCount > 99 ? '99+' : cartItemCount}
+                  </span>
+                )}
+                <span className="sr-only">Cart ({cartItemCount} items)</span>
               </Link>
 
               <div className="relative">
@@ -91,6 +99,14 @@ function Header() {
               <Link to="/services" className="block px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-800" onClick={() => setShowMobileMenu(false)}>Services</Link>
               <Link to="/about" className="block px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-800" onClick={() => setShowMobileMenu(false)}>About</Link>
               <Link to="/contact" className="block px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-800" onClick={() => setShowMobileMenu(false)}>Contact</Link>
+              <Link to="/cart" className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-800" onClick={() => setShowMobileMenu(false)}>
+                <span>Cart</span>
+                {cartItemCount > 0 && (
+                  <span className="bg-sky-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold">
+                    {cartItemCount > 99 ? '99+' : cartItemCount}
+                  </span>
+                )}
+              </Link>
               <hr className="my-2" />
               {user ? (
                 <>
