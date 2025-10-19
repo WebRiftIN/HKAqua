@@ -255,7 +255,7 @@ const ContactList = () => {
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-blue-100">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gradient-to-r from-water-blue to-water-gradient">
+              <thead className="bg-gradient-to-r from-sky-600 to-sky-400">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Customer</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Subject</th>

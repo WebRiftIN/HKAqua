@@ -14,6 +14,7 @@ export const AppProvider = ({ children }) => {
     const [products,setProducts] = useState([])
     const [cartItems,setCartItems] = useState({})
     const [cartData,setCartData] = useState({})
+    const [addingToCart, setAddingToCart] = useState({}) // Track loading state for each product
     console.log(cartData)
     const [user, setUser] = useState(() => {
         try {
@@ -25,6 +26,9 @@ export const AppProvider = ({ children }) => {
     })
 
     const addToCart = async(userId,itemId) =>{
+        // Set loading state for this specific product
+        setAddingToCart(prev => ({ ...prev, [itemId]: true }))
+        
         let cartData = structuredClone(cartItems)
         if(cartData[itemId]){
             cartData[itemId] += 1
@@ -34,6 +38,42 @@ export const AppProvider = ({ children }) => {
         setCartItems(cartData)
         try {
             await axios.post('/api/cart/addToCart',{userId,itemId})
+            // Refresh cart data after adding
+            fetchCart()
+            toast.success('Added to cart!')
+        } catch (error) {
+            toast.error(error.message)
+        } finally {
+            // Clear loading state for this product
+            setAddingToCart(prev => ({ ...prev, [itemId]: false }))
+        }
+    }
+
+    const updateCartQuantity = async(userId, itemId, quantity) => {
+        try {
+            await axios.post('/api/cart/updateQuantity', {userId, itemId, quantity})
+            // Refresh cart data after updating
+            fetchCart()
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const removeFromCart = async(userId, itemId) => {
+        try {
+            await axios.post('/api/cart/removeItem', {userId, itemId})
+            // Refresh cart data after removing
+            fetchCart()
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const clearUserCart = async(userId) => {
+        try {
+            await axios.post('/api/cart/clearCart', {userId})
+            // Refresh cart data after clearing
+            fetchCart()
         } catch (error) {
             toast.error(error.message)
         }
@@ -86,7 +126,8 @@ export const AppProvider = ({ children }) => {
     }
 
     const value = {
-        axios, token, setToken, user, setUser, logout, products,cartItems,addToCart
+        axios, token, setToken, user, setUser, logout, products, cartItems, addToCart, 
+        updateCartQuantity, removeFromCart, clearUserCart, cartData, addingToCart
     }
     return (
         <AppContext.Provider value={value}>

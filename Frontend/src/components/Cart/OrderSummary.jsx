@@ -1,8 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function OrderSummary({ subtotal, discount, gst, onApplyCoupon, couponApplied, showCoupon = true, showProceed = true, showPaymentIcons = true, isSticky = true }) {
-  const total = Math.max(0, subtotal - discount + gst)
+function OrderSummary({ subtotal, discount, gst, onApplyCoupon, couponApplied, showCoupon = true, showProceed = true, showPaymentIcons = true, isSticky = true, priceDiscount = 0, couponDiscount = 0 }) {
+  const total = Math.max(0, subtotal - discount)
   const navigate = useNavigate()
   const containerClass = `bg-white rounded-xl shadow-lg p-6 ${isSticky ? 'sticky top-24' : ''}`
 
@@ -15,17 +15,27 @@ function OrderSummary({ subtotal, discount, gst, onApplyCoupon, couponApplied, s
           <span className="text-gray-600">Subtotal</span>
           <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-gray-600">Discount</span>
-          <span className="font-semibold text-green-600">-₹{discount.toLocaleString()}</span>
-        </div>
+        {priceDiscount > 0 && (
+          <div className="flex justify-between">
+            <span className="text-gray-600">Price Discount</span>
+            <span className="font-semibold text-green-600">-₹{priceDiscount.toLocaleString()}</span>
+          </div>
+        )}
+        {couponDiscount > 0 && (
+          <div className="flex justify-between">
+            <span className="text-gray-600">Coupon Discount</span>
+            <span className="font-semibold text-green-600">-₹{couponDiscount.toLocaleString()}</span>
+          </div>
+        )}
+        {discount > 0 && (
+          <div className="flex justify-between">
+            <span className="text-gray-600">Total Discount</span>
+            <span className="font-semibold text-green-600">-₹{discount.toLocaleString()}</span>
+          </div>
+        )}
         <div className="flex justify-between">
           <span className="text-gray-600">Delivery Charges</span>
           <span className="font-semibold text-green-600">FREE</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-gray-600">GST (18%)</span>
-          <span className="font-semibold">₹{gst.toLocaleString()}</span>
         </div>
         <hr className="border-gray-200" />
         <div className="flex justify-between text-lg font-bold">

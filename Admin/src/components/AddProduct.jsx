@@ -196,13 +196,13 @@ const AddProduct = () => {
                                     className="form-input w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition-all duration-200"
                                 >
                                     <option value="">Select Category</option>
-                                    <option value="ro-premium">RO Premium Series</option>
-                                    <option value="ro-standard">RO Standard Series</option>
-                                    <option value="uv-filter">UV Water Filter</option>
-                                    <option value="uf-purifier">UF Water Purifier</option>
-                                    <option value="gravity-based">Gravity Based Filter</option>
-                                    <option value="alkaline">Alkaline Water Purifier</option>
-                                    <option value="commercial">Commercial RO System</option>
+                                    <option value="nexus-ro">Nexus Ro</option>
+                                    <option value="apple-ro">Apple Ro</option>
+                                    <option value="aqua-x">Aqua X</option>
+                                    <option value="100-lph">100 LPH Ro</option>
+                                    <option value="250-lph">250 LPH RO</option>
+                                    <option value="500-lph">500 LPH RO</option>
+                                    <option value="spare-parts">Spare Parts</option>
                                 </select>
                             </div>
 
