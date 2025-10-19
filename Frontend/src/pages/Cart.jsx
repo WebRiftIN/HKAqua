@@ -6,26 +6,29 @@ import Waves from '../components/Waves'
 import { useAppContext } from '../context/ShopContext'
 
 function Cart() {
-  const { products, cartData, user, updateCartQuantity, removeFromCart, clearUserCart } = useAppContext()
+  const { products, cartItems, user, updateCartQuantity, removeFromCart, clearUserCart } = useAppContext()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [couponApplied, setCouponApplied] = useState(false)
+  const [couponDiscount, setCouponDiscount] = useState(0)
 
-  // Calculate cart items from products and cartData
+  // ✅ FIXED: Build `items` array from `products` and `cartItems` (context)
   useEffect(() => {
-    if (products.length > 0 && cartData.cartData) {
-      const cartItems = []
-      Object.entries(cartData.cartData).forEach(([productId, quantity]) => {
+    if (products.length > 0 && cartItems && Object.keys(cartItems).length > 0) {
+      const itemsArray = []
+
+      Object.entries(cartItems).forEach(([productId, quantity]) => {
         const product = products.find(p => p._id === productId)
         if (product) {
-          cartItems.push({
+          itemsArray.push({
             id: product._id,
             title: product.name,
             description: product.description,
             price: product.discountedPrice,
             oldPrice: product.originalPrice,
-            discountLabel: product.originalPrice > product.discountedPrice ? 
-              `${Math.round(((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100)}% OFF` : null,
+            discountLabel: product.originalPrice > product.discountedPrice
+              ? `${Math.round(((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100)}% OFF`
+              : null,
             qty: quantity,
             iconClass: 'fas fa-tint',
             colorClass: 'text-blue-600',
@@ -41,23 +44,24 @@ function Cart() {
           })
         }
       })
-      setItems(cartItems)
+
+      setItems(itemsArray)
+      setLoading(false)
+    } else {
+      setItems([])
       setLoading(false)
     }
-  }, [products, cartData])
+  }, [products, cartItems])
 
-  // Calculate subtotal based on original prices (before discount)
+  // ✅ Calculate subtotal based on original or discounted price
   const subtotal = useMemo(() => {
     return items.reduce((sum, item) => {
-      // Use original price if available, otherwise use discounted price
       const price = item.oldPrice || item.price
       return sum + (price * item.qty)
     }, 0)
   }, [items])
-  
-  const [couponDiscount, setCouponDiscount] = useState(0)
-  
-  // Calculate actual discount from price differences
+
+  // ✅ Calculate actual discount from price differences
   const priceDiscount = useMemo(() => {
     return items.reduce((sum, item) => {
       if (item.oldPrice && item.oldPrice > item.price) {
@@ -66,17 +70,14 @@ function Cart() {
       return sum
     }, 0)
   }, [items])
-  
-  const totalDiscount = priceDiscount + couponDiscount
-  // Remove GST calculation
-  const gst = 0
 
+  const totalDiscount = priceDiscount + couponDiscount
+  const gst = 0 // Removed GST calculation
+
+  // ✅ Update quantity both in UI and backend
   const updateQuantity = async (id, qty) => {
     const clamped = Math.max(1, Math.min(10, qty || 1))
-    // Update local state immediately for better UX
     setItems(prev => prev.map(it => (it.id === id ? { ...it, qty: clamped } : it)))
-    
-    // Update backend using context function
     await updateCartQuantity(user._id, id, clamped)
   }
 
@@ -95,22 +96,16 @@ function Cart() {
   }
 
   const removeItem = async (id) => {
-    // Update local state immediately
     setItems(prev => prev.filter(it => it.id !== id))
-    
-    // Update backend using context function
     await removeFromCart(user._id, id)
   }
 
   const clearCart = async () => {
-    // Update local state immediately
     setItems([])
-    
-    // Update backend using context function
     await clearUserCart(user._id)
   }
 
-  function applyCoupon(code) {
+  const applyCoupon = (code) => {
     const coupons = { SAVE10: 10, FIRST20: 20, WELCOME15: 15 }
     const pct = coupons[(code || '').toUpperCase()]
     if (!pct || couponApplied) return
@@ -157,7 +152,9 @@ function Cart() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">Cart Items (<span id="item-count">{items.length}</span>)</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    Cart Items (<span id="item-count">{items.length}</span>)
+                  </h2>
                   <button className="text-red-500 hover:text-red-700 transition-colors" onClick={clearCart}>
                     <i className="fas fa-trash mr-2"></i>Clear Cart
                   </button>
@@ -231,7 +228,3 @@ function Cart() {
 }
 
 export default Cart
-
-
-
-
