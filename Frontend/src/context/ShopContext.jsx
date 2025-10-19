@@ -25,7 +25,7 @@ export const AppProvider = ({ children }) => {
         }
     })
 
-    const addToCart = async(userId,itemId) =>{
+    const addToCart = async(userId,itemId, options = {}) =>{
         // Set loading state for this specific product
         setAddingToCart(prev => ({ ...prev, [itemId]: true }))
         
@@ -37,7 +37,8 @@ export const AppProvider = ({ children }) => {
         }
         setCartItems(cartData)
         try {
-            await axios.post('/api/cart/addToCart',{userId,itemId})
+            // include options (e.g., addons) when adding
+            await axios.post('/api/cart/addToCart',{userId,itemId, options})
             // Refresh cart data after adding
             fetchCart()
             toast.success('Added to cart!')
@@ -81,6 +82,7 @@ export const AppProvider = ({ children }) => {
 
     const fetchCart = async()=>{
         try {
+            if(!user?._id) return
             const response = await axios.post('/api/cart/getCart',{ userId: user._id })
             if(response.data.success){
                 setCartData(response.data)

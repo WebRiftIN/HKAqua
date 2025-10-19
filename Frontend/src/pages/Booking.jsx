@@ -54,11 +54,48 @@ function Booking() {
     selectedService: '',
   })
   const [submitted, setSubmitted] = useState(false)
+  const [errors, setErrors] = useState({})
   const {axios} = useAppContext()
 
   function onChange(e) {
     const { name, value } = e.target
     setForm((f) => ({ ...f, [name]: value }))
+    setErrors(prev => { const p = { ...prev }; delete p[name]; return p })
+  }
+
+  function validateField(name, value) {
+    switch (name) {
+      case 'fullName':
+        if (!value || !value.trim()) return 'Full name is required'
+        return ''
+      case 'phone':
+        if (!value || !/^[0-9]{10}$/.test(value.replace(/\D/g,''))) return 'Enter a valid 10-digit phone number'
+        return ''
+      case 'email':
+        if (!value) return ''
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email address'
+        return ''
+      case 'street':
+        if (!value || !value.trim()) return 'Street address is required'
+        return ''
+      case 'city':
+        if (!value) return 'Please select a city'
+        return ''
+      case 'pincode':
+        if (!value || !/^\d{6}$/.test(value)) return 'Enter a valid 6-digit PIN code'
+        return ''
+      case 'selectedService':
+        if (!value) return 'Please select a service'
+        return ''
+      default:
+        return ''
+    }
+  }
+
+  function handleBlur(e) {
+    const { name, value } = e.target
+    const msg = validateField(name, value)
+    setErrors(prev => ({ ...prev, ...(msg ? { [name]: msg } : {} ) }))
   }
 
   function selectService(key) {
@@ -68,16 +105,31 @@ function Booking() {
   const canSubmit = useMemo(() => {
     return (
       form.fullName.trim() &&
-      form.phone.trim() &&
+      /^[0-9]{10}$/.test(form.phone.replace(/\D/g,'')) &&
       form.street.trim() &&
       form.city &&
-      form.pincode.trim().length === 6 &&
+      /^\d{6}$/.test(form.pincode) &&
       form.selectedService
     )
   }, [form])
 
   const handleSubmit= async(e) =>{
     e.preventDefault()
+    // validate all fields
+    const fieldNames = ['fullName','phone','email','street','city','pincode','selectedService']
+    const newErrors = {}
+    for (const n of fieldNames) {
+      const msg = validateField(n, form[n])
+      if (msg) newErrors[n] = msg
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      // focus first invalid
+      const first = Object.keys(newErrors)[0]
+      const el = document.getElementById(first)
+      if (el && typeof el.focus === 'function') el.focus()
+      return
+    }
     setSubmitted(true)
     const payload = {
     name: form.fullName,
@@ -131,16 +183,19 @@ function Booking() {
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
                     <label  htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-                    <input onChange={onChange} value={form.fullName} type="text" id="fullName" name="fullName" required className="input-field w-full px-4 py-3 rounded-xl border focus:outline-none" placeholder="Enter your full name" />
+                    <input onChange={onChange} value={form.fullName} type="text" id="fullName" name="fullName" className={`input-field w-full px-4 py-3 rounded-xl border focus:outline-none ${errors.fullName ? 'border-red-400' : ''}`} placeholder="Enter your full name" onBlur={handleBlur} />
+                    {errors.fullName && <p className="text-sm text-red-600 mt-1">{errors.fullName}</p>}
                   </div>
                   <div>
                     <label value={form.phone} onChange={onChange} htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
-                    <input type="tel" id="phone" name="phone" required className="input-field w-full px-4 py-3 rounded-xl border focus:outline-none" placeholder="+91 98765 43210" value={form.phone} onChange={onChange} />
+                    <input type="tel" id="phone" name="phone" className={`input-field w-full px-4 py-3 rounded-xl border focus:outline-none ${errors.phone ? 'border-red-400' : ''}`} placeholder="9876543210" value={form.phone} onChange={onChange} onBlur={handleBlur} />
+                    {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone}</p>}
                   </div>
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                  <input type="email" id="email" name="email" className="input-field w-full px-4 py-3 rounded-xl border focus:outline-none" placeholder="your.email@example.com" value={form.email} onChange={onChange} />
+                  <input type="email" id="email" name="email" className={`input-field w-full px-4 py-3 rounded-xl border focus:outline-none ${errors.email ? 'border-red-400' : ''}`} placeholder="your.email@example.com" value={form.email} onChange={onChange} onBlur={handleBlur} />
+                  {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
                 </div>
               </div>
 
@@ -153,12 +208,13 @@ function Booking() {
                 </h3>
                 <div>
                   <label htmlFor="street" className="block text-sm font-medium text-gray-700 mb-2">Street Address *</label>
-                  <textarea id="street" name="street" required rows={3} className="input-field w-full px-4 py-3 rounded-xl border focus:outline-none resize-none" placeholder="House/Flat No., Street Name, Locality" value={form.street} onChange={onChange}></textarea>
+                  <textarea id="street" name="street" rows={3} className={`input-field w-full px-4 py-3 rounded-xl border focus:outline-none resize-none ${errors.street ? 'border-red-400' : ''}`} placeholder="House/Flat No., Street Name, Locality" value={form.street} onChange={onChange} onBlur={handleBlur}></textarea>
+                  {errors.street && <p className="text-sm text-red-600 mt-1">{errors.street}</p>}
                 </div>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">City *</label>
-                    <select id="city" name="city" required className="input-field w-full px-4 py-3 rounded-xl border focus:outline-none" value={form.city} onChange={onChange}>
+                    <select id="city" name="city" className={`input-field w-full px-4 py-3 rounded-xl border focus:outline-none ${errors.city ? 'border-red-400' : ''}`} value={form.city} onChange={onChange} onBlur={handleBlur}>
                       <option value="">Select City</option>
                       <option value="ambala">Ambala</option>
                       <option value="ambala-city">Ambala City</option>
@@ -168,10 +224,12 @@ function Booking() {
                       <option value="kharar">Kharar</option>
                       <option value="mohali">Mohali</option>
                     </select>
+                    {errors.city && <p className="text-sm text-red-600 mt-1">{errors.city}</p>}
                   </div>
                   <div>
                     <label htmlFor="pincode" className="block text-sm font-medium text-gray-700 mb-2">PIN Code *</label>
-                    <input type="text" id="pincode" name="pincode" required className="input-field w-full px-4 py-3 rounded-xl border focus:outline-none" placeholder="134003" maxLength={6} value={form.pincode} onChange={onChange} />
+                    <input type="text" id="pincode" name="pincode" className={`input-field w-full px-4 py-3 rounded-xl border focus:outline-none ${errors.pincode ? 'border-red-400' : ''}`} placeholder="134003" maxLength={6} value={form.pincode} onChange={onChange} onBlur={handleBlur} />
+                    {errors.pincode && <p className="text-sm text-red-600 mt-1">{errors.pincode}</p>}
                   </div>
                 </div>
               </div>
@@ -203,7 +261,8 @@ function Booking() {
                     </div>
                   ))}
                 </div>
-                <input type="hidden" name="selectedService" required value={form.selectedService} readOnly />
+                <input type="hidden" id="selectedService" name="selectedService" value={form.selectedService} readOnly />
+                {errors.selectedService && <p className="text-sm text-red-600 mt-2">{errors.selectedService}</p>}
               </div>
 
               <div className="text-center pt-6">

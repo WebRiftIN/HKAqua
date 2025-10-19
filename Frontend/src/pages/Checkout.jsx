@@ -16,6 +16,7 @@ function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [modalOpen, setModalOpen] = useState(false)
   const [orderId, setOrderId] = useState('')
+  const [errors, setErrors] = useState({})
   const navigate = useNavigate()
 
   // Reuse same payment info section numbers as Cart page example
@@ -34,29 +35,48 @@ function Checkout() {
     if (name === 'phone') {
       const v = value.replace(/\D/g, '').slice(0, 10)
       setForm(prev => ({ ...prev, [name]: v }))
+      setErrors(prev => { const c = { ...prev }; delete c[name]; return c })
       return
     }
     if (name === 'pincode') {
       const v = value.replace(/\D/g, '').slice(0, 6)
       setForm(prev => ({ ...prev, [name]: v }))
+      setErrors(prev => { const c = { ...prev }; delete c[name]; return c })
       return
     }
     setForm(prev => ({ ...prev, [name]: value }))
+    setErrors(prev => { const c = { ...prev }; delete c[name]; return c })
   }
 
+  // Validate fields and return an object with errors (empty if valid)
   function validate() {
-    const required = ['firstName','lastName','email','phone','street','city','state','pincode']
-    for (const key of required) {
-      if (!String(form[key] || '').trim()) return false
-    }
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
-    const pinOk = /^\d{6}$/.test(form.pincode)
-    return emailOk && pinOk
+    const errs = {}
+    if (!String(form.firstName || '').trim()) errs.firstName = 'First name is required'
+    if (!String(form.lastName || '').trim()) errs.lastName = 'Last name is required'
+    if (!String(form.email || '').trim()) errs.email = 'Email is required'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Enter a valid email address'
+    if (!String(form.phone || '').trim()) errs.phone = 'Phone number is required'
+    else if (!/^\d{10}$/.test(form.phone)) errs.phone = 'Enter a valid 10-digit phone number'
+    if (!String(form.street || '').trim()) errs.street = 'Street address is required'
+    if (!String(form.city || '').trim()) errs.city = 'City is required'
+    if (!String(form.state || '').trim()) errs.state = 'State is required'
+    if (!String(form.pincode || '').trim()) errs.pincode = 'PIN code is required'
+    else if (!/^\d{6}$/.test(form.pincode)) errs.pincode = 'Enter a valid 6-digit PIN code'
+
+    setErrors(errs)
+    return errs
   }
 
   function submit(e) {
     e.preventDefault()
-    if (!validate()) return
+    const errs = validate()
+    if (Object.keys(errs).length > 0) {
+      // focus/scroll first invalid field
+      const first = Object.keys(errs)[0]
+      const el = document.getElementById(first)
+      if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
     const id = `#AP${new Date().getFullYear()}${String(Math.floor(Math.random()*10000)).padStart(4,'0')}`
     setOrderId(id)
     navigate('/confirmation')
@@ -88,8 +108,8 @@ function Checkout() {
 
         <div className="bg-white rounded-2xl shadow-xl p-8 water-ripple">
           <form onSubmit={submit} className="space-y-8">
-            <PersonalInfo form={form} onChange={onChange} />
-            <AddressInfo form={form} onChange={onChange} />
+            <PersonalInfo form={form} onChange={onChange} errors={errors} />
+            <AddressInfo form={form} onChange={onChange} errors={errors} />
             <PaymentMethod value={paymentMethod} onChange={setPaymentMethod} />
 
             <OrderSummary

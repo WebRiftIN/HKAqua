@@ -8,9 +8,19 @@ function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const { user, logout, cartData } = useAppContext()
 
-  // Calculate total items in cart
-  const cartItemCount = cartData?.cartData ? 
-    Object.values(cartData.cartData).reduce((total, quantity) => total + quantity, 0) : 0
+  // Calculate total items in cart excluding addon entries
+  const cartItemCount = (() => {
+    if (!cartData?.cartData) return 0
+    return Object.entries(cartData.cartData).reduce((total, [key, value]) => {
+      // ignore addon keys like 'addon_warranty' or synthetic 'productId::addon_warranty'
+      if (String(key).startsWith('addon_') || String(key).includes('::addon_')) return total
+
+      // value might be a number (legacy) or object { qty, addons }
+      if (typeof value === 'number') return total + value
+      if (typeof value === 'object' && value !== null) return total + (Number(value.qty || 0))
+      return total
+    }, 0)
+  })()
 
   return (
     <>

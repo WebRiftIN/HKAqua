@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import ProgressBar from '../components/Cart/ProgressBar'
 import CartItem from '../components/Cart/CartItem'
 import OrderSummary from '../components/Cart/OrderSummary'
@@ -6,16 +7,40 @@ import Waves from '../components/Waves'
 import { useAppContext } from '../context/ShopContext'
 
 function Cart() {
-  const { products, cartData, user, updateCartQuantity, removeFromCart, clearUserCart } = useAppContext()
+  const { products, cartData, user, updateCartQuantity, removeFromCart, clearUserCart, addToCart } = useAppContext()
+  const navigate = useNavigate()
+  // Addon definitions (persisted as itemId keys in user.cartData)
+  const ADDONS = {
+    addon_warranty: {
+      id: 'addon_warranty',
+      title: 'Extended Warranty (1 year)',
+      description: 'Add 1 year extended warranty',
+      price: 899,
+      oldPrice: null,
+      badge: { label: 'Addon', className: 'bg-yellow-100 text-yellow-800' }
+    },
+    addon_5_maintenance: {
+      id: 'addon_5_maintenance',
+      title: '5 Maintenance Free',
+      description: 'Five free maintenance visits',
+      price: 499,
+      oldPrice: null,
+      badge: { label: 'Addon', className: 'bg-yellow-100 text-yellow-800' }
+    }
+  }
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [couponApplied, setCouponApplied] = useState(false)
 
   // Calculate cart items from products and cartData
   useEffect(() => {
-    if (products.length > 0 && cartData.cartData) {
+    if (products.length > 0 && cartData?.cartData) {
       const cartItems = []
-      Object.entries(cartData.cartData).forEach(([productId, quantity]) => {
+      Object.entries(cartData.cartData).forEach(([productId, storedValue]) => {
+        // storedValue can be a number (legacy) or an object { qty, addons }
+        const qty = typeof storedValue === 'number' ? storedValue : (storedValue?.qty || 0)
+        const addons = typeof storedValue === 'object' ? (storedValue.addons || {}) : {}
+
         const product = products.find(p => p._id === productId)
         if (product) {
           cartItems.push({
@@ -26,7 +51,8 @@ function Cart() {
             oldPrice: product.originalPrice,
             discountLabel: product.originalPrice > product.discountedPrice ? 
               `${Math.round(((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100)}% OFF` : null,
-            qty: quantity,
+            qty,
+            addons,
             iconClass: 'fas fa-tint',
             colorClass: 'text-blue-600',
             image: product.image,
@@ -37,7 +63,56 @@ function Cart() {
             ],
             stockLabel: product.isOutOfStock ? 'Out of Stock' : 'In Stock',
             deliveryLabel: 'Free delivery',
-            warrantyLabel: '2 year warranty'
+            warrantyLabel: '1 year warranty'
+          })
+          // if this product has addons stored, add synthetic items for each addon so prices appear
+          if (addons && Object.keys(addons).length > 0) {
+            // warranty
+            if (addons.warranty) {
+              const addon = ADDONS['addon_warranty']
+              cartItems.push({
+                id: `${product._id}::addon_warranty`,
+                title: `${product.name} - Extended Warranty`,
+                description: addon.description,
+                price: addon.price,
+                oldPrice: addon.oldPrice,
+                qty: 1,
+                isAddon: true,
+                image: '',
+                badges: [addon.badge]
+              })
+            }
+            if (addons.maintenance5) {
+              const addon = ADDONS['addon_5_maintenance']
+              cartItems.push({
+                id: `${product._id}::addon_5_maintenance`,
+                title: `${product.name} - 5 Maintenance Free`,
+                description: addon.description,
+                price: addon.price,
+                oldPrice: addon.oldPrice,
+                qty: 1,
+                isAddon: true,
+                image: '',
+                badges: [addon.badge]
+              })
+            }
+          }
+          return
+        }
+
+        // If it's not a product, maybe it's an addon we know about
+        if (ADDONS[productId]) {
+          const addon = ADDONS[productId]
+          cartItems.push({
+            id: addon.id,
+            title: addon.title,
+            description: addon.description,
+            price: addon.price,
+            oldPrice: addon.oldPrice,
+            qty,
+            isAddon: true,
+            image: '',
+            badges: [addon.badge],
           })
         }
       })
@@ -49,9 +124,9 @@ function Cart() {
   // Calculate subtotal based on original prices (before discount)
   const subtotal = useMemo(() => {
     return items.reduce((sum, item) => {
-      // Use original price if available, otherwise use discounted price
-      const price = item.oldPrice || item.price
-      return sum + (price * item.qty)
+      const price = Number(item.price || 0)
+      const qty = Number(item.qty || 0)
+      return sum + (price * qty)
     }, 0)
   }, [items])
   
@@ -157,7 +232,7 @@ function Cart() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">Cart Items (<span id="item-count">{items.length}</span>)</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">Cart Items (<span id="item-count">{items.filter(i => !i.isAddon).length}</span>)</h2>
                   <button className="text-red-500 hover:text-red-700 transition-colors" onClick={clearCart}>
                     <i className="fas fa-trash mr-2"></i>Clear Cart
                   </button>
@@ -190,22 +265,35 @@ function Cart() {
                     <div className="w-full h-24 water-bg rounded-lg flex items-center justify-center mb-3">
                       <i className="fas fa-wrench text-2xl text-blue-600"></i>
                     </div>
-                    <h4 className="font-semibold text-gray-800 mb-1">Installation Kit</h4>
-                    <p className="text-sm text-gray-600 mb-2">Professional installation accessories</p>
+                    <h4 className="font-semibold text-gray-800 mb-1">Extended Warranty </h4>
+                    <p className="text-sm text-gray-600 mb-2">Extended warranty by 1 year and total warranty will be 2 Year warranty</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-blue-600">₹1,299</span>
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">Add to Cart</button>
+                      <span className="text-lg font-bold text-blue-600">₹899</span>
+                      <button
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                        onClick={async () => {
+                          if (!user?._id) return navigate('/account/login')
+                          // addon id key persisted in backend
+                          await addToCart(user._id, 'addon_warranty', { addons: { warranty: true } })
+                        }}
+                      >Add to Cart</button>
                     </div>
                   </div>
                   <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                     <div className="w-full h-24 water-bg rounded-lg flex items-center justify-center mb-3">
                       <i className="fas fa-tools text-2xl text-blue-600"></i>
                     </div>
-                    <h4 className="font-semibold text-gray-800 mb-1">Maintenance Kit</h4>
-                    <p className="text-sm text-gray-600 mb-2">Annual maintenance essentials</p>
+                    <h4 className="font-semibold text-gray-800 mb-1">5 Maintenance Free</h4>
+                    <p className="text-sm text-gray-600 mb-2">5 Maintenance will be free, Delivary will be charge no maintenance cost will be charged </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-blue-600">₹899</span>
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">Add to Cart</button>
+                      <span className="text-lg font-bold text-blue-600">₹499</span>
+                      <button
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                        onClick={async () => {
+                          if (!user?._id) return navigate('/account/login')
+                          await addToCart(user._id, 'addon_5_maintenance', { addons: { maintenance5: true } })
+                        }}
+                      >Add to Cart</button>
                     </div>
                   </div>
                 </div>

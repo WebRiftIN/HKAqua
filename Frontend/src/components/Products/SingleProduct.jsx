@@ -57,6 +57,8 @@ function SingleProduct() {
   const discount = originalPrice
     ? `${Math.round(((originalPrice - price) / originalPrice) * 100)}% OFF`
     : '';
+  const warrantyText = product.warranty || '1 Year Warranty'
+  const showWarranty = price >= 5000
 
   return (
     <div className="pt-10 pb-16">
@@ -108,6 +110,13 @@ function SingleProduct() {
                       ? `${Math.round(((product.originalPrice - (product.discountedPrice ?? 0)) / product.originalPrice) * 100)}% OFF`
                       : ''}
                   </span>
+                  {/* Main feature: warranty */}
+                  {showWarranty && (
+                    <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-semibold ml-2 flex items-center">
+                      <i className="fas fa-shield-alt mr-2 text-green-600"></i>
+                      {warrantyText}
+                    </span>
+                  )}
                 </>
               )}
             </div>
@@ -141,7 +150,7 @@ function SingleProduct() {
                   <div className="text-sm text-gray-600">Complimentary essentials with purchase</div>
                 </div>
               </div>
-              {price >= 4499 && (
+              {price >= 5000 && (
                 <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                   <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
                     <i className="fas fa-concierge-bell text-purple-600"></i>
