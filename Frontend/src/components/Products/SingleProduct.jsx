@@ -158,7 +158,7 @@ function SingleProduct() {
 
             <div className="space-y-4">
               <button 
-                onClick={()=>addToCart(user._id,id)} 
+                onClick={()=>addToCart(id)} 
                 disabled={addingToCart[id]}
                 className={`btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg transition-all ${
                   addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
