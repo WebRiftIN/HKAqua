@@ -8,6 +8,8 @@ function SingleProduct() {
   const product = products.find(p => p._id === id || p.id === id);
 
   const [quantity, setQuantity] = useState(1);
+  const [warrantySelected, setWarrantySelected] = useState(false);
+  const [maintenanceSelected, setMaintenanceSelected] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
   const [selectedRating, setSelectedRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
@@ -156,30 +158,102 @@ function SingleProduct() {
 
       
 
+            {/* Extended options - visual cards */}
             <div className="space-y-4">
-              <button 
-                onClick={()=>addToCart(user._id,id)} 
-                disabled={addingToCart[id]}
-                className={`btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg transition-all ${
-                  addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
-                }`}
-              >
-                {addingToCart[id] ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin mr-2"></i>
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-shopping-cart mr-2"></i>
-                    Add to Cart
-                  </>
-                )}
-              </button>
-              <button className="btn-secondary w-full py-4 font-semibold rounded-xl text-lg">
-                <i className="fas fa-bolt mr-2"></i>
-                Buy Now
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/** compute extension prices */}
+                {(() => {
+                  const base = Number(product.discountedPrice || product.price || 0)
+                  const warrantyPrice = Math.max(499, Math.round(base * 0.10))
+                  const maintenancePrice = Math.max(399, Math.round(base * 0.08))
+                  const mainFeature = specifications[0] || features.split(/[\.\n]/)[0] || product.name
+
+                  return (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setWarrantySelected(s => !s)}
+                        className={`text-left p-4 rounded-xl border transition-shadow flex flex-col justify-between ${warrantySelected ? 'border-blue-600 shadow-lg bg-blue-50' : 'border-gray-200 bg-white hover:shadow-md'}`}
+                        aria-pressed={warrantySelected}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <h4 className="text-lg font-semibold">1 Year Extended Warranty</h4>
+                              {/* <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">1 year</span> */}
+                            </div>
+                            <p className="text-sm text-gray-600 mt-2">Cover manufacturing defects and free replacement parts for one year beyond the standard warranty.</p>
+                            {/* <p className="text-sm text-gray-700 mt-3"><strong>Main feature:</strong> {mainFeature}</p> */}
+                          </div>
+                          <div className="ml-4 text-right">
+                            <div className="text-2xl font-bold water-blue">₹{warrantyPrice.toLocaleString()}</div>
+                            <div className="text-sm text-gray-500">one-time</div>
+                          </div>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setMaintenanceSelected(s => !s)}
+                        className={`text-left p-4 rounded-xl border transition-shadow flex flex-col justify-between ${maintenanceSelected ? 'border-blue-600 shadow-lg bg-blue-50' : 'border-gray-200 bg-white hover:shadow-md'}`}
+                        aria-pressed={maintenanceSelected}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <h4 className="text-lg font-semibold">Extended Maintenance Plan</h4>
+                              {/* <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">1 year</span> */}
+                            </div>
+                            <p className="text-sm text-gray-600 mt-2">Annual scheduled servicing and part checks to keep your purifier running at peak performance.</p>
+                            {/* <p className="text-sm text-gray-700 mt-3"><strong>Main feature:</strong> {mainFeature}</p> */}
+                          </div>
+                          <div className="ml-4 text-right">
+                            <div className="text-2xl font-bold water-blue">₹{maintenancePrice.toLocaleString()}</div>
+                            <div className="text-sm text-gray-500">one-time</div>
+                          </div>
+                        </div>
+                      </button>
+                    </>
+                  )
+                })()}
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button 
+                  onClick={async ()=>{
+                    // Add main product
+                    await addToCart(user._id,id)
+                    // Add warranty/maintenance as special items keyed to product id
+                    if (warrantySelected) {
+                      await addToCart(user._id, `warranty:${id}`)
+                    }
+                    if (maintenanceSelected) {
+                      await addToCart(user._id, `maintenance:${id}`)
+                    }
+                  }} 
+                  disabled={addingToCart[id]}
+                  className={`btn-primary flex-1 py-4 text-white font-semibold rounded-xl text-lg transition-all ${
+                    addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
+                  }`}
+                >
+                  {addingToCart[id] ? (
+                    <>
+                      <i className="fas fa-spinner fa-spin mr-2"></i>
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-shopping-cart mr-2"></i>
+                      Add to Cart
+                    </>
+                  )}
+                </button>
+
+                <button className="btn-secondary flex-1 py-4 font-semibold rounded-xl text-lg">
+                  <i className="fas fa-bolt mr-2"></i>
+                  Buy Now
+                </button>
+              </div>
             </div>
 
             <div className="bg-gray-50 rounded-xl p-6 space-y-3">

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Waves from '../components/Waves'
+import ProgressBar from '../components/Cart/ProgressBar'
 import SuccessHeader from '../components/OrderConfirmation/SuccessHeader'
 import OrderInfo from '../components/OrderConfirmation/OrderInfo'
 import ProductDetails from '../components/OrderConfirmation/ProductDetails'
@@ -29,6 +30,7 @@ function OrderConfirmation() {
   return (
     <>
       <Waves />
+      <ProgressBar currentStep={3} />
       <main className="max-w-4xl mx-auto px-4 py-12">
         <SuccessHeader />
 
