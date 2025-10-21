@@ -62,7 +62,6 @@ function OrderSummary({ subtotal, discount, gst, onApplyCoupon, couponApplied, s
               {couponApplied ? 'Applied' : 'Apply'}
             </button>
           </div>
-          <div className="mt-2 text-sm text-gray-500">Available coupons: SAVE10, FIRST20, WELCOME15</div>
         </div>
       )}
 
@@ -76,19 +75,6 @@ function OrderSummary({ subtotal, discount, gst, onApplyCoupon, couponApplied, s
         <i className="fas fa-lock mr-1"></i>
         Secure checkout with 256-bit SSL encryption
       </div>
-
-      {showPaymentIcons && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <p className="text-sm text-gray-600 mb-2">We accept:</p>
-          <div className="flex items-center space-x-2">
-            <i className="fab fa-cc-visa text-2xl text-blue-600"></i>
-            <i className="fab fa-cc-mastercard text-2xl text-red-500"></i>
-            <i className="fab fa-cc-paypal text-2xl text-blue-500"></i>
-            <i className="fas fa-university text-2xl text-gray-600"></i>
-            <span className="text-xs text-gray-500">+more</span>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

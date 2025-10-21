@@ -8,6 +8,8 @@ function SingleProduct() {
   const product = products.find(p => p._id === id || p.id === id);
 
   const [quantity, setQuantity] = useState(1);
+  const [warrantySelected, setWarrantySelected] = useState(false);
+  const [maintenanceSelected, setMaintenanceSelected] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
   const [selectedRating, setSelectedRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
@@ -156,9 +158,10 @@ function SingleProduct() {
 
       
 
+            {/* Extended options - visual cards */}
             <div className="space-y-4">
               <button 
-                onClick={()=>addToCart(id)} 
+                onClick={()=>addToCart(user._id,id)} 
                 disabled={addingToCart[id]}
                 className={`btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg transition-all ${
                   addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
