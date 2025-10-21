@@ -14,6 +14,7 @@ export const AppProvider = ({ children }) => {
     const [products, setProducts] = useState([])
     const [cartItems, setCartItems] = useState({})
     const [cartTotal, setCartTotal] = useState(0);
+    const [cartCount, setCartCount] = useState(0);
     // const [cartData, setCartData] = useState({})
     const [addingToCart, setAddingToCart] = useState({}) // Track loading state for each product
     const [user, setUser] = useState(() => {
@@ -24,8 +25,14 @@ export const AppProvider = ({ children }) => {
             return null
         }
     })
-
+    const userId = user._id;
+    
     const addToCart = async (userId, itemId) => {
+        if (!token) {
+            toast.error("Please login to add items to your cart!");
+            window.location.href = "/login";
+            return;
+        }
         // Set loading state for this specific product
         setAddingToCart(prev => ({ ...prev, [itemId]: true }))
 
@@ -40,6 +47,7 @@ export const AppProvider = ({ children }) => {
             await axios.post('/api/cart/addToCart', { userId, itemId })
             // Refresh cart data after adding
             fetchCart()
+            getCartCount()
             toast.success('Added to cart!')
         } catch (error) {
             toast.error(error.message)
@@ -140,10 +148,6 @@ export const AppProvider = ({ children }) => {
         delete axios.defaults.headers.common['Authorization']
         toast.success('Logged out')
     }
-    console.log(cartTotal);
-    console.log(cartItems);
-    
-    
 
     const value = {
         axios, token, setToken, user, setUser, logout, products, cartItems, addToCart,
