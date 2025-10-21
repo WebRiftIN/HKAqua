@@ -5,7 +5,7 @@ import Installation from '../components/Services/Installation'
 import Commercial from '../components/Services/Commercial'
 import Maintenance from '../components/Services/Maintenance'
 import CTA from '../components/Services/CTA'
-import '../components/Services/services.css'
+import '../components/Services/Services.css'
 import Repair from '../components/Services/Repair'
 
 function Services() {
