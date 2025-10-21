@@ -1,5 +1,5 @@
 import React from 'react'
-import Hk_mission from '../../assets/hk_mission.jpg'
+import Hk_mission from '../../assets/Hk_mission.jpg'
 
 
 function Mission() {

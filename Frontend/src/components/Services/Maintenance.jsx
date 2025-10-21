@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import ro_Maintenance from '../../assets/ro_maintaince.jpg'
+import ro_Maintenance from '../../assets/Ro_maintaince.jpg'
 
 function Maintenance() {
   return (
