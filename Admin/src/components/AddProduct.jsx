@@ -95,7 +95,8 @@ const AddProduct = () => {
             const response = await axios.post(backend+"/api/product/addProduct", formData)
             if (response.data.success) {
                 toast.success(response.data.message)
-                alert(`🎉 Product added successfully to your inventory!\n\nProduct: ${formData.name}\nCategory: ${formData.category}\nPrice: ₹${formData.price}`);
+                // Use local state values for the confirmation message (FormData is not directly readable)
+                alert(`🎉 Product added successfully to your inventory!\n\nProduct: ${name}\nCategory: ${category}\nPrice: ₹${price}`);
             } else {
                 toast.error(response.data.message)
             }
@@ -104,7 +105,8 @@ const AddProduct = () => {
         } finally {
             // Reset form and state
             setName('');
-            setCategory('under-sink');
+            // Reset category to default
+            setCategory('All');
             setPrice('');
             setOriginalPrice('');
             setFeatures('');
