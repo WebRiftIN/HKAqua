@@ -40,7 +40,29 @@ function Cart() {
             ],
             stockLabel: product.isOutOfStock ? 'Out of Stock' : 'In Stock',
             deliveryLabel: 'Free delivery',
-            warrantyLabel: '2 year warranty'
+            warrantyLabel: '1 year warranty'
+          })
+        } else if (productId && (productId.startsWith('warranty:') || productId.startsWith('maintenance:'))) {
+          // extension item
+          const [type, pid] = productId.split(':')
+          const prod = products.find(p => p._id === pid)
+          const basePrice = Number(prod?.discountedPrice || prod?.price || 0)
+          const extPrice = type === 'warranty' ? Math.max(499, Math.round(basePrice * 0.10)) : Math.max(399, Math.round(basePrice * 0.08))
+          itemsArray.push({
+            id: productId,
+            title: type === 'warranty' ? `1yr Extended Warranty for ${prod?.name || pid}` : `Maintenance for ${prod?.name || pid}`,
+            description: prod ? `Addon linked to ${prod.name}` : 'Addon',
+            price: extPrice,
+            oldPrice: null,
+            discountLabel: null,
+            qty: quantity,
+            iconClass: type === 'warranty' ? 'fas fa-shield-alt' : 'fas fa-tools',
+            colorClass: 'text-green-600',
+            image: prod?.image,
+            badges: [],
+            stockLabel: 'In Stock',
+            deliveryLabel: 'One-time service',
+            warrantyLabel: type === 'warranty' ? '1 year extended' : '1 year maintenance'
           })
         }
       })
@@ -132,7 +154,7 @@ function Cart() {
 
   return (
     <>
-      <Waves />
+  <Waves />
       <ProgressBar currentStep={1} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
@@ -153,24 +175,47 @@ function Cart() {
               <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">
-                    Cart Items (<span id="item-count">{items.length}</span>)
-                  </h2>
+                      Cart Items (<span id="item-count">{items.filter(i => !i.id?.startsWith?.('warranty:') && !i.id?.startsWith?.('maintenance:')).length}</span>)
+                    </h2>
                   <button className="text-red-500 hover:text-red-700 transition-colors" onClick={clearCart}>
                     <i className="fas fa-trash mr-2"></i>Clear Cart
                   </button>
                 </div>
 
                 <div className="space-y-6" id="cart-items">
-                  {items.map(it => (
-                    <CartItem
-                      key={it.id}
-                      item={it}
-                      onIncrease={increase}
-                      onDecrease={decrease}
-                      onRemove={removeItem}
-                      onQuantityChange={updateQuantity}
-                    />
-                  ))}
+                  {items.map(it => {
+                    // If this is an extension, decorate title to show target product
+                    if (it.id.startsWith('warranty:') || it.id.startsWith('maintenance:')) {
+                      const [type, pid] = it.id.split(':')
+                      const product = products.find(p => p._id === pid)
+                      const title = product ? `${type === 'warranty' ? '1yr Extended Warranty for' : 'Maintenance for'} ${product.name}` : (type === 'warranty' ? '1yr Extended Warranty' : 'Maintenance')
+                      return (
+                        <div key={it.id} className="cart-item border-b border-gray-200 pb-6">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="text-lg font-semibold">{title}</h3>
+                              <p className="text-sm text-gray-600">One-time add-on linked to product</p>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-blue-600">₹{it.price?.toLocaleString?.() ?? it.price}</div>
+                              <div className="text-sm text-gray-500">Qty: {it.qty}</div>
+                              <button className="text-red-500 hover:text-red-700 mt-2" onClick={() => removeItem(it.id)}>Remove</button>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }
+                    return (
+                      <CartItem
+                        key={it.id}
+                        item={it}
+                        onIncrease={increase}
+                        onDecrease={decrease}
+                        onRemove={removeItem}
+                        onQuantityChange={updateQuantity}
+                      />
+                    )
+                  })}
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-gray-200">
@@ -180,33 +225,6 @@ function Cart() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">You might also like</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div className="w-full h-24 water-bg rounded-lg flex items-center justify-center mb-3">
-                      <i className="fas fa-wrench text-2xl text-blue-600"></i>
-                    </div>
-                    <h4 className="font-semibold text-gray-800 mb-1">Installation Kit</h4>
-                    <p className="text-sm text-gray-600 mb-2">Professional installation accessories</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-blue-600">₹1,299</span>
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">Add to Cart</button>
-                    </div>
-                  </div>
-                  <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div className="w-full h-24 water-bg rounded-lg flex items-center justify-center mb-3">
-                      <i className="fas fa-tools text-2xl text-blue-600"></i>
-                    </div>
-                    <h4 className="font-semibold text-gray-800 mb-1">Maintenance Kit</h4>
-                    <p className="text-sm text-gray-600 mb-2">Annual maintenance essentials</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-blue-600">₹899</span>
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">Add to Cart</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div className="lg:col-span-1">

@@ -114,9 +114,28 @@ export const AppProvider = ({ children }) => {
         let totalAmount = 0;
         for (const itemId in cartItems) {
             const quantity = cartItems[itemId];
+            if (!quantity || quantity <= 0) continue;
+
+            // Handle extension items which are stored with a prefix like "warranty:<productId>" or "maintenance:<productId>"
+            if (itemId.startsWith('warranty:') || itemId.startsWith('maintenance:')) {
+                const [type, productId] = itemId.split(':')
+                const product = products.find((p) => p._id === productId)
+                if (!product) continue
+                // Determine extension price: fallback to 10% for warranty, 8% for maintenance, with minimums
+                const basePrice = Number(product.discountedPrice || product.price || 0)
+                let extPrice = 0
+                if (type === 'warranty') {
+                    extPrice = Math.max(499, Math.round(basePrice * 0.10))
+                } else if (type === 'maintenance') {
+                    extPrice = Math.max(399, Math.round(basePrice * 0.08))
+                }
+                totalAmount += extPrice * quantity
+                continue
+            }
+
             const itemInfo = products.find((product) => product._id === itemId);
-            if (itemInfo && quantity > 0) {
-                totalAmount += itemInfo.discountedPrice * quantity;
+            if (itemInfo) {
+                totalAmount += Number(itemInfo.discountedPrice || itemInfo.price || 0) * quantity;
             }
         }
         setCartTotal(totalAmount);

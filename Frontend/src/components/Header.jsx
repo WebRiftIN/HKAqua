@@ -6,11 +6,15 @@ import { useAppContext } from '../context/ShopContext'
 function Header() {
   const [showAccount, setShowAccount] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
-  const { user, logout, cartData } = useAppContext()
+  const { user, logout, cartItems } = useAppContext()
 
-  // Calculate total items in cart
-  const cartItemCount = cartData?.cartData ? 
-    Object.values(cartData.cartData).reduce((total, quantity) => total + quantity, 0) : 0
+  // Calculate product-only items in cart (exclude warranty/maintenance add-ons)
+  const cartItemCount = cartItems && Object.keys(cartItems).length > 0
+    ? Object.entries(cartItems).reduce((total, [itemId, quantity]) => {
+        if (!itemId || itemId.startsWith?.('warranty:') || itemId.startsWith?.('maintenance:')) return total
+        return total + (quantity || 0)
+      }, 0)
+    : 0
 
   return (
     <>
