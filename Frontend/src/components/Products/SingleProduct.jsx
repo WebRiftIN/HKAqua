@@ -125,6 +125,17 @@ function SingleProduct() {
 
             {/* Main perks below description */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Warranty card - prominent and responsive */}
+              <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
+                <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
+                  <i className="fas fa-shield-alt text-green-600 text-lg"></i>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-800">{product.warrantyPeriod ? product.warrantyPeriod : '1 Year'} Warranty Included</div>
+                  <div className="text-sm text-gray-600">Covers parts & service as per policy</div>
+                </div>
+              </div>
+
               <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <i className="fas fa-tools text-green-600"></i>
@@ -134,6 +145,7 @@ function SingleProduct() {
                   <div className="text-sm text-gray-600">Professional doorstep setup included</div>
                 </div>
               </div>
+
               <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                   <i className="fas fa-gift text-blue-600"></i>
@@ -160,17 +172,27 @@ function SingleProduct() {
 
             {/* Extended options - visual cards */}
             <div className="space-y-4">
-              <button 
-                onClick={()=>addToCart(user._id,id)} 
-                disabled={addingToCart[id]}
+              {/* Disable add-to-cart when out of stock */}
+              <button
+                onClick={() => {
+                  if (product.isOutOfStock) return
+                  addToCart(user._id, id)
+                }}
+                disabled={Boolean(addingToCart[id] || product.isOutOfStock)}
+                aria-disabled={product.isOutOfStock ? 'true' : undefined}
                 className={`btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg transition-all ${
-                  addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
+                  addingToCart[id] || product.isOutOfStock ? 'opacity-60 cursor-not-allowed' : 'hover:bg-blue-700'
                 }`}
               >
                 {addingToCart[id] ? (
                   <>
                     <i className="fas fa-spinner fa-spin mr-2"></i>
                     Adding...
+                  </>
+                ) : product.isOutOfStock ? (
+                  <>
+                    <i className="fas fa-ban mr-2"></i>
+                    Out of stock
                   </>
                 ) : (
                   <>
@@ -179,9 +201,22 @@ function SingleProduct() {
                   </>
                 )}
               </button>
-              <button className="btn-secondary w-full py-4 font-semibold rounded-xl text-lg">
-                <i className="fas fa-bolt mr-2"></i>
-                Buy Now
+              <button
+                onClick={() => {
+                  if (product.isOutOfStock) return
+                  // existing buy flow might navigate to checkout — keep behavior minimal here
+                  // e.g., addToCart then navigate or open checkout in calling code
+                  addToCart(user._id, id)
+                }}
+                disabled={Boolean(product.isOutOfStock)}
+                aria-disabled={product.isOutOfStock ? 'true' : undefined}
+                className={`btn-secondary w-full py-4 font-semibold rounded-xl text-lg ${product.isOutOfStock ? 'opacity-60 cursor-not-allowed' : ''}`}
+              >
+                {product.isOutOfStock ? (
+                  <><i className="fas fa-ban mr-2"></i>Out of stock</>
+                ) : (
+                  <><i className="fas fa-bolt mr-2"></i>Buy Now</>
+                )}
               </button>
             </div>
 

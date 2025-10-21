@@ -80,17 +80,6 @@ const NewArrivals = () => {
                       {original ? <div className="text-xs text-gray-500 line-through">₹{Number(original).toLocaleString()}</div> : null}
                     </div>
                   </div>
-
-                  <div className="mt-4">
-                    <Link
-                      to={`/single-product/${p._id || p.id}`}
-                      className="w-full py-3 rounded-lg font-semibold transition-colors bg-sky-500 text-white hover:bg-sky-600 flex items-center justify-center"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <i className="fas fa-eye mr-2"></i>
-                      View Details
-                    </Link>
-                  </div>
                 </div>
               </Link>
             )
