@@ -161,12 +161,12 @@ function Catalog() {
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="lg:w-1/4">
           <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-            <h3 className="text-xl font-bold water-blue mb-6">Categories</h3>
+            <h3 className="text-xl font-bold text-sky-600 mb-6">Categories</h3>
 
             <div className="space-y-4">
               <div className="mb-4">
                 <button
-                  className={`w-full text-left px-4 py-3 rounded-xl font-medium ${selectedCategory === 'all' ? 'bg-blue-100 text-blue-700' : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-600'}`}
+                  className={`w-full text-left px-4 py-3 rounded-xl font-medium ${selectedCategory === 'all' ? 'bg-blue-100 text-sky-600' : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-sky-600'}`}
                   onClick={() => setSelectedCategory('all')}
                 >
                   All Products
@@ -179,9 +179,9 @@ function Catalog() {
                 </button>
                 {expanded['domesticRoSystems'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'NexusRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('NexusRoSystem')}>Nexus RO</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'AppleRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('AppleRoSystem')}>Apple RO</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'LivePureRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('LivePureRoSystem')}>LivePure RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'NexusRoSystem' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('NexusRoSystem')}>Nexus RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'AppleRoSystem' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('AppleRoSystem')}>Apple RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'LivePureRoSystem' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('LivePureRoSystem')}>LivePure RO</button>
                   </div>
                 )}
               </div>
@@ -193,9 +193,9 @@ function Catalog() {
                 </button>
                 {expanded['commercialRoSystems'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '50LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('50LPHRO')}>50 LPH RO</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '100LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('100LPHRO')}>100 LPH RO</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '250LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('250LPHRO')}>250 LPH RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '50LPHRO' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('50LPHRO')}>50 LPH RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '100LPHRO' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('100LPHRO')}>100 LPH RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '250LPHRO' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('250LPHRO')}>250 LPH RO</button>
 
                   </div>
                 )}
@@ -208,8 +208,8 @@ function Catalog() {
                 </button>
                 {expanded['waterPurifiersSpareParts'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-basic' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-basic')}>Basic Alkaline</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-premium' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-premium')}>Premium Alkaline</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-basic' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-basic')}>Basic Alkaline</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-premium' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-premium')}>Premium Alkaline</button>
                   </div>
                 )}
               </div>
@@ -222,7 +222,7 @@ function Catalog() {
                   const checked = priceFilters.some(r => r.min === min && r.max === max)
                   return (
                     <label key={`${min}-${max}`} className="flex items-center">
-                      <input type="checkbox" className="price-filter rounded text-blue-600" checked={checked} onChange={(e) => onTogglePrice(min, max, e.target.checked)} />
+                      <input type="checkbox" className="price-filter rounded text-sky-600" checked={checked} onChange={(e) => onTogglePrice(min, max, e.target.checked)} />
                       <span className="ml-2 text-gray-600">{label}</span>
                     </label>
                   )

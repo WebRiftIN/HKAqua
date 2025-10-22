@@ -40,13 +40,13 @@ function OrderSummary({ subtotal, discount, gst, onApplyCoupon, couponApplied, s
         <hr className="border-gray-200" />
         <div className="flex justify-between text-lg font-bold">
           <span>Total Amount</span>
-          <span className="text-blue-600">₹{total.toLocaleString()}</span>
+          <span className="text-sky-600">₹{total.toLocaleString()}</span>
         </div>
       </div>
 
       {showCoupon && (
         <div className="mb-6">
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
             <input
               type="text"
               placeholder="Enter coupon code"

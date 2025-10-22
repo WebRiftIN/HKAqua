@@ -10,7 +10,7 @@ function OrderStats({ totalOrders, deliveredOrders, transitOrders, totalSpent })
             <p className="text-2xl font-bold text-gray-800">{totalOrders}</p>
           </div>
           <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-6 h-6 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
               <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3z"/>
             </svg>
@@ -36,10 +36,10 @@ function OrderStats({ totalOrders, deliveredOrders, transitOrders, totalSpent })
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-600 mb-1">In Transit</p>
-            <p className="text-2xl font-bold text-blue-600">{transitOrders}</p>
+            <p className="text-2xl font-bold text-sky-600">{transitOrders}</p>
           </div>
           <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-6 h-6 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
               <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
               <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707L16 7.586A1 1 0 0015.414 7H14z"/>
             </svg>

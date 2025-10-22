@@ -16,7 +16,7 @@ function SuccessModal({ open, orderId, onClose }) {
         <h3 className="text-2xl font-bold text-gray-800 mb-4">Order Placed Successfully!</h3>
         <p className="text-gray-600 mb-6">Thank you for choosing hK aquafresh. Your RO system will be delivered within 3-5 business days.</p>
         <div className="bg-blue-50 p-4 rounded-lg mb-6">
-          <p className="text-sm text-gray-700">Order ID: <span className="font-bold text-blue-600">{orderId}</span></p>
+          <p className="text-sm text-gray-700">Order ID: <span className="font-bold text-sky-600">{orderId}</span></p>
         </div>
         <button onClick={onClose} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
           Continue Shopping

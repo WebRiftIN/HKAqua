@@ -12,7 +12,7 @@ function PaymentMethod({ value = 'cod', onChange }) {
       <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-xl border-2 border-blue-200">
         <div className="flex items-center space-x-4">
           <input type="radio" id="cod" name="paymentMethod" value="cod" checked={value === 'cod'}
-                 onChange={(e) => onChange && onChange(e.target.value)} className="w-5 h-5 text-blue-600 focus:ring-blue-500" />
+                 onChange={(e) => onChange && onChange(e.target.value)} className="w-5 h-5 text-sky-600 focus:ring-blue-500" />
           <label htmlFor="cod" className="flex items-center space-x-3 cursor-pointer">
             <div className="bg-white p-3 rounded-lg shadow-md">
               <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">

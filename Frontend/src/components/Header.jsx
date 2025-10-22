@@ -114,7 +114,7 @@ function Header() {
               <hr className="my-2" />
               {user ? (
                 <>
-                  <Link to="/orders" className="block px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-800" onClick={() => setShowMobileMenu(false)}>My Orders</Link>
+                  <Link to="/my-orders" className="block px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-800" onClick={() => setShowMobileMenu(false)}>My Orders</Link>
                   <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-800" onClick={() => { setShowMobileMenu(false); logout(); }}>Logout</button>
                 </>
               ) : (
