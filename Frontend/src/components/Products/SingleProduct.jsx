@@ -213,7 +213,7 @@ function SingleProduct() {
                 onClick={async () => {
                   if (product.isOutOfStock) return
                   // add main product first
-                  await addToCart(user._id, id)
+                  await addToCart(id)
                   // add addons if selected
                   if (warrantySelected) await addToCart(user._id, `warranty:${id}`)
                   if (maintenanceSelected) await addToCart(user._id, `maintenance:${id}`)
