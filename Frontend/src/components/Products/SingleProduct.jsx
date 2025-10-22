@@ -215,8 +215,8 @@ function SingleProduct() {
                   // add main product first
                   await addToCart(id)
                   // add addons if selected
-                  if (warrantySelected) await addToCart(user._id, `warranty:${id}`)
-                  if (maintenanceSelected) await addToCart(user._id, `maintenance:${id}`)
+                  if (warrantySelected) await addToCart( `warranty:${id}`)
+                  if (maintenanceSelected) await addToCart(`maintenance:${id}`)
                 }}
                 disabled={Boolean(addingToCart[id] || product.isOutOfStock)}
                 aria-disabled={product.isOutOfStock ? 'true' : undefined}
