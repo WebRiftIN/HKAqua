@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import { useAppContext } from '../context/ShopContext'
@@ -7,6 +7,8 @@ function Header() {
   const [showAccount, setShowAccount] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const { user, logout, cartItems } = useAppContext()
+  const accountRef = useRef(null)
+  const accountBtnRef = useRef(null)
 
   // Calculate product-only items in cart (exclude warranty/maintenance add-ons)
   const cartItemCount = cartItems && Object.keys(cartItems).length > 0
@@ -45,12 +47,12 @@ function Header() {
               </Link>
 
               <div className="relative">
-                <button className="text-gray-700 hover:text-sky-600 transition-colors" onClick={() => setShowAccount(true)} aria-expanded={showAccount} aria-controls="account-dropdown">
+                <button ref={accountBtnRef} className="text-gray-700 hover:text-sky-600 transition-colors" onClick={() => setShowAccount(s => !s)} aria-expanded={showAccount} aria-controls="account-dropdown">
                   <i className="fas fa-user text-xl"></i>
                   <span className="sr-only">Account</span>
                 </button>
                 {showAccount && (
-                  <div id="account-dropdown" className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-50">
+                  <div ref={accountRef} id="account-dropdown" className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-50">
                     <div className="flex items-center justify-between px-4 py-3 border-b">
                       <span className="font-semibold text-gray-800">{user ? `Hi, ${user.name}` : 'Account'}</span>
                       <button className="text-gray-500 hover:text-gray-700" onClick={() => setShowAccount(false)} aria-label="Close account menu">
@@ -76,6 +78,11 @@ function Header() {
                   </div>
                 )}
               </div>
+
+              {/* Close account menu when clicking outside or pressing Escape */}
+              {typeof window !== 'undefined' && (
+                <AccountOutsideClickHandler showAccount={showAccount} onClose={() => setShowAccount(false)} accountRef={accountRef} accountBtnRef={accountBtnRef} />
+              )}
 
               <button className="md:hidden text-gray-700 hover:text-sky-600" onClick={() => setShowMobileMenu(true)} aria-expanded={showMobileMenu} aria-controls="mobile-menu">
                 <i className="fas fa-bars text-xl"></i>
@@ -132,3 +139,25 @@ function Header() {
 }
 
 export default Header
+
+function AccountOutsideClickHandler({ showAccount, onClose, accountRef, accountBtnRef }) {
+  useEffect(() => {
+    if (!showAccount) return
+    function onDocClick(e) {
+      const target = e.target
+      if (accountRef?.current && !accountRef.current.contains(target) && accountBtnRef?.current && !accountBtnRef.current.contains(target)) {
+        onClose()
+      }
+    }
+    function onKey(e) {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('click', onDocClick)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('click', onDocClick)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [showAccount, onClose, accountRef, accountBtnRef])
+  return null
+}
