@@ -126,9 +126,9 @@ export const AppProvider = ({ children }) => {
                 const basePrice = Number(product.discountedPrice || product.price || 0)
                 let extPrice = 0
                 if (type === 'warranty') {
-                    extPrice = Math.max(499, Math.round(basePrice * 0.10))
+                    extPrice = 2999;
                 } else if (type === 'maintenance') {
-                    extPrice = Math.max(399, Math.round(basePrice * 0.08))
+                    extPrice = 999
                 }
                 totalAmount += extPrice * quantity
                 continue
