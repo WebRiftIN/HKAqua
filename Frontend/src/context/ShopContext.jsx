@@ -25,10 +25,10 @@ export const AppProvider = ({ children }) => {
             return null
         }
     })
-    const userId = user?._id;
+    const user_Id = user?._id||"";
     
-    const addToCart = async (userId, itemId) => {
-        if (!token) {
+    const addToCart = async (user_Id, itemId) => {
+        if (!token || !user._id) {
             toast.error("Please login to add items to your cart!");
             window.location.href = "/login";
             return;
@@ -44,7 +44,7 @@ export const AppProvider = ({ children }) => {
         }
         setCartItems(cartData)
         try {
-            await axios.post('/api/cart/addToCart', { userId, itemId })
+            await axios.post('/api/cart/addToCart', { user_Id, itemId })
             // Refresh cart data after adding
             fetchCart()
             getCartAmount()
