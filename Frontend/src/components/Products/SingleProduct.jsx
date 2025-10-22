@@ -83,9 +83,16 @@ function SingleProduct() {
           </div>
 
           <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{product.name}</h1>
-              <p className="text-lg text-gray-600">{product.category}</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{product.name}</h1>
+                <p className="text-lg text-gray-600">{product.category}</p>
+              </div>
+              <div className="mt-3 sm:mt-0">
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-semibold">
+                  {product.warrantyPeriod ? product.warrantyPeriod : '1 Year'} Warranty
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -125,17 +132,6 @@ function SingleProduct() {
 
             {/* Main perks below description */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Warranty card - prominent and responsive */}
-              <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
-                <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
-                  <i className="fas fa-shield-alt text-green-600 text-lg"></i>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-800">{product.warrantyPeriod ? product.warrantyPeriod : '1 Year'} Warranty Included</div>
-                  <div className="text-sm text-gray-600">Covers parts & service as per policy</div>
-                </div>
-              </div>
-
               <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <i className="fas fa-tools text-green-600"></i>
@@ -170,13 +166,55 @@ function SingleProduct() {
 
       
 
-            {/* Extended options - visual cards */}
+            {/* Extended options - visual cards + interactive addons */}
             <div className="space-y-4">
-              {/* Disable add-to-cart when out of stock */}
+              {/* Addon selectors (warranty, maintenance) */}
+              {(() => {
+                const basePrice = Number(product.discountedPrice || product.price || 0)
+                const warrantyPrice = Math.max(899, Math.round(basePrice * 0.10))
+                const maintenancePrice = Math.max(599, Math.round(basePrice * 0.08))
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label className={`flex items-center p-4 border rounded-lg cursor-pointer ${warrantySelected ? 'border-green-400 bg-green-50' : 'border-gray-200'}`}>
+                      <input
+                        type="checkbox"
+                        checked={warrantySelected}
+                        onChange={() => setWarrantySelected(s => !s)}
+                        disabled={Boolean(addingToCart[id])}
+                        className="mr-4 w-5 h-5"
+                      />
+                      <div>
+                        <div className="font-semibold">Extended Warranty</div>
+                        <div className="text-sm text-gray-600">1 year extended coverage — ₹{warrantyPrice.toLocaleString()}</div>
+                      </div>
+                    </label>
+
+                    <label className={`flex items-center p-4 border rounded-lg cursor-pointer ${maintenanceSelected ? 'border-green-400 bg-green-50' : 'border-gray-200'}`}>
+                      <input
+                        type="checkbox"
+                        checked={maintenanceSelected}
+                        onChange={() => setMaintenanceSelected(s => !s)}
+                        disabled={Boolean(addingToCart[id])}
+                        className="mr-4 w-5 h-5"
+                      />
+                      <div>
+                        <div className="font-semibold">Annual Maintenance</div>
+                        <div className="text-sm text-gray-600">1 year maintenance package — ₹{maintenancePrice.toLocaleString()}</div>
+                      </div>
+                    </label>
+                  </div>
+                )
+              })()}
+
+              {/* Disable add-to-cart when out of stock; add selected addons when adding */}
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (product.isOutOfStock) return
-                  addToCart(user._id, id)
+                  // add main product first
+                  await addToCart(user._id, id)
+                  // add addons if selected
+                  if (warrantySelected) await addToCart(user._id, `warranty:${id}`)
+                  if (maintenanceSelected) await addToCart(user._id, `maintenance:${id}`)
                 }}
                 disabled={Boolean(addingToCart[id] || product.isOutOfStock)}
                 aria-disabled={product.isOutOfStock ? 'true' : undefined}
@@ -201,12 +239,16 @@ function SingleProduct() {
                   </>
                 )}
               </button>
+
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (product.isOutOfStock) return
-                  // existing buy flow might navigate to checkout — keep behavior minimal here
-                  // e.g., addToCart then navigate or open checkout in calling code
-                  addToCart(user._id, id)
+                  // add main product and selected addons, then redirect to checkout
+                  await addToCart(user._id, id)
+                  if (warrantySelected) await addToCart(user._id, `warranty:${id}`)
+                  if (maintenanceSelected) await addToCart(user._id, `maintenance:${id}`)
+                  // minimal buy-now behavior left to page-level flow (e.g., navigate to /checkout)
+                  window.location.href = '/checkout'
                 }}
                 disabled={Boolean(product.isOutOfStock)}
                 aria-disabled={product.isOutOfStock ? 'true' : undefined}
