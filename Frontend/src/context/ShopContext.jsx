@@ -25,10 +25,10 @@ export const AppProvider = ({ children }) => {
             return null
         }
     })
-    const user_Id = user?._id||"";
+    const user_Id = user?._id;
     
     const addToCart = async (user_Id, itemId) => {
-        if (!token || !user._id) {
+        if (!token) {
             toast.error("Please login to add items to your cart!");
             window.location.href = "/login";
             return;
