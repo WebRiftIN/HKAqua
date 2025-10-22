@@ -196,7 +196,7 @@ function OrderManagement() {
               <div className="bg-white rounded-xl shadow-md p-4 border border-blue-100">
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-blue-100">
-                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M5 13l4 4L19 7"/>
                     </svg>
                   </div>

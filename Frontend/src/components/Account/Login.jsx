@@ -85,10 +85,10 @@ function Login() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-sky-600 focus:ring-blue-500 border-gray-300 rounded" />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">Remember me</label>
               </div>
-              <Link to="#" className="text-sm text-blue-600 hover:text-blue-800 transition-colors">Forgot password?</Link>
+              <Link to="#" className="text-sm text-sky-600 hover:text-blue-800 transition-colors">Forgot password?</Link>
             </div>
 
             <button type="submit" className="w-full water-gradient text-white py-3 px-4 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 water-ripple">Sign In</button>
@@ -105,7 +105,7 @@ function Login() {
             <div className="text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
-                <Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium transition-colors">Sign up now</Link>
+                <Link to="/register" className="text-sky-600 hover:text-blue-800 font-medium transition-colors">Sign up now</Link>
               </p>
             </div>
           </form>

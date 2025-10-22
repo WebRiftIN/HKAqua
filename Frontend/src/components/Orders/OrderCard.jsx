@@ -37,7 +37,7 @@ function OrderCard({ order, onCancelOrder, onGetSupport }) {
   const getTotalColor = (status) => {
     const colorClasses = {
       delivered: 'text-green-600',
-      shipped: 'text-blue-600',
+      shipped: 'text-sky-600',
       processing: 'text-orange-600',
       cancelled: 'text-red-600'
     }
@@ -69,7 +69,7 @@ function OrderCard({ order, onCancelOrder, onGetSupport }) {
         <div className="lg:col-span-2">
           <div className="flex items-start space-x-4">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center floating">
-              <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-10 h-10 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
               </svg>

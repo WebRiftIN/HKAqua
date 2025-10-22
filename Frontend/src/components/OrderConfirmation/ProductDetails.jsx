@@ -13,7 +13,7 @@ function ProductDetails() {
       <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-6 rounded-xl">
         <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
           <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center floating">
-            <svg className="w-12 h-12 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-12 h-12 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
               <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
             </svg>
@@ -51,7 +51,7 @@ function ProductDetails() {
 
           <div className="text-right">
             <p className="text-sm text-gray-600 mb-1">Price</p>
-            <p className="text-3xl font-bold text-blue-600">₹15,999</p>
+            <p className="text-3xl font-bold text-sky-600">₹15,999</p>
           </div>
         </div>
       </div>

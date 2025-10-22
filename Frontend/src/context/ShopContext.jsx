@@ -47,7 +47,7 @@ export const AppProvider = ({ children }) => {
             await axios.post('/api/cart/addToCart', { userId, itemId })
             // Refresh cart data after adding
             fetchCart()
-            getCartCount()
+            getCartAmount()
             toast.success('Added to cart!')
         } catch (error) {
             toast.error(error.message)

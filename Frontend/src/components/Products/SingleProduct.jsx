@@ -64,11 +64,11 @@ function SingleProduct() {
     <div className="pt-10 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <nav className="text-sm text-gray-500">
-          <Link to="/" className="hover:text-blue-600">Home</Link>
+          <Link to="/" className="hover:text-sky-600">Home</Link>
           <span className="mx-2">/</span>
-          <Link to="/products" className="hover:text-blue-600">Water Purifiers</Link>
+          <Link to="/products" className="hover:text-sky-600">Water Purifiers</Link>
           <span className="mx-2">/</span>
-          <span className="hover:text-blue-600">{product.category}</span>
+          <span className="hover:text-sky-600">{product.category}</span>
           <span className="mx-2">/</span>
           <span className="text-gray-800">{product.name}</span>
         </nav>
@@ -88,11 +88,13 @@ function SingleProduct() {
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{product.name}</h1>
                 <p className="text-lg text-gray-600">{product.category}</p>
               </div>
+               {price >= 5000 && (
               <div className="mt-3 sm:mt-0">
                 <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-semibold">
                   {product.warrantyPeriod ? product.warrantyPeriod : '1 Year'} Warranty
                 </span>
               </div>
+               )}
             </div>
 
             <div className="flex items-center space-x-4">
@@ -104,7 +106,7 @@ function SingleProduct() {
                 <i className="fas fa-star-half-alt"></i>
               </div>
               <span className="text-gray-600">({rating})</span>
-              <span className="text-blue-600 hover:underline cursor-pointer">{reviewsCount} Reviews</span>
+              <span className="text-sky-600 hover:underline cursor-pointer">{reviewsCount} Reviews</span>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -144,14 +146,14 @@ function SingleProduct() {
 
               <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <i className="fas fa-gift text-blue-600"></i>
+                  <i className="fas fa-gift text-sky-600"></i>
                 </div>
                 <div>
                   <div className="font-semibold text-gray-800">Filter bottle and candle free</div>
                   <div className="text-sm text-gray-600">Complimentary essentials with purchase</div>
                 </div>
               </div>
-              {price >= 4499 && (
+              {price >= 5000 && (
                 <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                   <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
                     <i className="fas fa-concierge-bell text-purple-600"></i>
@@ -219,7 +221,7 @@ function SingleProduct() {
                 disabled={Boolean(addingToCart[id] || product.isOutOfStock)}
                 aria-disabled={product.isOutOfStock ? 'true' : undefined}
                 className={`btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg transition-all ${
-                  addingToCart[id] || product.isOutOfStock ? 'opacity-60 cursor-not-allowed' : 'hover:bg-blue-700'
+                  addingToCart[id] || product.isOutOfStock ? 'opacity-60 cursor-not-allowed' : 'hover:bg-sky-700'
                 }`}
               >
                 {addingToCart[id] ? (
@@ -424,7 +426,7 @@ function SingleProduct() {
                     <i className="fas fa-star-half-alt text-sm"></i>
                     <span className="text-gray-500 text-sm ml-1">(100)</span>
                   </div>
-                  <p className="text-xl font-bold water-blue">
+                  <p className="text-xl font-bold text-sky-600">
                     ₹{rel.discountedPrice ? Number(rel.discountedPrice).toLocaleString() : '0'}
                   </p>
                   <span className="text-gray-400 line-through ml-2">

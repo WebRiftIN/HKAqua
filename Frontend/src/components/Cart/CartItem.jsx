@@ -7,7 +7,7 @@ function CartItem({
   onRemove,
   onQuantityChange
 }) {
-  const { id, title, description, price, oldPrice, discountLabel, qty, iconClass, badges = [], stockLabel, deliveryLabel, warrantyLabel, colorClass = 'text-blue-600' } = item
+  const { id, title, description, price, oldPrice, discountLabel, qty, iconClass, badges = [], stockLabel, deliveryLabel, warrantyLabel, colorClass = 'text-sky-600' } = item
 
   return (
     <div className="cart-item border-b border-gray-200 pb-6">
@@ -30,8 +30,8 @@ function CartItem({
               <p className="text-sm text-gray-500 mt-1 hidden sm:block">{description}</p>
             </div>
             <div className="flex items-center space-x-3">
-              <button aria-label="Remove item" className="text-red-500 hover:text-red-700 transition-colors remove-item" onClick={() => onRemove(id)}>
-                <i className="fas fa-times"></i>
+              <button aria-label="Remove item" title="Remove item" className="text-red-500 hover:text-red-700 transition-colors remove-item" onClick={() => onRemove(id)}>
+                <i className="fas fa-trash-alt"></i>
               </button>
             </div>
           </div>
@@ -43,7 +43,7 @@ function CartItem({
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center space-x-4 mb-3 sm:mb-0">
-              <span className="text-2xl font-bold text-blue-600">₹{price.toLocaleString()}</span>
+              <span className="text-2xl font-bold text-sky-600">₹{price.toLocaleString()}</span>
               {oldPrice ? <span className="text-lg text-gray-500 line-through">₹{oldPrice.toLocaleString()}</span> : null}
               {discountLabel ? <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">{discountLabel}</span> : null}
             </div>

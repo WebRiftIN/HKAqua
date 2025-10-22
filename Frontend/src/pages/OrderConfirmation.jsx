@@ -67,7 +67,7 @@ function OrderConfirmation() {
                 <hr className="border-gray-300" />
                 <div className="flex justify-between items-center text-xl font-bold">
                   <span>Total Amount</span>
-                  <span className="text-blue-600">₹{(subtotal - discount + gst).toLocaleString()}</span>
+                  <span className="text-sky-600">₹{(subtotal - discount + gst).toLocaleString()}</span>
                 </div>
                 <div className="bg-green-100 p-3 rounded-lg">
                   <p className="text-sm text-green-800 font-medium">Payment Method: Cash on Delivery (COD)</p>

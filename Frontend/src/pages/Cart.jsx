@@ -31,7 +31,7 @@ function Cart() {
               : null,
             qty: quantity,
             iconClass: 'fas fa-tint',
-            colorClass: 'text-blue-600',
+            colorClass: 'text-sky-600',
             image: product.image,
             badges: [
               { label: product.category, className: 'bg-blue-100 text-blue-800' },
@@ -197,7 +197,7 @@ function Cart() {
                               <p className="text-sm text-gray-600">One-time add-on linked to product</p>
                             </div>
                             <div className="text-right">
-                              <div className="text-2xl font-bold text-blue-600">₹{it.price?.toLocaleString?.() ?? it.price}</div>
+                              <div className="text-2xl font-bold text-sky-600">₹{it.price?.toLocaleString?.() ?? it.price}</div>
                               <div className="text-sm text-gray-500">Qty: {it.qty}</div>
                               <button className="text-red-500 hover:text-red-700 mt-2" onClick={() => removeItem(it.id)}>Remove</button>
                             </div>
@@ -219,7 +219,7 @@ function Cart() {
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-gray-200">
-                  <a href="/products" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+                  <a href="/products" className="text-sky-600 hover:text-blue-700 font-semibold transition-colors">
                     <i className="fas fa-arrow-left mr-2"></i>Continue Shopping
                   </a>
                 </div>

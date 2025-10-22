@@ -6,7 +6,7 @@ function OrderInfo({ orderId, orderDate }) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-800 mb-2">Order ID</h2>
-          <p className="text-2xl font-bold text-blue-600">{orderId}</p>
+          <p className="text-2xl font-bold text-sky-600">{orderId}</p>
         </div>
         <div className="text-right">
           <p className="text-sm text-gray-600">Order Date</p>

@@ -19,12 +19,12 @@ function Commercial() {
           </div>
           <div className="commercial-content">
             <div className="flex items-center mb-6">
-              <div className="bg-blue-600 rounded-full p-3 mr-4 shadow-lg">
+              <div className="bg-sky-600 rounded-full p-3 mr-4 shadow-lg">
                 <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 3a1 1 0 100 2h.01a1 1 0 100-2H10zm-4 1a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1zm1-4a1 1 0 100 2h.01a1 1 0 100-2H7zm2 0a1 1 0 100 2h.01a1 1 0 100-2H9zm2 0a1 1 0 100 2h.01a1 1 0 100-2H11z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-blue-600">Commercial RO Services</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-sky-600">Commercial RO Services</h2>
             </div>
             <p className="text-base sm:text-lg text-gray-700 mb-6 leading-relaxed">
               Large-scale water purification solutions for offices, restaurants, hotels, and industrial facilities. Our commercial RO systems deliver high-capacity, reliable water treatment for your business needs.
@@ -46,7 +46,7 @@ function Commercial() {
               ))}
             </div>
             <Link to="/booking" className="inline-block w-full sm:w-auto">
-              <button className="w-full sm:w-auto bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-blue-700 transition-all ripple-effect service-card transform hover:scale-105">Get Commercial Quote</button>
+              <button className="w-full sm:w-auto bg-sky-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-sky-500 transition-all ripple-effect service-card transform hover:scale-105">Get Commercial Quote</button>
             </Link>
           </div>
         </div>

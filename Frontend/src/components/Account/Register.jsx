@@ -186,21 +186,21 @@ function Register() {
 
               <div className="flex items-start">
                 <div className="flex items-center h-5">
-                  <input id="terms" name="terms" type="checkbox" required className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked={form.terms} onChange={onChange} />
+                  <input id="terms" name="terms" type="checkbox" required className="h-4 w-4 text-sky-600 focus:ring-blue-500 border-gray-300 rounded" checked={form.terms} onChange={onChange} />
                 </div>
                 <div className="ml-3 text-sm">
                   <label htmlFor="terms" className="text-gray-700">
                     I agree to the{' '}
-                    <Link to="#" className="text-blue-600 hover:text-blue-800 transition-colors">Terms of Service</Link>{' '}
+                    <Link to="#" className="text-sky-600 hover:text-blue-800 transition-colors">Terms of Service</Link>{' '}
                     and{' '}
-                    <Link to="#" className="text-blue-600 hover:text-blue-800 transition-colors">Privacy Policy</Link>
+                    <Link to="#" className="text-sky-600 hover:text-blue-800 transition-colors">Privacy Policy</Link>
                   </label>
                 </div>
               </div>
 
               <div className="flex items-start">
                 <div className="flex items-center h-5">
-                  <input id="newsletter" name="newsletter" type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked={form.newsletter} onChange={onChange} />
+                  <input id="newsletter" name="newsletter" type="checkbox" className="h-4 w-4 text-sky-600 focus:ring-blue-500 border-gray-300 rounded" checked={form.newsletter} onChange={onChange} />
                 </div>
                 <div className="ml-3 text-sm">
                   <label htmlFor="newsletter" className="text-gray-700">Subscribe to our newsletter for water purification tips and product updates</label>
@@ -224,7 +224,7 @@ function Register() {
               <div className="text-center">
                 <p className="text-sm text-gray-600">
                   Already have an account?{' '}
-                  <Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium transition-colors">Sign in here</Link>
+                  <Link to="/login" className="text-sky-600 hover:text-blue-800 font-medium transition-colors">Sign in here</Link>
                 </p>
               </div>
             </form>
