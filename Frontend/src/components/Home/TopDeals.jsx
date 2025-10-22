@@ -75,17 +75,6 @@ const TopDeals = () => {
                       {original ? <span className="text-xs text-gray-500 line-through">₹{Number(original).toLocaleString()}</span> : null}
                     </div>
                   </div>
-
-                  <div className="mt-3">
-                    <Link
-                      to={`/single-product/${p._id || p.id}`}
-                      className="w-full py-2 rounded-lg font-semibold text-sm transition-colors bg-sky-500 text-white hover:bg-sky-600 flex items-center justify-center"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <i className="fas fa-eye mr-2"></i>
-                      View Details
-                    </Link>
-                  </div>
                 </div>
               </Link>
             );

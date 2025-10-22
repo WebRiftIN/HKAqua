@@ -11,7 +11,7 @@ function Mission() {
             <img src={Hk_mission} alt="Mission Image" className="w-full h-auto rounded-lg shadow-lg" />
           </div>
           <div className="mission-content order-1 md:order-2">
-            <h2 className="text-4xl font-bold text-blue-600 mb-6">Our Mission</h2>
+            <h2 className="text-4xl font-bold text-sky-600 mb-6">Our Mission</h2>
             <p className="text-gray-700 text-lg mb-6 leading-relaxed">
               To revolutionize water purification technology and make clean, safe drinking water accessible to every household worldwide. We strive to eliminate waterborne diseases and improve public health through innovative, reliable, and affordable water purification solutions.
             </p>

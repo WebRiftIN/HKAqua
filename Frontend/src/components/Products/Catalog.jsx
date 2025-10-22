@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAppContext } from '../../context/ShopContext'
+import hktry1 from '../../assets/hi.png'
 
 function Catalog() {
   const { products: dbProducts } = useAppContext();
@@ -160,12 +161,12 @@ function Catalog() {
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="lg:w-1/4">
           <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-            <h3 className="text-xl font-bold water-blue mb-6">Categories</h3>
+            <h3 className="text-xl font-bold text-sky-600 mb-6">Categories</h3>
 
             <div className="space-y-4">
               <div className="mb-4">
                 <button
-                  className={`w-full text-left px-4 py-3 rounded-xl font-medium ${selectedCategory === 'all' ? 'bg-blue-100 text-blue-700' : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-600'}`}
+                  className={`w-full text-left px-4 py-3 rounded-xl font-medium ${selectedCategory === 'all' ? 'bg-blue-100 text-sky-600' : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-sky-600'}`}
                   onClick={() => setSelectedCategory('all')}
                 >
                   All Products
@@ -178,9 +179,9 @@ function Catalog() {
                 </button>
                 {expanded['domesticRoSystems'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'NexusRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('NexusRoSystem')}>Nexus RO</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'AppleRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('AppleRoSystem')}>Apple RO</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'LivePureRoSystem' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('LivePureRoSystem')}>LivePure RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'NexusRoSystem' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('NexusRoSystem')}>Nexus RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'AppleRoSystem' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('AppleRoSystem')}>Apple RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'LivePureRoSystem' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('LivePureRoSystem')}>LivePure RO</button>
                   </div>
                 )}
               </div>
@@ -192,9 +193,9 @@ function Catalog() {
                 </button>
                 {expanded['commercialRoSystems'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '50LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('50LPHRO')}>50 LPH RO</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '100LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('100LPHRO')}>100 LPH RO</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '250LPHRO' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('250LPHRO')}>250 LPH RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '50LPHRO' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('50LPHRO')}>50 LPH RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '100LPHRO' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('100LPHRO')}>100 LPH RO</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === '250LPHRO' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('250LPHRO')}>250 LPH RO</button>
 
                   </div>
                 )}
@@ -207,8 +208,8 @@ function Catalog() {
                 </button>
                 {expanded['waterPurifiersSpareParts'] && (
                   <div className="subcategories mt-2 ml-4 space-y-2">
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-basic' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-basic')}>Basic Alkaline</button>
-                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-premium' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-premium')}>Premium Alkaline</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-basic' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-basic')}>Basic Alkaline</button>
+                    <button className={`subcategory-btn block w-full text-left px-3 py-2 rounded-lg transition-all ${selectedCategory === 'alkaline-premium' ? 'bg-blue-100 text-sky-600' : 'text-gray-600 hover:text-sky-600 hover:bg-blue-50'}`} onClick={() => onSelectSubcategory('alkaline-premium')}>Premium Alkaline</button>
                   </div>
                 )}
               </div>
@@ -221,7 +222,7 @@ function Catalog() {
                   const checked = priceFilters.some(r => r.min === min && r.max === max)
                   return (
                     <label key={`${min}-${max}`} className="flex items-center">
-                      <input type="checkbox" className="price-filter rounded text-blue-600" checked={checked} onChange={(e) => onTogglePrice(min, max, e.target.checked)} />
+                      <input type="checkbox" className="price-filter rounded text-sky-600" checked={checked} onChange={(e) => onTogglePrice(min, max, e.target.checked)} />
                       <span className="ml-2 text-gray-600">{label}</span>
                     </label>
                   )
@@ -249,61 +250,44 @@ function Catalog() {
               const discount = product.originalPrice
                 ? Math.round(((product.originalPrice - (product.discountedPrice ?? 0)) / product.originalPrice) * 100)
                 : 0;
+
+              const id = product._id || product.id
+              const img = product.image || hktry1
+              const rating = product.rating ?? 4.8
+              const reviews = product.reviews ?? 0
+              const discounted = product.discountedPrice ?? product.price ?? 0
+              const original = product.originalPrice ?? 0
+
               return (
                 <Link
-                  key={product._id || product.id}
-                  to={`/single-product/${product._id || product.id}`}
-                  className={`product-card bg-white rounded-2xl shadow-lg overflow-hidden block hover:shadow-xl transition-all ${view === 'list' ? 'grid grid-cols-1 md:grid-cols-3' : ''}`}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  key={id}
+                  to={`/single-product/${id}`}
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-gray-100 block hover:shadow-xl transition"
                 >
-                  <div className={view === 'list' ? 'relative overflow-hidden h-80 md:h-full flex items-center justify-center ' : 'relative overflow-hidden h-64 w-full flex items-center justify-center '}>
-                      <img
-                          src={product.image ? product.image : hktry1}
-                          alt={product.name}
-                          className="max-h-full w-auto object-contain"
-                        />
-                    {(product.isNewProduct || product.isNew) && (
-                      <span className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
-                    )}
-                    <span className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">{discount}% OFF</span>
-                    {product.isOutOfStock && (
-                      <span className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Out of Stock</span>
-                    )}
-                  </div>
-                  <div className="p-6 md:col-span-2">
-                    <h3 className="font-semibold text-lg text-gray-800 mb-3">{product.name}</h3>
-                    <div className="flex items-center mb-3">
-                      <div className="flex items-center star-rating text-yellow-400">{starIcons(product.rating)}</div>
-                      <span className="text-gray-500 text-sm ml-2">({product.reviews})</span>
-                    </div>
-                    {/* Only show price if NOT out of stock */}
-                    {!product.isOutOfStock && (
+                  <div className="p-4 flex flex-col h-full">
+                    <div className="flex-1 flex flex-col">
+                      <div className="rounded-lg overflow-hidden mb-3 flex-1 relative flex items-center justify-center">
+                        {(product.isNewProduct || product.isNew) && (
+                          <span className="absolute top-2 right-2 bg-green-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold z-10">New</span>
+                        )}
+                        {discount > 0 && (
+                          <span className="absolute top-2 left-2 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold z-10">{discount}% OFF</span>
+                        )}
+                        <img src={img} alt={product.name} className="max-h-70 w-auto object-contain" />
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">{product.name}</h3>
+
+                      <div className="flex items-center mb-2">
+                        <div className="flex items-center text-amber-300 mr-2 text-sm">{starIcons(rating)}</div>
+                        <span className="text-xs text-gray-500">({reviews})</span>
+                      </div>
+
                       <div className="flex items-center justify-between mb-3">
-                          <div>
-                            <span className="text-2xl font-extrabold water-blue">₹{product.discountedPrice ? Number(product.discountedPrice).toLocaleString() : '0'}</span>
-                            <span className="text-gray-400 line-through ml-3 text-sm">₹{product.originalPrice ? Number(product.originalPrice).toLocaleString() : '0'}</span>
-                          </div>
-                        </div>
-                    )}
-                    {/* Limited Product text */}
-                    {product.isLimited && (
-                      <div className="text-red-600 text-sm font-semibold mt-1">Limited Product</div>
-                    )}
-                    <div className="mb-4">
-                      <div className="flex flex-wrap gap-1">
-                        {product.features.map((feature) => (
-                          <span key={feature} className="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs">{feature}</span>
-                        ))}
+                        <div className="text-xl font-bold text-sky-600">₹{Number(discounted).toLocaleString()}</div>
+                        {original ? <div className="text-xs text-gray-500 line-through">₹{Number(original).toLocaleString()}</div> : null}
                       </div>
                     </div>
-                    <Link
-                      to={`/single-product/${product._id || product.id}`}
-                      className="ripple-effect w-full water-bg text-white py-2 rounded-lg font-semibold bg-blue-700 transition-all transform text-sm hover:scale-105 flex items-center justify-center"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <i className="fas fa-eye mr-2"></i>
-                      View Details
-                    </Link>
                   </div>
                 </Link>
               )

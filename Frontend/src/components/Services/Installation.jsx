@@ -9,12 +9,12 @@ function Installation() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div className="installation-content order-2 lg:order-1">
             <div className="flex items-center mb-6">
-              <div className="bg-blue-600 rounded-full p-3 mr-4 shadow-lg">
+              <div className="bg-sky-600 rounded-full p-3 mr-4 shadow-lg">
                 <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z" />
                 </svg>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-blue-600">RO Installation</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-sky-600">RO Installation</h2>
             </div>
             <p className="text-base sm:text-lg text-gray-700 mb-6 leading-relaxed">
               Professional installation of your RO water purification system by certified technicians. We ensure optimal placement, proper connections, and thorough testing for peak performance.
@@ -36,7 +36,7 @@ function Installation() {
               ))}
             </div>
             <Link to="/booking" className="inline-block w-full sm:w-auto">
-              <button className="w-full sm:w-auto bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-blue-700 transition-all ripple-effect service-card transform hover:scale-105">Book Installation Service</button>
+              <button className="w-full sm:w-auto bg-sky-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-sky-500 transition-all ripple-effect service-card transform hover:scale-105">Book Installation Service</button>
             </Link>
           </div>
 

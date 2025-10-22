@@ -64,11 +64,11 @@ function SingleProduct() {
     <div className="pt-10 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <nav className="text-sm text-gray-500">
-          <Link to="/" className="hover:text-blue-600">Home</Link>
+          <Link to="/" className="hover:text-sky-600">Home</Link>
           <span className="mx-2">/</span>
-          <Link to="/products" className="hover:text-blue-600">Water Purifiers</Link>
+          <Link to="/products" className="hover:text-sky-600">Water Purifiers</Link>
           <span className="mx-2">/</span>
-          <span className="hover:text-blue-600">{product.category}</span>
+          <span className="hover:text-sky-600">{product.category}</span>
           <span className="mx-2">/</span>
           <span className="text-gray-800">{product.name}</span>
         </nav>
@@ -83,9 +83,18 @@ function SingleProduct() {
           </div>
 
           <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{product.name}</h1>
-              <p className="text-lg text-gray-600">{product.category}</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{product.name}</h1>
+                <p className="text-lg text-gray-600">{product.category}</p>
+              </div>
+               {price >= 5000 && (
+              <div className="mt-3 sm:mt-0">
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-semibold">
+                  {product.warrantyPeriod ? product.warrantyPeriod : '1 Year'} Warranty
+                </span>
+              </div>
+               )}
             </div>
 
             <div className="flex items-center space-x-4">
@@ -97,7 +106,7 @@ function SingleProduct() {
                 <i className="fas fa-star-half-alt"></i>
               </div>
               <span className="text-gray-600">({rating})</span>
-              <span className="text-blue-600 hover:underline cursor-pointer">{reviewsCount} Reviews</span>
+              <span className="text-sky-600 hover:underline cursor-pointer">{reviewsCount} Reviews</span>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -134,16 +143,17 @@ function SingleProduct() {
                   <div className="text-sm text-gray-600">Professional doorstep setup included</div>
                 </div>
               </div>
+
               <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <i className="fas fa-gift text-blue-600"></i>
+                  <i className="fas fa-gift text-sky-600"></i>
                 </div>
                 <div>
                   <div className="font-semibold text-gray-800">Filter bottle and candle free</div>
                   <div className="text-sm text-gray-600">Complimentary essentials with purchase</div>
                 </div>
               </div>
-              {price >= 4499 && (
+              {price >= 5000 && (
                 <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start space-x-3">
                   <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
                     <i className="fas fa-concierge-bell text-purple-600"></i>
@@ -158,19 +168,71 @@ function SingleProduct() {
 
       
 
-            {/* Extended options - visual cards */}
+            {/* Extended options - visual cards + interactive addons */}
             <div className="space-y-4">
-              <button 
-                onClick={()=>addToCart(user._id,id)} 
-                disabled={addingToCart[id]}
+              {/* Addon selectors (warranty, maintenance) */}
+              {(() => {
+                const basePrice = Number(product.discountedPrice || product.price || 0)
+                const warrantyPrice = Math.max(899, Math.round(basePrice * 0.10))
+                const maintenancePrice = Math.max(599, Math.round(basePrice * 0.08))
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label className={`flex items-center p-4 border rounded-lg cursor-pointer ${warrantySelected ? 'border-green-400 bg-green-50' : 'border-gray-200'}`}>
+                      <input
+                        type="checkbox"
+                        checked={warrantySelected}
+                        onChange={() => setWarrantySelected(s => !s)}
+                        disabled={Boolean(addingToCart[id])}
+                        className="mr-4 w-5 h-5"
+                      />
+                      <div>
+                        <div className="font-semibold">Extended Warranty</div>
+                        <div className="text-sm text-gray-600">1 year extended coverage — ₹{warrantyPrice.toLocaleString()}</div>
+                      </div>
+                    </label>
+
+                    <label className={`flex items-center p-4 border rounded-lg cursor-pointer ${maintenanceSelected ? 'border-green-400 bg-green-50' : 'border-gray-200'}`}>
+                      <input
+                        type="checkbox"
+                        checked={maintenanceSelected}
+                        onChange={() => setMaintenanceSelected(s => !s)}
+                        disabled={Boolean(addingToCart[id])}
+                        className="mr-4 w-5 h-5"
+                      />
+                      <div>
+                        <div className="font-semibold">Annual Maintenance</div>
+                        <div className="text-sm text-gray-600">1 year maintenance package — ₹{maintenancePrice.toLocaleString()}</div>
+                      </div>
+                    </label>
+                  </div>
+                )
+              })()}
+
+              {/* Disable add-to-cart when out of stock; add selected addons when adding */}
+              <button
+                onClick={async () => {
+                  if (product.isOutOfStock) return
+                  // add main product first
+                  await addToCart(user._id, id)
+                  // add addons if selected
+                  if (warrantySelected) await addToCart(user._id, `warranty:${id}`)
+                  if (maintenanceSelected) await addToCart(user._id, `maintenance:${id}`)
+                }}
+                disabled={Boolean(addingToCart[id] || product.isOutOfStock)}
+                aria-disabled={product.isOutOfStock ? 'true' : undefined}
                 className={`btn-primary w-full py-4 text-white font-semibold rounded-xl text-lg transition-all ${
-                  addingToCart[id] ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'
+                  addingToCart[id] || product.isOutOfStock ? 'opacity-60 cursor-not-allowed' : 'hover:bg-sky-700'
                 }`}
               >
                 {addingToCart[id] ? (
                   <>
                     <i className="fas fa-spinner fa-spin mr-2"></i>
                     Adding...
+                  </>
+                ) : product.isOutOfStock ? (
+                  <>
+                    <i className="fas fa-ban mr-2"></i>
+                    Out of stock
                   </>
                 ) : (
                   <>
@@ -179,9 +241,26 @@ function SingleProduct() {
                   </>
                 )}
               </button>
-              <button className="btn-secondary w-full py-4 font-semibold rounded-xl text-lg">
-                <i className="fas fa-bolt mr-2"></i>
-                Buy Now
+
+              <button
+                onClick={async () => {
+                  if (product.isOutOfStock) return
+                  // add main product and selected addons, then redirect to checkout
+                  await addToCart(user._id, id)
+                  if (warrantySelected) await addToCart(user._id, `warranty:${id}`)
+                  if (maintenanceSelected) await addToCart(user._id, `maintenance:${id}`)
+                  // minimal buy-now behavior left to page-level flow (e.g., navigate to /checkout)
+                  window.location.href = '/checkout'
+                }}
+                disabled={Boolean(product.isOutOfStock)}
+                aria-disabled={product.isOutOfStock ? 'true' : undefined}
+                className={`btn-secondary w-full py-4 font-semibold rounded-xl text-lg ${product.isOutOfStock ? 'opacity-60 cursor-not-allowed' : ''}`}
+              >
+                {product.isOutOfStock ? (
+                  <><i className="fas fa-ban mr-2"></i>Out of stock</>
+                ) : (
+                  <><i className="fas fa-bolt mr-2"></i>Buy Now</>
+                )}
               </button>
             </div>
 
@@ -347,7 +426,7 @@ function SingleProduct() {
                     <i className="fas fa-star-half-alt text-sm"></i>
                     <span className="text-gray-500 text-sm ml-1">(100)</span>
                   </div>
-                  <p className="text-xl font-bold water-blue">
+                  <p className="text-xl font-bold text-sky-600">
                     ₹{rel.discountedPrice ? Number(rel.discountedPrice).toLocaleString() : '0'}
                   </p>
                   <span className="text-gray-400 line-through ml-2">

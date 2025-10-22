@@ -5,8 +5,8 @@ import homepageimg from '../../assets/heroservicesimg.webp';
 
 const Hero = () => {
   return (
-    <section id="home" className="relative min-h-100 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <section id="home" className="relative bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="text-sky-900">
             <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
@@ -33,11 +33,11 @@ const Hero = () => {
           </div>
 
           <div className="relative flex justify-end">
-            <div className="bg-transparent">
+            <div className="bg-transparent w-full sm:w-auto flex justify-center sm:justify-end">
               <img
                 src={homepageimg}
                 alt="Homepage hero"
-                className="w-full h-100 object-contain"
+                className="w-full max-h-64 sm:max-h-96 object-contain"
               />
             </div>
           </div>

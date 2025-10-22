@@ -25,7 +25,7 @@ export const AppProvider = ({ children }) => {
             return null
         }
     })
-    const userId = user._id;
+    const userId = user?._id;
     
     const addToCart = async (userId, itemId) => {
         if (!token) {
@@ -47,7 +47,7 @@ export const AppProvider = ({ children }) => {
             await axios.post('/api/cart/addToCart', { userId, itemId })
             // Refresh cart data after adding
             fetchCart()
-            getCartCount()
+            getCartAmount()
             toast.success('Added to cart!')
         } catch (error) {
             toast.error(error.message)
@@ -88,6 +88,7 @@ export const AppProvider = ({ children }) => {
     }
 
     const fetchCart = async () => {
+        if (!user?._id) return;
         try {
             const response = await axios.post('/api/cart/getCart', { userId: user._id })
             if (response.data.success) {
