@@ -25,10 +25,10 @@ export const AppProvider = ({ children }) => {
             return null
         }
     })
-    const user_Id = user?._id||"";
-    
-    const addToCart = async (user_Id, itemId) => {
-        if (!token || !user._id) {
+    const user_Id = user?._id || "";
+
+    const addToCart = async (itemId) => {
+        if (!token || !user_Id) {
             toast.error("Please login to add items to your cart!");
             window.location.href = "/login";
             return;
@@ -44,7 +44,7 @@ export const AppProvider = ({ children }) => {
         }
         setCartItems(cartData)
         try {
-            await axios.post('/api/cart/addToCart', { userId:user_Id, itemId })
+              await axios.post('/api/cart/addToCart', { userId:user_Id, itemId })
             // Refresh cart data after adding
             fetchCart()
             getCartAmount()
@@ -141,6 +141,19 @@ export const AppProvider = ({ children }) => {
         }
         setCartTotal(totalAmount);
     };
+
+     useEffect(() => {
+        const storedToken = localStorage.getItem("token");
+        const storedUser = localStorage.getItem("user");
+
+        if (storedToken) {
+            setToken(storedToken);
+            axios.defaults.headers.common["Authorization"] = storedToken;
+        }
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
