@@ -1,4 +1,5 @@
 import { Order } from "../models/orderModel.js";
+import { User } from "../models/userModel.js"
 
 const placeOrder = async (req, res) => {
   try {
@@ -54,7 +55,7 @@ const placeOrder = async (req, res) => {
         message: "Something went wrong! Please try again",
       });
     }
-
+    await User.findByIdAndUpdate(userId, { $set: { cartData: {} } });
     return res.json({ success: true, message: "Order Placed", orderId: order._id });
   } catch (error) {
     console.error(error);
