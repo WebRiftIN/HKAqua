@@ -197,7 +197,7 @@ export const AppProvider = ({ children }) => {
 
     const value = {
         axios, token, setToken, user, setUser, logout, products, cartItems, addToCart,
-        updateCartQuantity, removeFromCart, clearUserCart, addingToCart
+        updateCartQuantity, removeFromCart, clearUserCart, addingToCart,user_Id,cartTotal,setCartItems
     }
     return (
         <AppContext.Provider value={value}>
