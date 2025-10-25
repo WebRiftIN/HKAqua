@@ -10,6 +10,7 @@ const AppContext = createContext()
 export const AppProvider = ({ children }) => {
 
     // const navigate = useNavigate()
+    const [orders,setOrders] = useState([])
     const [token, setToken] = useState();
     const [products, setProducts] = useState([])
     const [cartItems, setCartItems] = useState({})
@@ -26,6 +27,7 @@ export const AppProvider = ({ children }) => {
         }
     })
     const user_Id = user?._id || "";
+    
 
     const addToCart = async (itemId) => {
         if (!token || !user_Id) {
@@ -142,18 +144,20 @@ export const AppProvider = ({ children }) => {
         setCartTotal(totalAmount);
     };
 
-     useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        const storedUser = localStorage.getItem("user");
+    const getAllOrders = async() =>{
+        try {
+            const {data} = await axios.get(`/api/order/${user_Id}`)
+            if(data.success){
+                setOrders(data.orders)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+console.log(orders);
 
-        if (storedToken) {
-            setToken(storedToken);
-            axios.defaults.headers.common["Authorization"] = storedToken;
-        }
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-    }, []);
 
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
@@ -172,6 +176,7 @@ export const AppProvider = ({ children }) => {
         fetchProducts()
         fetchCart()
         getCartAmount()
+        getAllOrders()
         if (token) {
             axios.defaults.headers.common['Authorization'] = token
         } else {
