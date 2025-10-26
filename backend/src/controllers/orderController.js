@@ -63,4 +63,22 @@ const placeOrder = async (req, res) => {
   }
 };
 
-export { placeOrder };
+const getOrder = async(req,res) =>{
+  try {
+    const {userId} = req.params;
+    console.log(userId);
+    
+    if(!userId){
+      return res.json({success:false,message:"User ID is required"})
+    }
+    const orders = await Order.find({userId}).sort({createdAt:-1})
+    if(!orders || orders.length===0){
+      return res.json({success:false,message:"No orders found"})
+    }
+    return res.json({success:true,orders})
+  } catch (error) {
+    return res.json({success:true,message:error.message})
+  }
+}
+
+export { placeOrder,getOrder};
