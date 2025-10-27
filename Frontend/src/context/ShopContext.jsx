@@ -156,7 +156,6 @@ export const AppProvider = ({ children }) => {
             toast.error(error.message)
         }
     }
-console.log(orders);
 
 
     useEffect(() => {
@@ -202,7 +201,8 @@ console.log(orders);
 
     const value = {
         axios, token, setToken, user, setUser, logout, products, cartItems, addToCart,
-        updateCartQuantity, removeFromCart, clearUserCart, addingToCart,user_Id,cartTotal,setCartItems
+        updateCartQuantity, removeFromCart, clearUserCart, addingToCart,user_Id,cartTotal,setCartItems, orders,
+        getAllOrders, fetchCart
     }
     return (
         <AppContext.Provider value={value}>

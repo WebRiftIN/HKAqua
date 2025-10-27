@@ -1,8 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Waves from '../components/Waves'
 import ProgressBar from '../components/Cart/ProgressBar'
-import OrderSummary from '../components/Cart/OrderSummary'
 import PersonalInfo from '../components/Checkout/PersonalInfo'
 import AddressInfo from '../components/Checkout/AddressInfo'
 import PaymentMethod from '../components/Checkout/PaymentMethod'
@@ -11,7 +10,7 @@ import { useAppContext } from '../context/ShopContext'
 import toast from 'react-hot-toast'
 
 function Checkout() {
-  const { axios, user_Id, cartItems, cartTotal, setCartItems } = useAppContext()
+  const { axios, user_Id, cartItems, cartTotal, setCartItems, getAllOrders } = useAppContext()
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     street: '', city: '', state: '', pincode: '', landmark: ''
@@ -21,16 +20,7 @@ function Checkout() {
   const [orderId, setOrderId] = useState('')
   const navigate = useNavigate()
 
-  // Reuse same payment info section numbers as Cart page example
-  const items = [
-    { label: 'hK aquafresh RO System', price: 15999 },
-    { label: 'Installation', price: 1500 }
-  ]
-  const subtotal = useMemo(() => items.reduce((s, i) => s + i.price, 0), [])
-  const [baseDiscount, setBaseDiscount] = useState(0)
-  const [couponApplied, setCouponApplied] = useState(false)
-  const discount = baseDiscount
-  const gst = Math.round(subtotal * 0.18)
+  // Cart values are pulled directly from ShopContext
 
   function onChange(e) {
     const { name, value } = e.target
@@ -89,7 +79,11 @@ function Checkout() {
           street: '', city: '', state: '', pincode: '', landmark: ''
         });
         setCartItems({});
-        navigate('/confirmation');
+        // Refresh orders list before navigating
+        if (getAllOrders) {
+          await getAllOrders();
+        }
+        navigate(`/confirmation?orderId=${response.data.orderId}`);
       } else {
         toast.error(response.data.message || "Order failed");
       }
@@ -97,15 +91,6 @@ function Checkout() {
       console.error(error);
       toast.error("Something went wrong while placing the order");
     }
-  }
-
-  function applyCoupon(code) {
-    const coupons = { SAVE10: 10, FIRST20: 20, WELCOME15: 15 }
-    const pct = coupons[(code || '').toUpperCase()]
-    if (!pct || couponApplied) return
-    const additional = Math.round(subtotal * pct / 100)
-    setBaseDiscount(d => d + additional)
-    setCouponApplied(true)
   }
 
   function closeModal() {
@@ -129,17 +114,16 @@ function Checkout() {
             <AddressInfo form={form} onChange={onChange} />
             <PaymentMethod value={paymentMethod} onChange={setPaymentMethod} />
 
-            <OrderSummary
-              subtotal={subtotal}
-              discount={discount}
-              gst={gst}
-              couponApplied={couponApplied}
-              onApplyCoupon={applyCoupon}
-              showCoupon={false}
-              showProceed={false}
-              showPaymentIcons={false}
-              isSticky={false}
-            />
+            <div className="bg-blue-50 p-6 rounded-lg shadow-sm mb-8">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-gray-700">Delivery</span>
+                <span className="text-green-600 font-medium">Free</span>
+              </div>
+              <div className="flex justify-between items-center text-lg font-semibold">
+                <span className="text-gray-800">Total Amount</span>
+                <span className="text-blue-600">₹{cartTotal.toLocaleString()}</span>
+              </div>
+            </div>
 
             <div className="text-center">
               <button type="submit" id="placeOrderBtn"

@@ -1,29 +1,61 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import Waves from '../components/Waves'
 import ProgressBar from '../components/Cart/ProgressBar'
 import SuccessHeader from '../components/OrderConfirmation/SuccessHeader'
 import OrderInfo from '../components/OrderConfirmation/OrderInfo'
 import ProductDetails from '../components/OrderConfirmation/ProductDetails'
 import OrderSummary from '../components/Cart/OrderSummary'
+import { useAppContext } from '../context/ShopContext'
 
 function OrderConfirmation() {
-  const [orderId, setOrderId] = useState('')
-  const [orderDate, setOrderDate] = useState('')
-
+  const [searchParams] = useSearchParams()
+  const orderIdParam = searchParams.get('orderId')
+  const { products, orders, cartItems: currentCartItems, getAllOrders } = useAppContext()
+  
+  // Fetch latest orders when component mounts
   useEffect(() => {
-    const id = `#AP${new Date().getFullYear()}${String(Math.floor(Math.random()*10000)).padStart(4,'0')}`
-    setOrderId(id)
-    const today = new Date()
-    const formatted = today.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-    setOrderDate(formatted)
-  }, [])
+    if (getAllOrders && orderIdParam) {
+      getAllOrders()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderIdParam])
+  
+  // Find the order from orders state
+  const order = orders.find(o => o._id === orderIdParam)
+  
+  // Get the order date formatted
+  const orderDate = order 
+    ? new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 
-  // Reuse cart payment info format using OrderSummary with fixed values
-  const items = [
-    { label: 'Product Price', price: 15999 },
-    { label: 'Installation Charges', price: 1500 }
-  ]
-  const subtotal = useMemo(() => items.reduce((s, i) => s + i.price, 0), [])
+  // Get cart items from order or current cart
+  const orderCartItems = order?.cartItems || currentCartItems
+
+  // Calculate installation charges based on cart items
+  const installationCharges = useMemo(() => {
+    let totalInstallation = 0
+    for (const itemId in orderCartItems) {
+      const quantity = orderCartItems[itemId]
+      if (!quantity || quantity <= 0) continue
+      
+      // Skip extension items (warranty/maintenance) as they don't need installation
+      if (itemId.startsWith('warranty:') || itemId.startsWith('maintenance:')) continue
+      
+      const product = products.find(p => p._id === itemId)
+      if (product) {
+        // Add installation charge for each product (assuming 1500 per product)
+        totalInstallation += 1500 * quantity
+      }
+    }
+    return totalInstallation
+  }, [orderCartItems, products])
+
+  // Calculate cart total from order or context
+  const cartTotal = order?.amount || 0
+  
+  // Dynamic pricing calculation
+  const subtotal = useMemo(() => cartTotal + installationCharges, [cartTotal, installationCharges])
   const discount = 0
   const gst = Math.round(subtotal * 0.18)
 
@@ -35,8 +67,8 @@ function OrderConfirmation() {
         <SuccessHeader />
 
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 card-hover">
-          <OrderInfo orderId={orderId} orderDate={orderDate} />
-          <ProductDetails />
+          {/* <OrderInfo orderId={orderIdParam || order?._id || 'N/A'} orderDate={orderDate} /> */}
+          <ProductDetails cartItems={orderCartItems} products={products} />
 
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
@@ -48,29 +80,19 @@ function OrderConfirmation() {
             </h2>
             <div className="bg-gray-50 p-6 rounded-xl">
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Product Price</span>
-                  <span className="font-semibold">₹{items[0].price.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Installation Charges</span>
-                  <span className="font-semibold">₹{items[1].price.toLocaleString()}</span>
-                </div>
+               
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Delivery Charges</span>
                   <span className="font-semibold text-green-600">Free</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">GST (18%)</span>
-                  <span className="font-semibold">₹{gst.toLocaleString()}</span>
-                </div>
+            
                 <hr className="border-gray-300" />
                 <div className="flex justify-between items-center text-xl font-bold">
                   <span>Total Amount</span>
-                  <span className="text-sky-600">₹{(subtotal - discount + gst).toLocaleString()}</span>
+                  <span className="text-sky-600">₹{cartTotal.toLocaleString()}</span>
                 </div>
                 <div className="bg-green-100 p-3 rounded-lg">
-                  <p className="text-sm text-green-800 font-medium">Payment Method: Cash on Delivery (COD)</p>
+                  <p className="text-sm text-green-800 font-medium">Payment Method: {order?.paymentMethod === 'cod' ? 'Cash on Delivery (COD)' : order?.paymentMethod || 'Cash on Delivery (COD)'}</p>
                 </div>
               </div>
             </div>

@@ -47,7 +47,7 @@ function Cart() {
           const [type, pid] = productId.split(':')
           const prod = products.find(p => p._id === pid)
           const basePrice = Number(prod?.discountedPrice || prod?.price || 0)
-          const extPrice = type === 'warranty' ? Math.max(499, Math.round(basePrice * 0.10)) : Math.max(399, Math.round(basePrice * 0.08))
+          const extPrice = type === 'warranty' ? 2999 : 999
           itemsArray.push({
             id: productId,
             title: type === 'warranty' ? `1yr Extended Warranty for ${prod?.name || pid}` : `Maintenance for ${prod?.name || pid}`,

@@ -173,8 +173,8 @@ function SingleProduct() {
               {/* Addon selectors (warranty, maintenance) */}
               {(() => {
                 const basePrice = Number(product.discountedPrice || product.price || 0)
-                const warrantyPrice = Math.max(899, Math.round(basePrice * 0.10))
-                const maintenancePrice = Math.max(599, Math.round(basePrice * 0.08))
+                const warrantyPrice = 2999
+                const maintenancePrice = 999
                 return (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <label className={`flex items-center p-4 border rounded-lg cursor-pointer ${warrantySelected ? 'border-green-400 bg-green-50' : 'border-gray-200'}`}>
