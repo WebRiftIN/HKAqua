@@ -27,6 +27,7 @@ export const AppProvider = ({ children }) => {
         }
     })
     const user_Id = user?._id || "";
+    console.log(products);
     
 
     const addToCart = async (itemId) => {
@@ -201,8 +202,7 @@ export const AppProvider = ({ children }) => {
 
     const value = {
         axios, token, setToken, user, setUser, logout, products, cartItems, addToCart,
-        updateCartQuantity, removeFromCart, clearUserCart, addingToCart,user_Id,cartTotal,setCartItems, orders,
-        getAllOrders, fetchCart
+        updateCartQuantity, removeFromCart, clearUserCart, addingToCart,user_Id,cartTotal,setCartItems
     }
     return (
         <AppContext.Provider value={value}>
