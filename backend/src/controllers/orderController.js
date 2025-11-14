@@ -66,7 +66,7 @@ const placeOrder = async (req, res) => {
 const getOrder = async(req,res) =>{
   try {
     const {userId} = req.params;
-    console.log(userId);
+    // console.log(userId);
     
     if(!userId){
       return res.json({success:false,message:"User ID is required"})

@@ -1,4 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import axios from 'axios'
+import React, { useEffect, useMemo, useState } from 'react'
+import { backend } from '../../App'
+import toast from 'react-hot-toast'
 
 function OrderManagement() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -87,6 +90,24 @@ function OrderManagement() {
       trackingNumber: 'TRK123456793'
     }
   ])
+
+  const getOrders = async()=>{
+    try {
+      const {data} = await axios.get(backend+"/api/admin/getAllOrders")
+      console.log(data.orders);
+      
+      if(data.success){
+        // setOrders(data.orders)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  useEffect(()=>{
+    getOrders()
+  },[])
+  
 
   const selectedOrder = useMemo(() => orders.find(o => o.id === selectedOrderId) || null, [orders, selectedOrderId])
 

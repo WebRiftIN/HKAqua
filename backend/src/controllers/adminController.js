@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { Order } from '../models/orderModel.js'
 
 const adminLogin = async (req, res) => {
     try {
@@ -17,4 +18,13 @@ const adminLogin = async (req, res) => {
     }
 }
 
-export {adminLogin}
+const getAllOrders = async(req,res)=>{
+    try {
+        const orders = await Order.find({})
+        return res.json({success:true,orders})
+    } catch (error) {
+        return res.json({success:false,message:"Something went wrong"})
+    }
+}
+
+export {adminLogin,getAllOrders}
