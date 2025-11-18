@@ -117,7 +117,9 @@ export const AppProvider = ({ children }) => {
     const getCartAmount = () => {
         let totalAmount = 0;
         for (const itemId in cartItems) {
-            const quantity = cartItems[itemId];
+            const cartItem = cartItems[itemId];
+            // Handle both old format (number) and new format (object with quantity)
+            const quantity = typeof cartItem === 'object' ? cartItem.quantity : cartItem;
             if (!quantity || quantity <= 0) continue;
 
             // Handle extension items which are stored with a prefix like "warranty:<productId>" or "maintenance:<productId>"
@@ -202,7 +204,8 @@ export const AppProvider = ({ children }) => {
 
     const value = {
         axios, token, setToken, user, setUser, logout, products, cartItems, addToCart,
-        updateCartQuantity, removeFromCart, clearUserCart, addingToCart,user_Id,cartTotal,setCartItems
+        updateCartQuantity, removeFromCart, clearUserCart, addingToCart, user_Id, cartTotal, setCartItems,
+        orders, getAllOrders
     }
     return (
         <AppContext.Provider value={value}>

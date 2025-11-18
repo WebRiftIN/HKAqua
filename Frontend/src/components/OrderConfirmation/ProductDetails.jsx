@@ -6,7 +6,10 @@ function ProductDetails({ cartItems, products }) {
   
   if (cartItems && products) {
     for (const itemId in cartItems) {
-      const quantity = cartItems[itemId]
+      const cartItem = cartItems[itemId]
+      // Handle both old format (number) and new format (object with quantity)
+      const quantity = typeof cartItem === 'object' ? cartItem.quantity : cartItem
+      
       if (!quantity || quantity <= 0) continue
       
       // Skip extension items for the main display

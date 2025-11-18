@@ -5,24 +5,35 @@ import ProgressBar from '../components/Cart/ProgressBar'
 import SuccessHeader from '../components/OrderConfirmation/SuccessHeader'
 import OrderInfo from '../components/OrderConfirmation/OrderInfo'
 import ProductDetails from '../components/OrderConfirmation/ProductDetails'
-import OrderSummary from '../components/Cart/OrderSummary'
 import { useAppContext } from '../context/ShopContext'
 
 function OrderConfirmation() {
   const [searchParams] = useSearchParams()
   const orderIdParam = searchParams.get('orderId')
-  const { products, orders, cartItems: currentCartItems, getAllOrders } = useAppContext()
+  const { products, orders, cartItems: currentCartItems, getAllOrders, cartTotal } = useAppContext()
+  const [loading, setLoading] = useState(true)
   
   // Fetch latest orders when component mounts
   useEffect(() => {
-    if (getAllOrders && orderIdParam) {
-      getAllOrders()
+    const fetchOrderData = async () => {
+      setLoading(true)
+      try {
+        if (getAllOrders) {
+          await getAllOrders()
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error)
+      } finally {
+        // Stop loading after a short delay to ensure state updates
+        setTimeout(() => setLoading(false), 500)
+      }
     }
+    fetchOrderData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderIdParam])
   
   // Find the order from orders state
-  const order = orders.find(o => o._id === orderIdParam)
+  const order = orders?.find(o => o._id === orderIdParam)
   
   // Get the order date formatted
   const orderDate = order 
@@ -36,7 +47,10 @@ function OrderConfirmation() {
   const installationCharges = useMemo(() => {
     let totalInstallation = 0
     for (const itemId in orderCartItems) {
-      const quantity = orderCartItems[itemId]
+      const cartItem = orderCartItems[itemId]
+      // Handle both old format (number) and new format (object with quantity)
+      const quantity = typeof cartItem === 'object' ? cartItem.quantity : cartItem
+      
       if (!quantity || quantity <= 0) continue
       
       // Skip extension items (warranty/maintenance) as they don't need installation
@@ -52,12 +66,23 @@ function OrderConfirmation() {
   }, [orderCartItems, products])
 
   // Calculate cart total from order or context
-  const cartTotal = order?.amount || 0
-  
-  // Dynamic pricing calculation
-  const subtotal = useMemo(() => cartTotal + installationCharges, [cartTotal, installationCharges])
-  const discount = 0
-  const gst = Math.round(subtotal * 0.18)
+  const displayTotal = order?.amount || cartTotal || 0
+
+  if (loading) {
+    return (
+      <>
+        <Waves />
+        <ProgressBar currentStep={3} />
+        <main className="max-w-4xl mx-auto px-4 py-12">
+          <div className="text-center py-16">
+            <div className="water-drop w-24 h-24 mx-auto mb-6 opacity-50 animate-pulse"></div>
+            <h2 className="text-3xl font-bold text-gray-600 mb-4">Processing your order...</h2>
+            <p className="text-gray-500">Please wait</p>
+          </div>
+        </main>
+      </>
+    )
+  }
 
   return (
     <>
@@ -67,7 +92,7 @@ function OrderConfirmation() {
         <SuccessHeader />
 
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 card-hover">
-          {/* <OrderInfo orderId={orderIdParam || order?._id || 'N/A'} orderDate={orderDate} /> */}
+          <OrderInfo orderId={orderIdParam || 'Processing...'} orderDate={orderDate} />
           <ProductDetails cartItems={orderCartItems} products={products} />
 
           <div className="mb-8">
@@ -89,7 +114,7 @@ function OrderConfirmation() {
                 <hr className="border-gray-300" />
                 <div className="flex justify-between items-center text-xl font-bold">
                   <span>Total Amount</span>
-                  <span className="text-sky-600">₹{cartTotal.toLocaleString()}</span>
+                  <span className="text-sky-600">₹{displayTotal.toLocaleString()}</span>
                 </div>
                 <div className="bg-green-100 p-3 rounded-lg">
                   <p className="text-sm text-green-800 font-medium">Payment Method: {order?.paymentMethod === 'cod' ? 'Cash on Delivery (COD)' : order?.paymentMethod || 'Cash on Delivery (COD)'}</p>

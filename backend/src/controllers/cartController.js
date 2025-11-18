@@ -25,21 +25,47 @@ import { Product } from "../models/productModel.js"
 const addToCart = async(req,res) =>{
     try {
         const {userId,itemId} = req.body;
-        // console.log(userId);
         
         const userData = await User.findById(userId)
         let cartData = userData.cartData
-        const productData = await Product.findById(itemId)
-        if(!productData){
-            return res.json({success:false,message:"product not found"})
+        
+        // Check if it's an addon item (warranty or maintenance)
+        let itemName = '';
+        let isAddon = false;
+        
+        if (itemId.startsWith('warranty:') || itemId.startsWith('maintenance:')) {
+            isAddon = true;
+            const [type, productId] = itemId.split(':');
+            const productData = await Product.findById(productId);
+            if (!productData) {
+                return res.json({success:false,message:"Product not found for addon"});
+            }
+            itemName = type === 'warranty' 
+                ? `Extended Warranty for ${productData.name}` 
+                : `Annual Maintenance for ${productData.name}`;
+        } else {
+            // Regular product
+            const productData = await Product.findById(itemId);
+            if (!productData) {
+                return res.json({success:false,message:"Product not found"});
+            }
+            itemName = productData.name;
         }
     
         if(cartData[itemId]){
-            cartData[itemId].quantity+=1;
-        }else{
+            if (typeof cartData[itemId] === 'object') {
+                cartData[itemId].quantity += 1;
+            } else {
+                // Convert old format to new format
+                cartData[itemId] = {
+                    quantity: cartData[itemId] + 1,
+                    name: itemName
+                };
+            }
+        } else {
             cartData[itemId] = {
                 quantity: 1,
-                name: productData.name,
+                name: itemName,
             };
         }
     
@@ -78,7 +104,14 @@ const updateQuantity = async (req, res) => {
         if (quantity <= 0) {
             delete cartData[itemId]
         } else {
-            cartData[itemId] = quantity
+            // Check if cart item is an object (new structure) or number (old structure)
+            if (typeof cartData[itemId] === 'object' && cartData[itemId] !== null) {
+                // New structure: {quantity: X, name: "..."}
+                cartData[itemId].quantity = quantity
+            } else {
+                // Old structure or simple number
+                cartData[itemId] = quantity
+            }
         }
 
         await User.findByIdAndUpdate(userId, { cartData })

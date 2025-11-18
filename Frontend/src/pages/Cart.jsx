@@ -4,6 +4,7 @@ import CartItem from '../components/Cart/CartItem'
 import OrderSummary from '../components/Cart/OrderSummary'
 import Waves from '../components/Waves'
 import { useAppContext } from '../context/ShopContext'
+import toast from 'react-hot-toast'
 
 function Cart() {
   const { products, cartItems, user, updateCartQuantity, removeFromCart, clearUserCart } = useAppContext()
@@ -17,7 +18,10 @@ function Cart() {
     if (products.length > 0 && cartItems && Object.keys(cartItems).length > 0) {
       const itemsArray = []
 
-      Object.entries(cartItems).forEach(([productId, quantity]) => {
+      Object.entries(cartItems).forEach(([productId, cartItem]) => {
+        // Handle both old format (number) and new format (object with quantity)
+        const quantity = typeof cartItem === 'object' ? cartItem.quantity : cartItem
+        
         const product = products.find(p => p._id === productId)
         if (product) {
           itemsArray.push({
@@ -98,9 +102,24 @@ function Cart() {
 
   // ✅ Update quantity both in UI and backend
   const updateQuantity = async (id, qty) => {
+    if (!user?._id) {
+      toast.error('Please login to update cart')
+      return
+    }
     const clamped = Math.max(1, Math.min(10, qty || 1))
+    // Optimistically update UI
     setItems(prev => prev.map(it => (it.id === id ? { ...it, qty: clamped } : it)))
-    await updateCartQuantity(user._id, id, clamped)
+    // Update backend
+    try {
+      await updateCartQuantity(user._id, id, clamped)
+    } catch (error) {
+      console.error('Failed to update quantity:', error)
+      // Revert on error by refetching
+      const item = items.find(it => it.id === id)
+      if (item) {
+        setItems(prev => prev.map(it => (it.id === id ? { ...it, qty: item.qty } : it)))
+      }
+    }
   }
 
   const increase = async (id) => {

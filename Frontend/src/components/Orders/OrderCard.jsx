@@ -68,7 +68,7 @@ function OrderCard({ order, onCancelOrder, onGetSupport }) {
         {/* Product Info */}
         <div className="lg:col-span-2">
           <div className="flex items-start space-x-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center floating">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center">
               <svg className="w-10 h-10 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
@@ -79,7 +79,6 @@ function OrderCard({ order, onCancelOrder, onGetSupport }) {
               <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
                 <p><span className="font-medium">Model:</span> {order.product.model}</p>
                 <p><span className="font-medium">Quantity:</span> {order.product.quantity}</p>
-                <p><span className="font-medium">Color:</span> {order.product.color}</p>
                 <p><span className="font-medium">Warranty:</span> {order.product.warranty}</p>
               </div>
             </div>
@@ -102,29 +101,17 @@ function OrderCard({ order, onCancelOrder, onGetSupport }) {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Installation:</span>
-              <span className="font-medium">
-                {order.status === 'cancelled' ? (
-                  <span className="line-through">₹{order.pricing.installation.toLocaleString()}</span>
-                ) : (
-                  `₹${order.pricing.installation.toLocaleString()}`
-                )}
-              </span>
+              <span className="font-medium text-green-600">Free</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">GST:</span>
-              <span className="font-medium">
-                {order.status === 'cancelled' ? (
-                  <span className="line-through">₹{order.pricing.gst.toLocaleString()}</span>
-                ) : (
-                  `₹${order.pricing.gst.toLocaleString()}`
-                )}
-              </span>
+              <span className="text-gray-600">Delivery:</span>
+              <span className="font-medium text-green-600">Free</span>
             </div>
             <hr className="border-gray-300" />
             <div className="flex justify-between font-bold text-lg">
               <span>{order.status === 'cancelled' ? 'Refunded:' : 'Total:'}</span>
               <span className={getTotalColor(order.status)}>
-                ₹{order.pricing.total.toLocaleString()}
+                ₹{order.pricing.productPrice.toLocaleString()}
               </span>
             </div>
           </div>

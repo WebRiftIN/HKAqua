@@ -17,17 +17,23 @@ function MyOrders() {
     if (getAllOrders) {
       getAllOrders()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Transform orders from database format to display format
   const transformedOrders = useMemo(() => {
+    if (!orders || !Array.isArray(orders)) return []
+    
     return orders.map(order => {
       // Get products from cartItems
       const orderProducts = []
       let totalInstallation = 0
       
       for (const itemId in order.cartItems) {
-        const quantity = order.cartItems[itemId]
+        const cartItem = order.cartItems[itemId]
+        // Handle both old format (number) and new format (object with quantity)
+        const quantity = typeof cartItem === 'object' ? cartItem.quantity : cartItem
+        
         if (!quantity || quantity <= 0) continue
         
         // Skip extension items for the main display
@@ -103,7 +109,7 @@ function MyOrders() {
     const transitOrders = transformedOrders.filter(o => o.status === 'shipped' || o.status === 'processing').length
     const totalSpent = transformedOrders
       .filter(o => o.status !== 'cancelled')
-      .reduce((sum, order) => sum + order.pricing.total, 0)
+      .reduce((sum, order) => sum + order.pricing.productPrice, 0)
     
     return { totalOrders, deliveredOrders, transitOrders, totalSpent }
   }, [transformedOrders])
