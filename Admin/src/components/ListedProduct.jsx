@@ -1,4 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import axios from 'axios';
+import { backend } from "../App";
+import toast from "react-hot-toast";
 
 const initialProducts = [
   {
@@ -14,65 +17,65 @@ const initialProducts = [
     image: null
   },
   {
-                id: 2,
-                name: "hK aquafresh UV Filter Pro",
-                category: "uv-filter",
-                categoryText: "UV Water Filter",
-                discountedPrice: 8999,
-                originalPrice: 11999,
-                description: "UV sterilization technology that kills 99.9% of bacteria and viruses.",
-                specifications: ["UV Sterilization", "6 Liters Storage", "18W Power", "1 Year Warranty"],
-                status: { new: false, limited: false, out: false, inactive: false },
-                image: null
-            },
-            {
-                id: 3,
-                name: "hK aquafresh UF Standard",
-                category: "uf-purifier",
-                categoryText: "UF Water Purifier",
-                discountedPrice: 6999,
-                originalPrice: 8999,
-                description: "Ultra-filtration technology for removing bacteria and suspended particles.",
-                specifications: ["UF Technology", "5 Liters Storage", "No Power Required", "1 Year Warranty"],
-                status: { new: false, limited: true, out: false, inactive: false },
-                image: null
-            },
-            {
-                id: 4,
-                name: "hK aquafresh Alkaline Plus",
-                category: "alkaline",
-                categoryText: "Alkaline Water Purifier",
-                discountedPrice: 22999,
-                originalPrice: 25999,
-                description: "Alkaline water purifier that maintains optimal pH levels for better health.",
-                specifications: ["Alkaline Technology", "10 Liters Storage", "30W Power", "3 Years Warranty"],
-                status: { new: true, limited: false, out: false, inactive: false },
-                image: null
-            },
-            {
-                id: 5,
-                name: "hK aquafresh Gravity Filter",
-                category: "gravity-based",
-                categoryText: "Gravity Based Filter",
-                discountedPrice: 3999,
-                originalPrice: 4999,
-                description: "Non-electric gravity-based water filter for areas with power issues.",
-                specifications: ["Gravity Based", "20 Liters Storage", "No Power Required", "6 Months Warranty"],
-                status: { new: false, limited: false, out: false, inactive: false },
-                image: null
-            },
-            {
-                id: 6,
-                name: "hK aquafresh Commercial RO",
-                category: "commercial",
-                categoryText: "Commercial RO System",
-                discountedPrice: 45999,
-                originalPrice: 52999,
-                description: "High-capacity commercial RO system for offices and restaurants.",
-                specifications: ["Commercial Grade", "50 Liters/Hour", "100W Power", "5 Years Warranty"],
-                status: { new: false, limited: true, out: false, inactive: false },
-                image: null
-            }
+    id: 2,
+    name: "hK aquafresh UV Filter Pro",
+    category: "uv-filter",
+    categoryText: "UV Water Filter",
+    discountedPrice: 8999,
+    originalPrice: 11999,
+    description: "UV sterilization technology that kills 99.9% of bacteria and viruses.",
+    specifications: ["UV Sterilization", "6 Liters Storage", "18W Power", "1 Year Warranty"],
+    status: { new: false, limited: false, out: false, inactive: false },
+    image: null
+  },
+  {
+    id: 3,
+    name: "hK aquafresh UF Standard",
+    category: "uf-purifier",
+    categoryText: "UF Water Purifier",
+    discountedPrice: 6999,
+    originalPrice: 8999,
+    description: "Ultra-filtration technology for removing bacteria and suspended particles.",
+    specifications: ["UF Technology", "5 Liters Storage", "No Power Required", "1 Year Warranty"],
+    status: { new: false, limited: true, out: false, inactive: false },
+    image: null
+  },
+  {
+    id: 4,
+    name: "hK aquafresh Alkaline Plus",
+    category: "alkaline",
+    categoryText: "Alkaline Water Purifier",
+    discountedPrice: 22999,
+    originalPrice: 25999,
+    description: "Alkaline water purifier that maintains optimal pH levels for better health.",
+    specifications: ["Alkaline Technology", "10 Liters Storage", "30W Power", "3 Years Warranty"],
+    status: { new: true, limited: false, out: false, inactive: false },
+    image: null
+  },
+  {
+    id: 5,
+    name: "hK aquafresh Gravity Filter",
+    category: "gravity-based",
+    categoryText: "Gravity Based Filter",
+    discountedPrice: 3999,
+    originalPrice: 4999,
+    description: "Non-electric gravity-based water filter for areas with power issues.",
+    specifications: ["Gravity Based", "20 Liters Storage", "No Power Required", "6 Months Warranty"],
+    status: { new: false, limited: false, out: false, inactive: false },
+    image: null
+  },
+  {
+    id: 6,
+    name: "hK aquafresh Commercial RO",
+    category: "commercial",
+    categoryText: "Commercial RO System",
+    discountedPrice: 45999,
+    originalPrice: 52999,
+    description: "High-capacity commercial RO system for offices and restaurants.",
+    specifications: ["Commercial Grade", "50 Liters/Hour", "100W Power", "5 Years Warranty"],
+    status: { new: false, limited: true, out: false, inactive: false },
+    image: null
+  }
   // ...other products (copy from your JS array)
 ];
 
@@ -85,7 +88,8 @@ function getStatusBadge(status) {
 }
 
 export default function ListedProduct() {
-  const [products, setProducts] = useState(initialProducts);
+
+  const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [form, setForm] = useState({
@@ -101,6 +105,19 @@ export default function ListedProduct() {
   });
   const [preview, setPreview] = useState(null);
   const imageInputRef = useRef();
+
+  const listProducts = async () => {
+    try {
+      const { data } = await axios.get(backend+'/api/product/allproducts')
+      if (data.success) {
+        setProducts(data.products)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+// console.log(products);
 
   // Helper to reset form
   const resetForm = () => {
@@ -209,6 +226,9 @@ export default function ListedProduct() {
     }
     handleShowList();
   };
+  useEffect(()=>{
+    listProducts()
+  },[])
 
   // Stats
   const totalProducts = products.length;
@@ -244,7 +264,7 @@ export default function ListedProduct() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-blue-100">
                     <svg className="w-5 h-5 text-water-blue" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/>
+                      <path d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -257,7 +277,7 @@ export default function ListedProduct() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-green-100">
                     <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -270,7 +290,7 @@ export default function ListedProduct() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-orange-100">
                     <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                      <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -283,7 +303,7 @@ export default function ListedProduct() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-red-100">
                     <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -316,7 +336,7 @@ export default function ListedProduct() {
                               <img src={product.image} alt={product.name} className="w-10 h-10 object-cover rounded" />
                             ) : (
                               <svg className="w-6 h-6 text-water-blue" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                               </svg>
                             )}
                           </div>
@@ -385,7 +405,7 @@ export default function ListedProduct() {
                     {!preview ? (
                       <div id="uploadContent">
                         <svg className="mx-auto h-12 w-12 text-water-blue mb-3" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                         <p className="text-sm font-medium text-gray-700 mb-1">Click to upload product image</p>
                         <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>

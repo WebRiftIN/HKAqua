@@ -11,12 +11,29 @@ function Header() {
   const accountBtnRef = useRef(null)
 
   // Calculate product-only items in cart (exclude warranty/maintenance add-ons)
+  // const cartItemCount = cartItems && Object.keys(cartItems).length > 0
+  //   ? Object.entries(cartItems).reduce((total, [itemId, quantity]) => {
+  //       if (!itemId || itemId.startsWith?.('warranty:') || itemId.startsWith?.('maintenance:')) return total
+  //       return total + (quantity || 0)
+  //     }, 0)
+  //   : 0
   const cartItemCount = cartItems && Object.keys(cartItems).length > 0
-    ? Object.entries(cartItems).reduce((total, [itemId, quantity]) => {
-        if (!itemId || itemId.startsWith?.('warranty:') || itemId.startsWith?.('maintenance:')) return total
-        return total + (quantity || 0)
-      }, 0)
-    : 0
+  ? Object.entries(cartItems).reduce((total, [itemId, item]) => {
+      
+      // ignore empty or unwanted keys
+      if (!itemId || itemId.startsWith?.('warranty:') || itemId.startsWith?.('maintenance:')) 
+        return total;
+
+      // if item is old format → number
+      if (typeof item === "number") {
+        return total + item;
+      }
+
+      // new format → object { quantity, name }
+      return total + (item.quantity || 0);
+
+    }, 0)
+  : 0;
 
   return (
     <>
