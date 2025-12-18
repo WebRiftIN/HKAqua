@@ -111,9 +111,12 @@ export default function ListedProduct() {
       const { data } = await axios.get(backend+'/api/product/allproducts')
       if (data.success) {
         setProducts(data.products)
+      } else {
+        toast.error(data.message || 'Failed to load products')
       }
     } catch (error) {
-      toast.error(error.message)
+      console.error('Error loading products:', error)
+      toast.error('Failed to connect to server')
     }
   }
 
@@ -150,25 +153,51 @@ export default function ListedProduct() {
 
   // Edit product
   const handleEdit = (id) => {
-    const product = products.find((p) => p.id === id);
-    if (!product) return;
+    const product = products.find((p) => p._id === id);
+    if (!product) {
+      toast.error('Product not found');
+      return;
+    }
+    console.log('Editing product:', product);
     setEditId(id);
     setForm({
-      ...product,
-      specifications: product.specifications.slice(),
-      status: { ...product.status }
+      name: product.name || "",
+      category: product.category || "",
+      categoryText: product.categoryText || "",
+      discountedPrice: product.discountedPrice || "",
+      originalPrice: product.originalPrice || "",
+      description: product.description || "",
+      specifications: product.specifications || ["", "", "", ""],
+      status: {
+        new: product.isNewProduct || false,
+        limited: product.isLimited || false,
+        out: product.isOutOfStock || false,
+        inactive: product.isInactive || false
+      },
+      image: null
     });
     setPreview(product.image || null);
     setShowForm(true);
+    console.log('Edit mode activated with ID:', id);
   };
 
   // Delete product
-  const handleDelete = (id) => {
-    const product = products.find((p) => p.id === id);
+  const handleDelete = async (id) => {
+    const product = products.find((p) => p._id === id);
     if (!product) return;
     if (window.confirm(`⚠️ Are you sure you want to delete "${product.name}"?\n\nThis action cannot be undone.`)) {
-      setProducts(products.filter((p) => p.id !== id));
-      alert(`🗑️ Product "${product.name}" has been deleted successfully!`);
+      try {
+        const { data } = await axios.delete(`${backend}/api/product/delete/${id}`);
+        if (data.success) {
+          setProducts(products.filter((p) => p._id !== id));
+          toast.success(`🗑️ Product "${product.name}" has been deleted successfully!`);
+        } else {
+          toast.error(data.message || 'Failed to delete product');
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        toast.error(error.response?.data?.message || 'Error deleting product');
+      }
     }
   };
 
@@ -212,19 +241,60 @@ export default function ListedProduct() {
   };
 
   // Save product (add or update)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editId) {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === editId ? { ...p, ...form } : p))
-      );
-      alert("✅ Product updated successfully!");
-    } else {
-      const newId = products.length ? Math.max(...products.map((p) => p.id)) + 1 : 1;
-      setProducts((prev) => [...prev, { ...form, id: newId }]);
-      alert("🎉 Product added successfully!");
+    
+    console.log('Submitting form. Edit mode:', !!editId, 'Edit ID:', editId);
+
+    const formData = new FormData();
+    formData.append('name', form.name);
+    formData.append('category', form.category);
+    formData.append('categoryText', form.categoryText);
+    formData.append('discountedPrice', form.discountedPrice);
+    formData.append('originalPrice', form.originalPrice);
+    formData.append('description', form.description);
+    formData.append('specifications', JSON.stringify(form.specifications.filter(spec => spec.trim() !== '')));
+    formData.append('isNewProduct', form.status.new);
+    formData.append('isLimited', form.status.limited);
+    formData.append('isOutOfStock', form.status.out);
+    formData.append('isInactive', form.status.inactive);
+    if (imageInputRef.current?.files[0]) {
+      formData.append('image', imageInputRef.current.files[0]);
     }
-    handleShowList();
+
+    try {
+      if (editId) {
+        // Update existing product
+        console.log('Updating product with ID:', editId);
+        const { data } = await axios.put(`${backend}/api/product/update/${editId}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (data.success) {
+          alert('✅ Product has been updated successfully!');
+          toast.success("✅ Product updated successfully!");
+          await listProducts();
+          handleShowList();
+        } else {
+          toast.error(data.message || 'Failed to update product');
+        }
+      } else {
+        // Add new product
+        console.log('Adding new product');
+        const { data } = await axios.post(`${backend}/api/product/addProduct`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (data.success) {
+          toast.success("🎉 Product added successfully!");
+          await listProducts();
+          handleShowList();
+        } else {
+          toast.error(data.message || 'Failed to add product');
+        }
+      }
+    } catch (error) {
+      console.error('Error saving product:', error);
+      toast.error(error.response?.data?.message || 'Error saving product');
+    }
   };
   useEffect(()=>{
     listProducts()
@@ -233,10 +303,10 @@ export default function ListedProduct() {
   // Stats
   const totalProducts = products.length;
   const activeProducts = products.filter(
-    (p) => !p.status.out && !p.status.inactive
+    (p) => !p.isOutOfStock && !p.isInactive
   ).length;
-  const lowStock = products.filter((p) => p.status.limited).length;
-  const outOfStock = products.filter((p) => p.status.out).length;
+  const lowStock = products.filter((p) => p.isLimited).length;
+  const outOfStock = products.filter((p) => p.isOutOfStock).length;
 
   return (
     <div className="min-h-full">
@@ -328,48 +398,57 @@ export default function ListedProduct() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {products.map((product) => (
-                      <tr key={product.id} className="table-row">
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
-                            {product.image ? (
-                              <img src={product.image} alt={product.name} className="w-10 h-10 object-cover rounded" />
-                            ) : (
-                              <svg className="w-6 h-6 text-water-blue" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                              </svg>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="text-sm text-gray-600">{product.categoryText}</div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="text-sm font-bold text-water-blue">₹{product.discountedPrice.toLocaleString()}</div>
-                          <div className="text-xs text-gray-400 line-through">₹{product.originalPrice.toLocaleString()}</div>
-                        </td>
-                        <td className="px-4 py-3">{getStatusBadge(product.status)}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleEdit(product.id)}
-                              className="bg-water-blue hover:bg-deep-water text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDelete(product.id)}
-                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {products.map((product) => {
+                      const productStatus = {
+                        new: product.isNewProduct || false,
+                        limited: product.isLimited || false,
+                        out: product.isOutOfStock || false,
+                        inactive: product.isInactive || false
+                      };
+                      
+                      return (
+                        <tr key={product._id} className="table-row">
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
+                              {product.image ? (
+                                <img src={product.image} alt={product.name} className="w-10 h-10 object-cover rounded" />
+                              ) : (
+                                <svg className="w-6 h-6 text-water-blue" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                </svg>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="text-sm text-gray-600">{product.category || product.categoryText || 'N/A'}</div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="text-sm font-bold text-water-blue">₹{product.discountedPrice?.toLocaleString() || 0}</div>
+                            <div className="text-xs text-gray-400 line-through">₹{product.originalPrice?.toLocaleString() || 0}</div>
+                          </td>
+                          <td className="px-4 py-3">{getStatusBadge(productStatus)}</td>
+                          <td className="px-4 py-3">
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => handleEdit(product._id)}
+                                className="bg-water-blue hover:bg-deep-water text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDelete(product._id)}
+                                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -394,6 +473,13 @@ export default function ListedProduct() {
             </div>
             {/* Product Form */}
             <div className="bg-white rounded-xl shadow-lg p-6 border border-blue-100">
+              {editId && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <strong>✏️ Edit Mode:</strong> Editing product ID: {editId}
+                  </p>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Image Upload Section */}
                 <div>
@@ -585,7 +671,7 @@ export default function ListedProduct() {
                 <div className="flex justify-end pt-4">
                   <button
                     type="submit"
-                    className="bg-gradient-to-r from-water-blue to-water-gradient hover:from-deep-water hover:to-water-blue text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="bg-gradient-to-r from-sky-600 to-sky-900 hover:from-deep-water hover:to-water-blue text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
                     <span>{editId ? "Update Product" : "Add Product to Inventory"}</span>
                   </button>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import Waves from '../components/Waves'
 import ProgressBar from '../components/Cart/ProgressBar'
 import SuccessHeader from '../components/OrderConfirmation/SuccessHeader'
@@ -9,6 +9,7 @@ import { useAppContext } from '../context/ShopContext'
 
 function OrderConfirmation() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const orderIdParam = searchParams.get('orderId')
   const { products, orders, cartItems: currentCartItems, getAllOrders, cartTotal } = useAppContext()
   const [loading, setLoading] = useState(true)
@@ -124,7 +125,9 @@ function OrderConfirmation() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="water-gradient text-white font-bold py-4 px-8 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
+            <button 
+              onClick={() => navigate('/my-orders')}
+              className="water-gradient text-white font-bold py-4 px-8 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
               <span className="flex items-center justify-center space-x-2">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>

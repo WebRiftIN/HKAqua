@@ -104,7 +104,7 @@ export const AppProvider = ({ children }) => {
 
     const fetchProducts = async () => {
         try {
-            const { data } = await axios.get('/api/product/allProducts')
+            const { data } = await axios.get('/api/product/allproducts')
 
             if (data.success) {
                 setProducts(data.products)
