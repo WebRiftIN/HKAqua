@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { Order } from '../models/orderModel.js'
+import { Contact } from '../models/contactModel.js'
 
 const adminLogin = async (req, res) => {
     try {
@@ -20,11 +21,20 @@ const adminLogin = async (req, res) => {
 
 const getAllOrders = async(req,res)=>{
     try {
-        const orders = await Order.find({})
+        const orders = await Order.find({}).sort({ createdAt: -1 })
         return res.json({success:true,orders})
     } catch (error) {
         return res.json({success:false,message:"Something went wrong"})
     }
 }
 
-export {adminLogin,getAllOrders}
+const getAllContacts = async(req,res)=>{
+    try {
+        const contacts = await Contact.find({}).sort({createdAt:-1})
+        return res.json({success:true,contacts})
+    } catch (error) {
+        return res.json({success:false,message:"Something went wrong"})
+    }
+}
+
+export {adminLogin,getAllOrders,getAllContacts}

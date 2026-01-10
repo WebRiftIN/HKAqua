@@ -9,7 +9,7 @@ import ProductListed from './Pages/ProductList';
 import OrderReceivedPage from './Pages/OrderReceived';
 import ServicesPage from './Pages/ServicesPage';
 
-export const backend = import.meta.env.VITE_BASE_URL;
+export const backend = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
   return (

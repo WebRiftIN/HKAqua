@@ -1,4 +1,8 @@
 import React, { useState, useMemo } from 'react';
+import { useEffect } from 'react';
+import { backend } from '../../App'
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const initialMessages = [
   {
@@ -116,7 +120,7 @@ function formatDate(dateString) {
 }
 
 const ContactList = () => {
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState([]);
   const [priorityFilter, setPriorityFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selected, setSelected] = useState(null);
@@ -143,6 +147,20 @@ const ContactList = () => {
     }
   };
 
+  const listContacts = async () => {
+    try {
+      const { data } = await axios.get(backend+'/api/admin/getAllContacts')      
+      if (data.success) {
+        setMessages(data.contacts)
+      } else {
+        toast.error(data.message || 'Failed to load constacts')
+      }
+    } catch (error) {
+      console.error('Error loading contacts:', error)
+      toast.error('Failed to connect to server')
+    }
+  }
+
   const handleReply = (id, response) => {
     setMessages(msgs =>
       msgs.map(m =>
@@ -159,6 +177,10 @@ const ContactList = () => {
       )
     );
   };
+
+  useEffect(()=>{
+    listContacts()
+  },[])
 
   return (
     <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -271,7 +293,7 @@ const ContactList = () => {
                     <td className="px-4 py-3">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center mr-3">
-                          <span className="text-water-blue font-semibold text-sm">{message.name.charAt(0)}</span>
+                          <span className="text-water-blue font-semibold text-sm">{message.name?.charAt(0) || '?'}</span>
                         </div>
                         <div>
                           <div className="text-sm font-medium text-gray-900">{message.name}</div>
@@ -281,17 +303,17 @@ const ContactList = () => {
                     </td>
                     <td className="px-4 py-3">
                       <div className="text-sm font-medium text-gray-900">{message.subject}</div>
-                      <div className="text-xs text-gray-500">{message.message.substring(0, 50)}...</div>
+                      <div className="text-xs text-gray-500">{message.message ? `${message.message.substring(0, 50)}...` : ''}</div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${priorityColors[message.priority]}`}>{message.priority.charAt(0).toUpperCase() + message.priority.slice(1)} Priority</span>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${priorityColors[message.priority] || 'bg-gray-100 text-gray-800'}`}>{message.priority ? (message.priority.charAt(0).toUpperCase() + message.priority.slice(1)) + ' Priority' : 'Priority: N/A'}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-sm text-gray-900">{formatDate(message.date)}</div>
-                      <div className="text-xs text-gray-500">{message.time}</div>
+                      <div className="text-sm text-gray-900">{message.date ? formatDate(message.date) : '—'}</div>
+                      <div className="text-xs text-gray-500">{message.time || '—'}</div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[message.status]}`}>{message.status.charAt(0).toUpperCase() + message.status.slice(1)}</span>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[message.status] || 'bg-gray-100 text-gray-800'}`}>{message.status ? (message.status.charAt(0).toUpperCase() + message.status.slice(1)) : 'Unknown'}</span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex space-x-2">
@@ -343,15 +365,15 @@ const ContactList = () => {
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-2xl font-bold text-gray-900">{selected.subject}</h2>
                     <div className="flex items-center space-x-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${priorityColors[selected.priority]}`}>{selected.priority.charAt(0).toUpperCase() + selected.priority.slice(1)} Priority</span>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[selected.status]}`}>{selected.status.charAt(0).toUpperCase() + selected.status.slice(1)}</span>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${priorityColors[selected?.priority] || 'bg-gray-100 text-gray-800'}`}>{selected?.priority ? (selected.priority.charAt(0).toUpperCase() + selected.priority.slice(1)) + ' Priority' : 'Priority: N/A'}</span>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[selected?.status] || 'bg-gray-100 text-gray-800'}`}>{selected?.status ? (selected.status.charAt(0).toUpperCase() + selected.status.slice(1)) : 'Unknown'}</span>
                     </div>
                   </div>
                   <div className="flex items-center text-sm text-gray-500">
                     <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    Received on {formatDate(selected.date)} at {selected.time}
+                    Received on {selected?.date ? formatDate(selected.date) : '—'} at {selected?.time || '—'}
                   </div>
                 </div>
                 <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
@@ -363,7 +385,7 @@ const ContactList = () => {
                       </svg>
                       <div>
                         <p className="text-sm text-gray-600">Full Name</p>
-                        <p className="font-semibold text-gray-900">{selected.name}</p>
+                        <p className="font-semibold text-gray-900">{selected?.name || '—'}</p>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -372,7 +394,7 @@ const ContactList = () => {
                       </svg>
                       <div>
                         <p className="text-sm text-gray-600">Email Address</p>
-                        <p className="font-semibold text-gray-900">{selected.email}</p>
+                        <p className="font-semibold text-gray-900">{selected?.email || '—'}</p>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -381,7 +403,7 @@ const ContactList = () => {
                       </svg>
                       <div>
                         <p className="text-sm text-gray-600">Phone Number</p>
-                        <p className="font-semibold text-gray-900">{selected.phone}</p>
+                        <p className="font-semibold text-gray-900">{selected?.phone || '—'}</p>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -390,7 +412,7 @@ const ContactList = () => {
                       </svg>
                       <div>
                         <p className="text-sm text-gray-600">Message ID</p>
-                        <p className="font-semibold text-gray-900">#MSG-{String(selected.id).padStart(4, '0')}</p>
+                        <p className="font-semibold text-gray-900">#MSG-{selected?.id ? String(selected.id).padStart(4, '0') : '----'}</p>
                       </div>
                     </div>
                   </div>
@@ -398,16 +420,16 @@ const ContactList = () => {
                 <div className="bg-gray-50 rounded-xl p-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Message Content</h3>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <p className="text-gray-700 leading-relaxed">{selected.message}</p>
+                    <p className="text-gray-700 leading-relaxed">{selected?.message || ''}</p>
                   </div>
                 </div>
                 <div className="bg-green-50 rounded-xl p-4 border border-green-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Send Response</h3>
                   <form
                     className="space-y-4"
-                    onSubmit={e => {
+                      onSubmit={e => {
                       e.preventDefault();
-                      handleReply(selected.id, e.target.response.value);
+                      if (selected?.id) handleReply(selected.id, e.target.response.value);
                     }}
                   >
                     <div>
@@ -418,7 +440,7 @@ const ContactList = () => {
                       <button type="submit" className="bg-water-blue hover:bg-deep-water text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
                         Send Response
                       </button>
-                      <button type="button" onClick={() => handleResolve(selected.id)} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
+                      <button type="button" onClick={() => selected?.id && handleResolve(selected.id)} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
                         Mark as Resolved
                       </button>
                     </div>
@@ -431,13 +453,13 @@ const ContactList = () => {
                 <div className="bg-white rounded-xl p-4 border border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                   <div className="space-y-3">
-                    <a href={`tel:${selected.phone}`} className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm flex items-center justify-center">
+                    <a href={`tel:${selected?.phone || ''}`} className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm flex items-center justify-center">
                       <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                       </svg>
                       Call Customer
                     </a>
-                    <a href={`mailto:${selected.email}`} className="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm flex items-center justify-center">
+                    <a href={`mailto:${selected?.email || ''}`} className="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm flex items-center justify-center">
                       <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                       </svg>
@@ -448,7 +470,7 @@ const ContactList = () => {
                 {/* Danger Zone */}
                 <div className="bg-red-50 rounded-xl p-4 border border-red-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Danger Zone</h3>
-                  <button onClick={() => handleDelete(selected.id)} className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
+                  <button onClick={() => selected?.id && handleDelete(selected.id)} className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
                     Delete Message
                   </button>
                   <p className="text-xs text-red-600 mt-2">This action cannot be undone</p>
