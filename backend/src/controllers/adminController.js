@@ -21,7 +21,7 @@ const adminLogin = async (req, res) => {
 
 const getAllOrders = async(req,res)=>{
     try {
-        const orders = await Order.find({}).sort({ createdAt: -1 })
+        const orders = await Order.find({})
         return res.json({success:true,orders})
     } catch (error) {
         return res.json({success:false,message:"Something went wrong"})
