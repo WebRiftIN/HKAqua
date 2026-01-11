@@ -3,10 +3,14 @@ import React from 'react'
 function OrderFilters({ activeFilter, onFilterChange }) {
   const filters = [
     { key: 'all', label: 'All Orders' },
-    { key: 'delivered', label: 'Delivered' },
-    { key: 'shipped', label: 'Shipped' },
+    { key: 'pending', label: 'Pending' },
+    { key: 'confirmed', label: 'Confirmed' },
     { key: 'processing', label: 'Processing' },
-    { key: 'cancelled', label: 'Cancelled' }
+    { key: 'shipped', label: 'Shipped' },
+    { key: 'out-for-delivery', label: 'Out for Delivery' },
+    { key: 'delivered', label: 'Delivered' },
+    { key: 'cancelled', label: 'Cancelled' },
+    { key: 'returned', label: 'Returned' }
   ]
 
   return (

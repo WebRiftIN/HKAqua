@@ -50,17 +50,8 @@ function MyOrders() {
       // Use the first product as the main product for display
       const mainProduct = orderProducts[0] || {}
 
-      // Map status from database to display format
-      let status = 'processing'
-      if (order.status === 'Order Placed' || order.status === 'Processing') {
-        status = 'processing'
-      } else if (order.status === 'Shipped' || order.status === 'Out for Delivery') {
-        status = 'shipped'
-      } else if (order.status === 'Delivered') {
-        status = 'delivered'
-      } else if (order.status === 'Cancelled') {
-        status = 'cancelled'
-      }
+      // Use the raw status from database (same as admin panel)
+      let status = order.status || 'processing'
 
       // Calculate pricing breakdown
       const installationCharge = totalInstallation
@@ -106,11 +97,11 @@ function MyOrders() {
   const stats = useMemo(() => {
     const totalOrders = transformedOrders.length
     const deliveredOrders = transformedOrders.filter(o => o.status === 'delivered').length
-    const transitOrders = transformedOrders.filter(o => o.status === 'shipped' || o.status === 'processing').length
+    const transitOrders = transformedOrders.filter(o => ['processing', 'shipped', 'out-for-delivery'].includes(o.status)).length
     const totalSpent = transformedOrders
       .filter(o => o.status !== 'cancelled')
       .reduce((sum, order) => sum + order.pricing.productPrice, 0)
-    
+
     return { totalOrders, deliveredOrders, transitOrders, totalSpent }
   }, [transformedOrders])
 

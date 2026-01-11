@@ -4,22 +4,30 @@ import OrderSummary from '../Cart/OrderSummary'
 function OrderCard({ order, onCancelOrder, onGetSupport }) {
   const getStatusBadge = (status) => {
     const statusClasses = {
-      delivered: 'status-delivered text-white px-4 py-2 rounded-full font-semibold text-sm',
-      shipped: 'status-shipped text-white px-4 py-2 rounded-full font-semibold text-sm',
-      processing: 'status-processing text-white px-4 py-2 rounded-full font-semibold text-sm',
-      cancelled: 'status-cancelled text-white px-4 py-2 rounded-full font-semibold text-sm'
+      pending: 'bg-orange-500 text-white px-4 py-2 rounded-full font-semibold text-sm',
+      confirmed: 'bg-blue-500 text-white px-4 py-2 rounded-full font-semibold text-sm',
+      processing: 'bg-purple-500 text-white px-4 py-2 rounded-full font-semibold text-sm',
+      shipped: 'bg-indigo-500 text-white px-4 py-2 rounded-full font-semibold text-sm',
+      'out-for-delivery': 'bg-yellow-500 text-white px-4 py-2 rounded-full font-semibold text-sm',
+      delivered: 'bg-green-500 text-white px-4 py-2 rounded-full font-semibold text-sm',
+      cancelled: 'bg-red-500 text-white px-4 py-2 rounded-full font-semibold text-sm',
+      returned: 'bg-gray-500 text-white px-4 py-2 rounded-full font-semibold text-sm'
     }
-    
+
     const statusLabels = {
-      delivered: 'Delivered',
-      shipped: 'Out for Delivery',
+      pending: 'Pending',
+      confirmed: 'Confirmed',
       processing: 'Processing',
-      cancelled: 'Cancelled'
+      shipped: 'Shipped',
+      'out-for-delivery': 'Out for Delivery',
+      delivered: 'Delivered',
+      cancelled: 'Cancelled',
+      returned: 'Returned'
     }
-    
+
     return (
-      <span className={statusClasses[status]}>
-        {statusLabels[status]}
+      <span className={statusClasses[status] || 'bg-gray-500 text-white px-4 py-2 rounded-full font-semibold text-sm'}>
+        {statusLabels[status] || status}
       </span>
     )
   }
@@ -29,6 +37,7 @@ function OrderCard({ order, onCancelOrder, onGetSupport }) {
       delivered: 'bg-green-50',
       shipped: 'bg-blue-50',
       processing: 'bg-orange-50',
+      order_placed: 'bg-yellow-50',
       cancelled: 'bg-red-50'
     }
     return bgClasses[status] || 'bg-gray-50'
@@ -39,12 +48,13 @@ function OrderCard({ order, onCancelOrder, onGetSupport }) {
       delivered: 'text-green-600',
       shipped: 'text-sky-600',
       processing: 'text-orange-600',
+      order_placed: 'text-yellow-600',
       cancelled: 'text-red-600'
     }
     return colorClasses[status] || 'text-gray-600'
   }
 
-  const canCancel = order.status === 'processing'
+  const canCancel = order.rawOrder && (order.rawOrder.status === 'pending' || order.rawOrder.status === 'processing')
 
   return (
     <div className="order-item bg-white rounded-2xl shadow-xl p-8 card-hover order-fade-in" data-status={order.status}>

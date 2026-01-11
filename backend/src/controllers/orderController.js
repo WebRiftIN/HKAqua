@@ -1,5 +1,6 @@
 import { Order } from "../models/orderModel.js";
-import { User } from "../models/userModel.js"
+import { User } from "../models/userModel.js";
+import { Product } from "../models/productModel.js";
 
 const placeOrder = async (req, res) => {
   try {
@@ -32,10 +33,54 @@ const placeOrder = async (req, res) => {
       return res.json({ success: false, message: "All fields are required" });
     }
 
+    // ✅ Prepare items with product details
+    const items = [];
+    for (const [itemId, itemData] of Object.entries(cartItems)) {
+      let productId = itemId;
+      let quantity = itemData.quantity || itemData;
+      let name = itemData.name || '';
+      let productPrice = 0;
+      let image = '';
+
+      // Handle addons (warranty or maintenance)
+      if (itemId.startsWith('warranty:') || itemId.startsWith('maintenance:')) {
+        const [type, prodId] = itemId.split(':');
+        productId = prodId;
+        const product = await Product.findById(prodId);
+        if (product) {
+          productPrice = type === 'warranty' ? 500 : 1000; // Example prices, adjust as needed
+          image = product.image;
+          if (!name) {
+            name = type === 'warranty'
+              ? `Extended Warranty for ${product.name}`
+              : `Annual Maintenance for ${product.name}`;
+          }
+        }
+      } else {
+        // Regular product
+        const product = await Product.findById(itemId);
+        if (product) {
+          productPrice = product.discountedPrice;
+          image = product.image;
+          if (!name) {
+            name = product.name;
+          }
+        }
+      }
+
+      items.push({
+        productId,
+        quantity,
+        productPrice,
+        name,
+        image,
+      });
+    }
+
     // ✅ Create order
     const order = await Order.create({
       userId,
-      items: cartItems,
+      items,
       amount,
       firstName,
       lastName,
@@ -66,18 +111,21 @@ const placeOrder = async (req, res) => {
 const getOrder = async(req,res) =>{
   try {
     const {userId} = req.params;
-    // console.log(userId);
-    
+    console.log("Fetching orders for userId:", userId);
+
     if(!userId){
       return res.json({success:false,message:"User ID is required"})
     }
-    const orders = await Order.find({userId}).sort({createdAt:-1})
+    const orders = await Order.find({userId}).sort({createdAt:-1}).populate('items.productId', 'name image discountedPrice originalPrice');
+    console.log("Orders before population:", JSON.stringify(orders, null, 2));
     if(!orders || orders.length===0){
       return res.json({success:false,message:"No orders found"})
     }
+    console.log("Orders after population:", JSON.stringify(orders, null, 2));
     return res.json({success:true,orders})
   } catch (error) {
-    return res.json({success:true,message:error.message})
+    console.log("Error in getOrder:", error);
+    return res.json({success:false,message:error.message})
   }
 }
 
