@@ -1,0 +1,55 @@
+const mongoose = require('mongoose');
+require('dotenv').config();
+
+const orderSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  items: [{
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    name: String,
+    quantity: Number,
+    productPrice: Number,
+    image: String
+  }],
+  amount: Number,
+  firstName: String,
+  lastName: String,
+  email: String,
+  phoneNumber: Number,
+  streetAddress: String,
+  city: String,
+  state: String,
+  pinCode: Number,
+  landMark: String,
+  paymentMethod: String,
+  status: { type: String, default: 'Order Placed' },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+const Order = mongoose.model('Order', orderSchema);
+
+async function checkOrders() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('Connected to MongoDB');
+
+    const orders = await Order.find({});
+    console.log('Total orders:', orders.length);
+
+    orders.forEach((order, index) => {
+      console.log(`Order ${index + 1}:`);
+      console.log('  ID:', order._id);
+      console.log('  Items length:', order.items ? order.items.length : 'undefined');
+      if (order.items && order.items.length > 0) {
+        console.log('  First item:', order.items[0]);
+      }
+      console.log('---');
+    });
+
+    await mongoose.disconnect();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+checkOrders();

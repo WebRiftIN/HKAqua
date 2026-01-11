@@ -20,7 +20,7 @@ const adminLogin = async (req, res) => {
 
 const getAllOrders = async(req,res)=>{
     try {
-        const orders = await Order.find({})
+        const orders = await Order.find({}).populate('items.productId', 'name')
         return res.json({success:true,orders})
     } catch (error) {
         return res.json({success:false,message:"Something went wrong"})

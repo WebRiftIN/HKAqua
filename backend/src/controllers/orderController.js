@@ -35,7 +35,7 @@ const placeOrder = async (req, res) => {
     // ✅ Create order
     const order = await Order.create({
       userId,
-      cartItems,
+      items: cartItems,
       amount,
       firstName,
       lastName,

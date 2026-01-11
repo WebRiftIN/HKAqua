@@ -95,9 +95,15 @@ function OrderManagement() {
     try {
       const {data} = await axios.get(backend+"/api/admin/getAllOrders")
       console.log(data.orders);
-      
+
       if(data.success){
-        setOrders(data.orders)
+        setOrders(data.orders.map(order => {
+          const newProductName = (order.productName && order.productName !== 'Multiple Items') ? order.productName : order.product?.name || order.items?.[0]?.name || 'Product';
+          return {
+            ...order,
+            productName: newProductName
+          };
+        }))
       }
     } catch (error) {
       toast.error(error.message)
@@ -170,6 +176,26 @@ function OrderManagement() {
         toast.success('Delivery information updated successfully!');
       } else {
         toast.error(data.message || 'Failed to update delivery info');
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+
+  const deleteOrder = async (orderId) => {
+    if (!window.confirm(`⚠️ Are you sure you want to delete this order?\n\nThis action cannot be undone and will remove the order from both admin and customer views.`)) {
+      return;
+    }
+    try {
+      const { data } = await axios.delete(`${backend}/api/admin/deleteOrder`, {
+        data: { orderId }
+      });
+      if (data.success) {
+        setOrders(prev => prev.filter(o => (o._id || o.id) !== orderId));
+        toast.success('Order deleted successfully!');
+        showOrderList(); // Go back to list if in details view
+      } else {
+        toast.error(data.message || 'Failed to delete order');
       }
     } catch (error) {
       toast.error(error.message);
@@ -305,31 +331,24 @@ function OrderManagement() {
                     {orders.map(order => {
                       const orderId = order._id || order.id;
                       const totalAmount = order.amount || (order.discountedPrice * order.quantity);
+                      const firstName = order.firstName || '';
+                      const lastName = order.lastName || '';
                       return (
                         <tr key={orderId} className="table-row">
                           <td className="px-4 py-3 whitespace-nowrap">
-                            <div className="text-sm font-medium text-sky-600">{orderId}</div>
+                            <div className="text-sm font-medium text-sky-600">{"HK-" + orderId.substring(0,5)}</div>
                             <div className="text-xs text-gray-500">{formatDate(order.createdAt || order.orderDate)}</div>
                           </td>
                           <td className="px-4 py-3">
-                            <div className="flex items-center">
-                              <div className="w-10 h-10 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                <svg className="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                </svg>
-                              </div>
-                              <div>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {order.items?.[0]?.name || order.productName || 'Multiple Items'}
-                                </div>
-                              </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {order.items?.[0]?.productId?.name || order.items?.[0]?.name || order.productName || 'Product'}
                             </div>
                           </td>
                           <td className="px-4 py-3">
                             <div className="text-sm font-medium text-gray-900">
-                              {order.address?.firstName} {order.address?.lastName || order.customerName}
+                              {`${firstName} ${lastName}`.trim() || order.customerName || 'Customer'}
                             </div>
-                            <div className="text-xs text-gray-500">{order.address?.phone || order.customerPhone}</div>
+                            <div className="text-xs text-gray-500">{order.phoneNumber || order.customerPhone}</div>
                           </td>
                           <td className="px-4 py-3">
                             <div className="text-sm font-medium text-gray-900">{order.items?.reduce((acc, item) => acc + item.quantity, 0) || order.quantity || 1}</div>
@@ -344,6 +363,7 @@ function OrderManagement() {
                           <td className="px-4 py-3">
                             <div className="flex space-x-2">
                               <button onClick={() => showOrderDetails(orderId)} className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">View</button>
+                              <button onClick={() => deleteOrder(orderId)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">Delete</button>
                             </div>
                           </td>
                         </tr>
@@ -373,7 +393,7 @@ function OrderManagement() {
                 {/* Left Column - Product and Customer Info */}
                 <div className="space-y-6">
                   <div className="border-b border-gray-200 pb-4">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Order {selectedOrder._id || selectedOrder.id}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Order {"HK-" + (selectedOrder._id || selectedOrder.id).substring(0,5)}</h2>
                     <div className="flex items-center space-x-4">
                       {getStatusBadge(selectedOrder.status)}
                       <span className="text-sm text-gray-500">Ordered on {formatDate(selectedOrder.createdAt || selectedOrder.orderDate)}</span>
@@ -396,6 +416,7 @@ function OrderManagement() {
                             <div key={index} className={`flex items-center space-x-4 p-3 rounded-lg ${isAddon ? 'bg-blue-50 border border-blue-200' : 'bg-white border border-gray-200'}`}>
                               <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
                                 {item.image ? (
+                                    // Format order ID as HK-xxxxx
                                   <img src={item.image} alt={item.name} className="w-14 h-14 object-cover rounded-lg" />
                                 ) : (
                                   <svg className="w-8 h-8 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
@@ -447,21 +468,21 @@ function OrderManagement() {
                     <div className="space-y-3">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Full Name</p>
-                        <p className="font-medium text-gray-900">{selectedOrder.address?.firstName} {selectedOrder.address?.lastName}</p>
+                        <p className="font-medium text-gray-900">{selectedOrder.firstName} {selectedOrder.lastName}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Email</p>
-                        <p className="text-gray-700">{selectedOrder.address?.email}</p>
+                        <p className="text-gray-700">{selectedOrder.email}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Phone</p>
-                        <p className="text-gray-700">{selectedOrder.address?.phone}</p>
+                        <p className="text-gray-700">{selectedOrder.phoneNumber}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Address</p>
                         <p className="text-gray-700">
-                          {selectedOrder.address?.street}<br />
-                          {selectedOrder.address?.city}, {selectedOrder.address?.state} {selectedOrder.address?.zipCode}
+                          {selectedOrder.streetAddress}<br />
+                          {selectedOrder.city}, {selectedOrder.state} {selectedOrder.pinCode}
                         </p>
                       </div>
                     </div>
@@ -476,9 +497,9 @@ function OrderManagement() {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Current Status</label>
-                        <select 
-                          value={selectedOrder.status} 
-                          onChange={(e) => updateStatus(selectedOrder._id || selectedOrder.id, e.target.value)} 
+                        <select
+                          value={selectedOrder.status}
+                          onChange={(e) => setOrders(prev => prev.map(o => (o._id === selectedOrder._id ? { ...o, status: e.target.value } : o)))}
                           className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200"
                         >
                           <option value="pending">Order Pending</option>
@@ -491,6 +512,14 @@ function OrderManagement() {
                           <option value="returned">Returned</option>
                         </select>
                       </div>
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => updateStatus(selectedOrder._id || selectedOrder.id, selectedOrder.status)}
+                          className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
+                        >
+                          Save Status
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -500,22 +529,30 @@ function OrderManagement() {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Expected Delivery Date</label>
-                        <input 
-                          type="date" 
-                          value={selectedOrder.deliveryDate || ''} 
-                          onChange={(e) => updateDeliveryInfo(selectedOrder._id || selectedOrder.id, e.target.value, selectedOrder.trackingNumber || '')} 
-                          className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200" 
+                        <input
+                          type="date"
+                          value={selectedOrder.deliveryDate || ''}
+                          onChange={(e) => setOrders(prev => prev.map(o => (o._id === selectedOrder._id ? { ...o, deliveryDate: e.target.value } : o)))}
+                          className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Tracking Number</label>
-                        <input 
-                          type="text" 
-                          value={selectedOrder.trackingNumber || ''} 
-                          onChange={(e) => updateDeliveryInfo(selectedOrder._id || selectedOrder.id, selectedOrder.deliveryDate || '', e.target.value)} 
-                          className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200" 
-                          placeholder="Enter tracking number" 
+                        <input
+                          type="text"
+                          value={selectedOrder.trackingNumber || ''}
+                          onChange={(e) => setOrders(prev => prev.map(o => (o._id === selectedOrder._id ? { ...o, trackingNumber: e.target.value } : o)))}
+                          className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200"
+                          placeholder="Enter tracking number"
                         />
+                      </div>
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => updateDeliveryInfo(selectedOrder._id || selectedOrder.id, selectedOrder.deliveryDate || '', selectedOrder.trackingNumber || '')}
+                          className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
+                        >
+                          Save Delivery Info
+                        </button>
                       </div>
                     </div>
                   </div>

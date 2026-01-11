@@ -5,10 +5,29 @@ const orderSchema = new Schema({
         type: String,
         required:true
     },
-    cartItems:{
-        type:Object,
-        required:true
-    },
+    items:[{
+        productId:{
+            type:Schema.Types.ObjectId,
+            ref:'Product',
+            required:true
+        },
+        quantity:{
+            type:Number,
+            required:true
+        },
+        productPrice:{
+            type:Number,
+            required:true
+        },
+        name:{
+            type:String,
+            required:true
+        },
+        image:{
+            type:String,
+            required:false
+        }
+    }],
     amount:{
         type:Number,
         required:true
