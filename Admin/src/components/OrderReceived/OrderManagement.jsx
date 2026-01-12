@@ -363,7 +363,7 @@ function OrderManagement() {
                           <td className="px-4 py-3">
                             <div className="flex space-x-2">
                               <button onClick={() => showOrderDetails(orderId)} className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">View</button>
-                              <button onClick={() => deleteOrder(orderId)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">Delete</button>
+                              <button onClick={() => deleteOrder(order._id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">Delete</button>
                             </div>
                           </td>
                         </tr>

@@ -183,7 +183,9 @@ export default function ListedProduct() {
 
   // Delete product
   const handleDelete = async (id) => {
-    const product = products.find((p) => p._id === id);
+    const product = await products.find((p) => p._id === id);
+    console.log(id);
+    
     if (!product) return;
     if (window.confirm(`⚠️ Are you sure you want to delete "${product.name}"?\n\nThis action cannot be undone.`)) {
       try {
