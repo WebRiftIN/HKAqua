@@ -37,4 +37,17 @@ const getAllContacts = async(req,res)=>{
     }
 }
 
-export {adminLogin,getAllOrders,getAllContacts}
+const deleteOrder = async(req,res)=>{
+    const orderId = req.params
+    try {
+        const order = await Order.findByIdAndDelete(orderId)
+        if(!order){
+            return res.json({success:false,message:"Order not found"})
+        }
+        return res.json({success:true,message:"Order deleted successfully"})
+    } catch (error) {
+        return res.json({success:false,message:"Something went wrong"})
+    }
+}
+
+export {adminLogin,getAllOrders,getAllContacts,deleteOrder}

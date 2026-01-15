@@ -187,7 +187,7 @@ function OrderManagement() {
       return;
     }
     try {
-      const { data } = await axios.delete(`${backend}/api/admin/deleteOrder`, {
+      const { data } = await axios.delete(`${backend}/api/admin/deleteOrder/${orderId}`, {
         data: { orderId }
       });
       if (data.success) {
