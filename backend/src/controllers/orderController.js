@@ -129,4 +129,68 @@ const getOrder = async(req,res) =>{
   }
 }
 
-export { placeOrder,getOrder};
+const cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { userId } = req.body; // Assuming userId is sent in body for authentication
+
+    if (!orderId) {
+      return res.json({ success: false, message: "Order ID is required" });
+    }
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.json({ success: false, message: "Order not found" });
+    }
+
+    // Check if the order belongs to the user
+    if (order.userId !== userId) {
+      return res.json({ success: false, message: "Unauthorized to cancel this order" });
+    }
+
+    // Check if order can be cancelled (only pending or processing)
+    if (order.status !== 'pending' && order.status !== 'processing' && order.status !== 'Order Placed') {
+      return res.json({ success: false, message: "Order cannot be cancelled at this stage" });
+    }
+
+    // Update order status and cancelled date
+    order.status = 'cancelled';
+    order.cancelledDate = new Date();
+    order.cancelledBy = 'user';
+    await order.save();
+
+    return res.json({ success: true, message: "Order cancelled successfully" });
+  } catch (error) {
+    console.error("Error in cancelOrder:", error);
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+// Update order status (admin)
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    if (!orderId || !status) {
+      return res.json({ success: false, message: "Order ID and status are required" });
+    }
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.json({ success: false, message: "Order not found" });
+    }
+    order.status = status;
+    if (status === 'cancelled') {
+      order.cancelledDate = new Date();
+      order.cancelledBy = 'admin';
+    }
+    await order.save();
+    return res.json({ success: true, message: "Order status updated", order });
+  } catch (error) {
+    console.error("Error in updateOrderStatus:", error);
+    // Always return a valid JSON response
+    res.status(500).json({ success: false, message: error.message || 'Internal server error' });
+  }
+};
+
+export { placeOrder, getOrder, cancelOrder, updateOrderStatus };

@@ -8,88 +8,7 @@ function OrderManagement() {
   const [view, setView] = useState('list') // 'list' | 'details'
   const [selectedOrderId, setSelectedOrderId] = useState(null)
 
-  const [orders, setOrders] = useState([
-    {
-      id: 'ORD-2024-001',
-      productName: 'AquaPure RO Premium 7-Stage',
-      productImage: null,
-      customerName: 'Rajesh Kumar',
-      customerPhone: '+91 9876543210',
-      address: '123 MG Road, Bangalore, Karnataka 560001',
-      quantity: 1,
-      discountedPrice: 15999,
-      originalPrice: 18999,
-      paymentType: 'Online Payment',
-      orderDate: '2024-01-15',
-      deliveryDate: '2024-01-22',
-      status: 'confirmed',
-      trackingNumber: 'TRK123456789'
-    },
-    {
-      id: 'ORD-2024-002',
-      productName: 'AquaPure UV Filter Pro',
-      productImage: null,
-      customerName: 'Priya Sharma',
-      customerPhone: '+91 9876543211',
-      address: '456 Park Street, Mumbai, Maharashtra 400001',
-      quantity: 2,
-      discountedPrice: 8999,
-      originalPrice: 11999,
-      paymentType: 'Cash on Delivery',
-      orderDate: '2024-01-16',
-      deliveryDate: '2024-01-23',
-      status: 'shipped',
-      trackingNumber: 'TRK123456790'
-    },
-    {
-      id: 'ORD-2024-003',
-      productName: 'AquaPure UF Standard',
-      productImage: null,
-      customerName: 'Amit Patel',
-      customerPhone: '+91 9876543212',
-      address: '789 Civil Lines, Delhi, Delhi 110001',
-      quantity: 1,
-      discountedPrice: 6999,
-      originalPrice: 8999,
-      paymentType: 'UPI Payment',
-      orderDate: '2024-01-17',
-      deliveryDate: '2024-01-24',
-      status: 'pending',
-      trackingNumber: 'TRK123456791'
-    },
-    {
-      id: 'ORD-2024-004',
-      productName: 'AquaPure Alkaline Plus',
-      productImage: null,
-      customerName: 'Sunita Reddy',
-      customerPhone: '+91 9876543213',
-      address: '321 Jubilee Hills, Hyderabad, Telangana 500001',
-      quantity: 1,
-      discountedPrice: 22999,
-      originalPrice: 25999,
-      paymentType: 'Credit Card',
-      orderDate: '2024-01-18',
-      deliveryDate: '2024-01-25',
-      status: 'delivered',
-      trackingNumber: 'TRK123456792'
-    },
-    {
-      id: 'ORD-2024-005',
-      productName: 'AquaPure Commercial RO',
-      productImage: null,
-      customerName: 'Vikram Singh',
-      customerPhone: '+91 9876543214',
-      address: '654 Sector 15, Gurgaon, Haryana 122001',
-      quantity: 1,
-      discountedPrice: 45999,
-      originalPrice: 52999,
-      paymentType: 'Bank Transfer',
-      orderDate: '2024-01-19',
-      deliveryDate: '2024-01-26',
-      status: 'cancelled',
-      trackingNumber: 'TRK123456793'
-    }
-  ])
+  const [orders, setOrders] = useState([])
 
   const getOrders = async () => {
     try {
@@ -148,19 +67,23 @@ function OrderManagement() {
   }
 
   const updateStatus = async (orderId, newStatus) => {
+    // Update order status in DB and local state
     try {
-      const { data } = await axios.put(`${backend}/api/admin/updateOrderStatus`, {
-        orderId,
-        status: newStatus
+      const response = await fetch(`${backend}/api/order/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
       });
+      const data = await response.json();
       if (data.success) {
-        setOrders(prev => prev.map(o => (o._id === orderId ? { ...o, status: newStatus } : o)));
-        toast.success('Order status updated successfully!');
+        setOrders(orders => orders.map(o => o._id === orderId ? { ...o, status: newStatus } : o));
       } else {
-        toast.error(data.message || 'Failed to update status');
+        window.alert(data.message || 'Failed to update status');
       }
-    } catch (error) {
-      toast.error(error.message);
+    } catch (err) {
+      window.alert('Error updating status: ' + err.message);
     }
   }
 
@@ -204,11 +127,25 @@ function OrderManagement() {
 
   const sendNotification = () => window.alert('📱 Status update notification sent to customer')
   const printInvoice = () => window.alert('🖨️ Invoice is being prepared for printing')
-  const cancelOrder = (orderId) => {
-    if (window.confirm(`⚠️ Are you sure you want to cancel order ${orderId}?\n\nThis action cannot be undone.`)) {
-      updateStatus(orderId, 'cancelled')
-      window.alert(`❌ Order ${orderId} has been cancelled`)
-      showOrderList()
+  // Cancel order via backend and update local state
+  const cancelOrder = async (orderId) => {
+    try {
+      const response = await fetch(`${backend}/api/order/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'cancelled' }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setOrders(orders => orders.map(o => o._id === orderId ? { ...o, status: 'cancelled' } : o));
+        window.alert('Order cancelled successfully');
+      } else {
+        window.alert(data.message || 'Failed to cancel order');
+      }
+    } catch (err) {
+      window.alert('Error cancelling order: ' + err.message);
     }
   }
 
@@ -492,36 +429,58 @@ function OrderManagement() {
                 {/* Right Column - Status & Delivery Management */}
                 <div className="space-y-6">
                   {/* Update Order Status */}
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Update Order Status</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Current Status</label>
-                        <select
-                          value={selectedOrder.status}
-                          onChange={(e) => setOrders(prev => prev.map(o => (o._id === selectedOrder._id ? { ...o, status: e.target.value } : o)))}
-                          className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200"
-                        >
-                          <option value="pending">Order Pending</option>
-                          <option value="confirmed">Order Confirmed</option>
-                          <option value="processing">Processing</option>
-                          <option value="shipped">Shipped</option>
-                          <option value="out-for-delivery">Out for Delivery</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="cancelled">Cancelled</option>
-                          <option value="returned">Returned</option>
-                        </select>
-                      </div>
-                      <div className="flex justify-end">
-                        <button
-                          onClick={() => updateStatus(selectedOrder._id || selectedOrder.id, selectedOrder.status)}
-                          className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
-                        >
-                          Save Status
-                        </button>
+                  {(selectedOrder.status !== 'cancelled' || selectedOrder.cancelledBy !== 'user') ? (
+                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Update Order Status</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Current Status</label>
+                          <select
+                            value={selectedOrder.status}
+                            onChange={(e) => setOrders(prev => prev.map(o => (o._id === selectedOrder._id ? { ...o, status: e.target.value } : o)))}
+                            className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200"
+                          >
+                            <option value="pending">Order Pending</option>
+                            <option value="confirmed">Order Confirmed</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="out-for-delivery">Out for Delivery</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="returned">Returned</option>
+                          </select>
+                        </div>
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => updateStatus(selectedOrder._id || selectedOrder.id, selectedOrder.status)}
+                            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
+                          >
+                            Save Status
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="bg-red-50 rounded-xl p-4 border border-red-200">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Current Status</label>
+                          <div className="flex items-center space-x-2">
+                            {getStatusBadge(selectedOrder.status)}
+                            <span className="text-sm text-gray-600">
+                              {selectedOrder.cancelledDate && `Cancelled on ${formatDate(selectedOrder.cancelledDate)}`}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="bg-red-100 border border-red-300 rounded-lg p-3">
+                          <p className="text-sm text-red-800">
+                            <strong>Order Cancelled:</strong> This order has been cancelled and cannot be modified further.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Delivery Management */}
                   <div className="bg-orange-50 rounded-xl p-4 border border-orange-200">
@@ -536,19 +495,9 @@ function OrderManagement() {
                           className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200"
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Tracking Number</label>
-                        <input
-                          type="text"
-                          value={selectedOrder.trackingNumber || ''}
-                          onChange={(e) => setOrders(prev => prev.map(o => (o._id === selectedOrder._id ? { ...o, trackingNumber: e.target.value } : o)))}
-                          className="form-input w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none transition-all duration-200"
-                          placeholder="Enter tracking number"
-                        />
-                      </div>
                       <div className="flex justify-end">
                         <button
-                          onClick={() => updateDeliveryInfo(selectedOrder._id || selectedOrder.id, selectedOrder.deliveryDate || '', selectedOrder.trackingNumber || '')}
+                          onClick={() => updateDeliveryInfo(selectedOrder._id || selectedOrder.id, selectedOrder.deliveryDate || '')}
                           className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
                         >
                           Save Delivery Info
@@ -566,5 +515,4 @@ function OrderManagement() {
   )
 }
 
-export default OrderManagement
-
+export default OrderManagement;

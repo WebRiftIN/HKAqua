@@ -75,11 +75,19 @@ const orderSchema = new Schema({
     status:{
         type:String,
         required:false,
-        default:'Order Placed'
+        default:'pending'
     },
     expectedDelivery:{
         type:Date,
         required:false
+    },
+    cancelledDate:{
+        type:Date,
+        required:false
+    },
+    cancelledBy: {
+        type: String, // 'admin' or 'user'
+        required: false
     }
 },{timestamps:true})
 

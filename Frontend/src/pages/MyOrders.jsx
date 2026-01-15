@@ -66,7 +66,7 @@ function MyOrders() {
         placedDate: new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
         deliveredDate: order.status === 'Delivered' && order.updatedAt ? new Date(order.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : null,
         cancelledDate: order.status === 'Cancelled' && order.updatedAt ? new Date(order.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : null,
-        expectedDeliveryDate: order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' }) : null,
+        expectedDelivery: order.expectedDelivery ? new Date(order.expectedDelivery) : null,
         product: {
           name: mainProduct.name || 'Product',
           model: mainProduct.category || 'N/A',
@@ -107,11 +107,11 @@ function MyOrders() {
 
   // Action handlers
   const handleCancelOrder = (orderId) => {
-    if (window.confirm(`Are you sure you want to cancel order ${orderId}?`)) {
-      showNotification(`Order ${orderId} has been cancelled.`, 'warning')
-      // In a real app, this would update the order status via API
-      console.log(`Cancelling order: ${orderId}`)
+    // Refresh orders list after cancellation
+    if (getAllOrders) {
+      getAllOrders()
     }
+    showNotification(`Order ${orderId} has been cancelled.`, 'warning')
   }
 
   const handleGetSupport = (orderId) => {
