@@ -91,12 +91,12 @@ function OrderManagement() {
     }
   ])
 
-  const getOrders = async()=>{
+  const getOrders = async () => {
     try {
-      const {data} = await axios.get(backend+"/api/admin/getAllOrders")
+      const { data } = await axios.get(backend + "/api/admin/getAllOrders")
       console.log(data.orders);
 
-      if(data.success){
+      if (data.success) {
         setOrders(data.orders.map(order => {
           const newProductName = (order.productName && order.productName !== 'Multiple Items') ? order.productName : order.product?.name || order.items?.[0]?.name || 'Product';
           return {
@@ -110,10 +110,10 @@ function OrderManagement() {
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getOrders()
-  },[])
-  
+  }, [])
+
 
   const selectedOrder = useMemo(() => {
     const order = orders.find(o => (o._id || o.id) === selectedOrderId);
@@ -183,22 +183,22 @@ function OrderManagement() {
   }
 
   const deleteOrder = async (orderId) => {
-    if (!window.confirm(`⚠️ Are you sure you want to delete this order?\n\nThis action cannot be undone and will remove the order from both admin and customer views.`)) {
-      return;
-    }
+    if (!window.confirm(
+      `⚠️ Are you sure you want to delete this order?\n\nThis action cannot be undone and will remove the order from both admin and customer views.`
+    )) return;
+
     try {
-      const { data } = await axios.delete(`${backend}/api/admin/deleteOrder/${orderId}`, {
-        data: { orderId }
-      });
+      const { data } = await axios.delete(`${backend}/api/admin/deleteOrder/${orderId}`)
+
       if (data.success) {
-        setOrders(prev => prev.filter(o => (o._id || o.id) !== orderId));
+        setOrders(prev => prev.filter(o => o._id !== orderId));
         toast.success('Order deleted successfully!');
-        showOrderList(); // Go back to list if in details view
+        showOrderList();
       } else {
         toast.error(data.message || 'Failed to delete order');
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   }
 
@@ -249,7 +249,7 @@ function OrderManagement() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-blue-100">
                     <svg className="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.293 2.293c-.63.63-.184 1.707.707 1.707H19M7 13v4a2 2 0 002 2h8a2 2 0 002-2v-4m-8 6h4"/>
+                      <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.293 2.293c-.63.63-.184 1.707.707 1.707H19M7 13v4a2 2 0 002 2h8a2 2 0 002-2v-4m-8 6h4" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -262,7 +262,7 @@ function OrderManagement() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-orange-100">
                     <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -275,7 +275,7 @@ function OrderManagement() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-blue-100">
                     <svg className="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M5 13l4 4L19 7"/>
+                      <path d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -288,7 +288,7 @@ function OrderManagement() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-purple-100">
                     <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+                      <path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -301,7 +301,7 @@ function OrderManagement() {
                 <div className="flex items-center">
                   <div className="p-2 rounded-lg bg-green-100">
                     <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -336,7 +336,7 @@ function OrderManagement() {
                       return (
                         <tr key={orderId} className="table-row">
                           <td className="px-4 py-3 whitespace-nowrap">
-                            <div className="text-sm font-medium text-sky-600">{"HK-" + orderId.substring(0,5)}</div>
+                            <div className="text-sm font-medium text-sky-600">{"HK-" + orderId.substring(0, 5)}</div>
                             <div className="text-xs text-gray-500">{formatDate(order.createdAt || order.orderDate)}</div>
                           </td>
                           <td className="px-4 py-3">
@@ -393,7 +393,7 @@ function OrderManagement() {
                 {/* Left Column - Product and Customer Info */}
                 <div className="space-y-6">
                   <div className="border-b border-gray-200 pb-4">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Order {"HK-" + (selectedOrder._id || selectedOrder.id).substring(0,5)}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Order {"HK-" + (selectedOrder._id || selectedOrder.id).substring(0, 5)}</h2>
                     <div className="flex items-center space-x-4">
                       {getStatusBadge(selectedOrder.status)}
                       <span className="text-sm text-gray-500">Ordered on {formatDate(selectedOrder.createdAt || selectedOrder.orderDate)}</span>
@@ -408,22 +408,22 @@ function OrderManagement() {
                       {selectedOrder.items && selectedOrder.items.length > 0 ? (
                         selectedOrder.items.map((item, index) => {
                           // Check if it's an addon (warranty or maintenance)
-                          const isAddon = item.name?.toLowerCase().includes('warranty') || 
-                                         item.name?.toLowerCase().includes('maintenance') ||
-                                         item.name?.toLowerCase().includes('installation');
-                          
+                          const isAddon = item.name?.toLowerCase().includes('warranty') ||
+                            item.name?.toLowerCase().includes('maintenance') ||
+                            item.name?.toLowerCase().includes('installation');
+
                           return (
                             <div key={index} className={`flex items-center space-x-4 p-3 rounded-lg ${isAddon ? 'bg-blue-50 border border-blue-200' : 'bg-white border border-gray-200'}`}>
                               <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
                                 {item.image ? (
-                                    // Format order ID as HK-xxxxx
+                                  // Format order ID as HK-xxxxx
                                   <img src={item.image} alt={item.name} className="w-14 h-14 object-cover rounded-lg" />
                                 ) : (
                                   <svg className="w-8 h-8 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
                                     {isAddon ? (
-                                      <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                      <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     ) : (
-                                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                     )}
                                   </svg>
                                 )}
@@ -447,7 +447,7 @@ function OrderManagement() {
                         <div className="flex items-center space-x-4 p-3 bg-white rounded-lg border border-gray-200">
                           <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
                             <svg className="w-8 h-8 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                             </svg>
                           </div>
                           <div className="flex-1">

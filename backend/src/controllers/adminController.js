@@ -19,14 +19,14 @@ const adminLogin = async (req, res) => {
     }
 }
 
-const getAllOrders = async(req,res)=>{
+const getAllOrders = async (req, res) => {
     try {
-        const orders = await Order.find({})
-        return res.json({success:true,orders})
+        const orders = await Order.find({}).sort({ createdAt: -1 });
+        return res.json({ success: true, orders });
     } catch (error) {
-        return res.json({success:false,message:"Something went wrong"})
+        return res.status(500).json({ success: false, message: "Something went wrong" });
     }
-}
+};
 
 const getAllContacts = async(req,res)=>{
     try {
@@ -38,7 +38,7 @@ const getAllContacts = async(req,res)=>{
 }
 
 const deleteOrder = async(req,res)=>{
-    const orderId = req.params
+    const {orderId} = req.params
     try {
         const order = await Order.findByIdAndDelete(orderId)
         if(!order){
@@ -50,4 +50,17 @@ const deleteOrder = async(req,res)=>{
     }
 }
 
-export {adminLogin,getAllOrders,getAllContacts,deleteOrder}
+const deleteContact = async(req,res)=>{
+    const {contactId} = req.params
+    try {
+        const contact = await Contact.findByIdAndDelete(contactId)
+        if(!contact){
+            return res.json({success:false,message:"message not found"})
+        }
+        return res.json({success:true,message:"message deleted successfully"})
+    } catch (error) {
+        return res.json({success:false,message:"Something went wrong"})
+    }
+}
+
+export {adminLogin,getAllOrders,getAllContacts,deleteOrder,deleteContact}

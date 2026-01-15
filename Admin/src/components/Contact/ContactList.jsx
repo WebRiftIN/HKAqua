@@ -140,16 +140,31 @@ const ContactList = () => {
   const highPriority = messages.filter(m => m.priority === 'high').length;
 
   // Actions
-  const handleDelete = id => {
-    if (window.confirm('Are you sure you want to delete this message?')) {
-      setMessages(msgs => msgs.filter(m => m.id !== id));
-      setSelected(sel => (sel && sel.id === id ? null : sel));
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this message?')) return;
+
+    try {
+      const { data } = await axios.delete(`${backend}/api/admin/deleteContact/${id}`);
+
+      if (data.success) {
+        // Remove from list
+        setMessages(msgs => msgs.filter(m => m._id !== id));
+
+        // Clear selected message if it was deleted
+        setSelected(sel => (sel && sel._id === id ? null : sel));
+
+        toast.success('Message deleted successfully');
+      } else {
+        toast.error(data.message || 'Failed to delete message');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
     }
   };
 
   const listContacts = async () => {
     try {
-      const { data } = await axios.get(backend+'/api/admin/getAllContacts')      
+      const { data } = await axios.get(backend + '/api/admin/getAllContacts')
       if (data.success) {
         setMessages(data.contacts)
       } else {
@@ -178,9 +193,9 @@ const ContactList = () => {
     );
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     listContacts()
-  },[])
+  }, [])
 
   return (
     <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -222,7 +237,7 @@ const ContactList = () => {
           <div className="flex items-center">
             <div className="p-2 rounded-lg bg-blue-100">
               <svg className="w-5 h-5 text-water-blue" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
             <div className="ml-3">
@@ -235,7 +250,7 @@ const ContactList = () => {
           <div className="flex items-center">
             <div className="p-2 rounded-lg bg-orange-100">
               <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
             <div className="ml-3">
@@ -248,7 +263,7 @@ const ContactList = () => {
           <div className="flex items-center">
             <div className="p-2 rounded-lg bg-green-100">
               <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="ml-3">
@@ -261,7 +276,7 @@ const ContactList = () => {
           <div className="flex items-center">
             <div className="p-2 rounded-lg bg-red-100">
               <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="ml-3">
@@ -289,7 +304,7 @@ const ContactList = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filtered.map(message => (
-                  <tr key={message.id} className="hover:bg-blue-50">
+                  <tr key={message._id} className="hover:bg-blue-50">
                     <td className="px-4 py-3">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center mr-3">
@@ -324,7 +339,7 @@ const ContactList = () => {
                           View
                         </button>
                         <button
-                          onClick={() => handleDelete(message.id)}
+                          onClick={() => handleDelete(message._id)}
                           className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200"
                         >
                           Delete
@@ -371,7 +386,7 @@ const ContactList = () => {
                   </div>
                   <div className="flex items-center text-sm text-gray-500">
                     <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Received on {selected?.date ? formatDate(selected.date) : '—'} at {selected?.time || '—'}
                   </div>
@@ -381,7 +396,7 @@ const ContactList = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center">
                       <svg className="w-5 h-5 text-gray-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                       <div>
                         <p className="text-sm text-gray-600">Full Name</p>
@@ -390,7 +405,7 @@ const ContactList = () => {
                     </div>
                     <div className="flex items-center">
                       <svg className="w-5 h-5 text-gray-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                       <div>
                         <p className="text-sm text-gray-600">Email Address</p>
@@ -399,20 +414,20 @@ const ContactList = () => {
                     </div>
                     <div className="flex items-center">
                       <svg className="w-5 h-5 text-gray-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                       <div>
                         <p className="text-sm text-gray-600">Phone Number</p>
-                        <p className="font-semibold text-gray-900">{selected?.phone || '—'}</p>
+                        <p className="font-semibold text-gray-900">{selected?.phoneNumber || '—'}</p>
                       </div>
                     </div>
                     <div className="flex items-center">
                       <svg className="w-5 h-5 text-gray-400 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4zM9 3v1h6V3H9z"/>
+                        <path d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4zM9 3v1h6V3H9z" />
                       </svg>
                       <div>
                         <p className="text-sm text-gray-600">Message ID</p>
-                        <p className="font-semibold text-gray-900">#MSG-{selected?.id ? String(selected.id).padStart(4, '0') : '----'}</p>
+                        <p className="font-semibold text-gray-900">{selected?._id ? String(selected._id).padStart(4, '0') : '----'}</p>
                       </div>
                     </div>
                   </div>
@@ -427,9 +442,9 @@ const ContactList = () => {
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Send Response</h3>
                   <form
                     className="space-y-4"
-                      onSubmit={e => {
+                    onSubmit={e => {
                       e.preventDefault();
-                      if (selected?.id) handleReply(selected.id, e.target.response.value);
+                      if (selected?._id) handleReply(selected._id, e.target.response.value);
                     }}
                   >
                     <div>
@@ -440,7 +455,7 @@ const ContactList = () => {
                       <button type="submit" className="bg-water-blue hover:bg-deep-water text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
                         Send Response
                       </button>
-                      <button type="button" onClick={() => selected?.id && handleResolve(selected.id)} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
+                      <button type="button" onClick={() => selected?._id && handleResolve(selected._id)} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
                         Mark as Resolved
                       </button>
                     </div>
@@ -453,15 +468,15 @@ const ContactList = () => {
                 <div className="bg-white rounded-xl p-4 border border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                   <div className="space-y-3">
-                    <a href={`tel:${selected?.phone || ''}`} className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm flex items-center justify-center">
+                    <a href={`tel:${selected?.phoneNumber || ''}`} className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm flex items-center justify-center">
                       <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                       Call Customer
                     </a>
                     <a href={`mailto:${selected?.email || ''}`} className="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm flex items-center justify-center">
                       <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                       Send Email
                     </a>
@@ -470,7 +485,7 @@ const ContactList = () => {
                 {/* Danger Zone */}
                 <div className="bg-red-50 rounded-xl p-4 border border-red-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Danger Zone</h3>
-                  <button onClick={() => selected?.id && handleDelete(selected.id)} className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
+                  <button onClick={() => selected?._id && handleDelete(selected._id)} className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
                     Delete Message
                   </button>
                   <p className="text-xs text-red-600 mt-2">This action cannot be undone</p>

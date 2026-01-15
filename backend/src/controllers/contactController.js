@@ -20,8 +20,6 @@ const contactUs = async(req,res)=>{
     return res.json({success:true,message:"Your service is booked"})
 }
 
-const deleteContact = async(req,res) =>{
-    
-}
+
 
 export {contactUs}
