@@ -7,6 +7,7 @@ import productRoutes from './routes/productRoutes.js'
 import cartRoutes from './routes/cartRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
+import serviceRoutes from './routes/serviceRoutes.js'
 import dotenv from 'dotenv';
 
 
@@ -62,5 +63,8 @@ app.use("/api/order",orderRoutes)
 
 //router for adminPage
 app.use("/api/admin",adminRoutes)
+
+//router for servicePage
+app.use("/api/service",serviceRoutes)
 
 export {app}

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { Order } from '../models/orderModel.js'
 import { Contact } from '../models/contactModel.js'
+import { Service } from '../models/serviceModel.js'
 
 const adminLogin = async (req, res) => {
     try {
@@ -36,6 +37,7 @@ const getAllContacts = async(req,res)=>{
         return res.json({success:false,message:"Something went wrong"})
     }
 }
+
 const deleteOrder = async(req,res)=>{
     const {orderId} = req.params
     try {
@@ -62,5 +64,14 @@ const deleteContact = async(req,res)=>{
     }
 }
 
-export {adminLogin,getAllOrders,getAllContacts,deleteOrder,deleteContact}
+const getAllServices = async(req,res)=>{
+    try {
+        const services = await Service.find({}).sort({createdAt:-1})
+        return res.json({success:true,services})
+    } catch (error) {
+        return res.json({success:false,message:"Something went wrong"})
+    }
+}
+
+export {adminLogin,getAllOrders,getAllContacts,deleteOrder,deleteContact,getAllServices}
 

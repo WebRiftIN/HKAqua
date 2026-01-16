@@ -205,11 +205,11 @@ function Booking() {
     email: form.email,
     address: form.street,     // backend expects `address`
     city: form.city,
-    pincode: form.pincode,
+    pinCode: form.pincode,
     serviceType: form.selectedService // backend expects `serviceType`
   }
     try {
-      const response = await axios.post('/api/service/bookservice',payload)
+      const response = await axios.post('/api/service/book-service',payload)
       if(response.data.success){
         toast.success(response.data.message)
         resetForm()

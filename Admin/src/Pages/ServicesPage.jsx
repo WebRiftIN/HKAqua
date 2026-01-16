@@ -1,10 +1,11 @@
-
-
 import React, { useState } from 'react';
 import StatsSummary from '../components/Services/StatsSummary';
 import ServiceTable from '../components/Services/ServiceTable';
 import ServiceDetails from '../components/Services/ServiceDetails';
 import Header from '../components/Header';
+import axios from 'axios';			
+import { backend } from '../App';
+import { useEffect } from 'react';
 
 const initialServices = [
 	{
@@ -136,6 +137,23 @@ const ServicesPage = () => {
 		setFilteredServices(prev => prev.map(s => s.id === id ? { ...s, technician } : s));
 	};
 
+	// const listServices = async () => {
+	// 	try {
+	// 		const { data } = await axios.get(`${backend}/api/admin/getAllServices`)
+	// 		if (data.success) {
+	// 			setServices(data.services)
+	// 			setFilteredServices(data.servi)
+	// 		}
+	// 	} catch (error) {
+	// 		console.error('Error loading services', error)
+	// 		// toast.error('Failed to connect to server')
+	// 	}
+	// }
+
+	// useEffect(() => {
+	// 	listServices()
+	// }, [])
+
 	const handleDelete = id => {
 		if (window.confirm('Are you sure you want to delete this service?')) {
 			setServices(prev => prev.filter(s => s.id !== id));
@@ -160,7 +178,7 @@ const ServicesPage = () => {
 
 	return (
 		<div className="min-h-full bg-gradient-to-br from-blue-50 to-white">
-            <Header />
+			<Header />
 			<main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
 				{!selectedServiceId ? (
 					<>
