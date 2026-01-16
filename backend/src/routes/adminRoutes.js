@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { adminLogin, getAllContacts, getAllOrders } from "../controllers/adminController.js";
+import { adminLogin, deleteContact, deleteOrder, getAllContacts, getAllOrders } from "../controllers/adminController.js";
 
 const router = Router()
 
 router.route("/login").post(adminLogin)
 router.route("/getAllOrders").get(getAllOrders)
 router.route("/getAllContacts").get(getAllContacts)
+router.route("/deleteOrder/:orderId").delete(deleteOrder)
+router.route("/deleteContact/:contactId").delete(deleteContact)
 
 export default router
