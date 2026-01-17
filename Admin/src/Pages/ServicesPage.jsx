@@ -112,7 +112,7 @@ const initialServices = [
 	}
 ];
 
-const ServicesPage = () => {
+const ServicesPage = ({ onLogout }) => {
 	const [services, setServices] = useState(initialServices);
 	const [filteredServices, setFilteredServices] = useState(initialServices);
 	const [selectedServiceId, setSelectedServiceId] = useState(null);
@@ -122,43 +122,68 @@ const ServicesPage = () => {
 	const handleView = id => setSelectedServiceId(id);
 	const handleBack = () => setSelectedServiceId(null);
 
+	const handleSaveServiceDetails = async (updated) => {
+		try {
+			// Find the correct _id for the selected service
+			const service = services.find(s => s.id === updated.id || s._id === updated.id);
+			const mongoId = service && service._id ? service._id : updated.id;
+			await axios.put(`${backend}/api/admin/updateService/${mongoId}`, updated);
+			// Update local state for immediate UI feedback
+			setServices(prev => prev.map(s => (s.id === updated.id || s._id === updated.id) ? { ...s, ...updated, _id: mongoId } : s));
+			setFilteredServices(prev => prev.map(s => (s.id === updated.id || s._id === updated.id) ? { ...s, ...updated, _id: mongoId } : s));
+			alert('Service details saved successfully!');
+		} catch (error) {
+			alert('Failed to save service details.');
+			console.error(error);
+		}
+	};
+
 	const handleUpdateStatus = (id, newStatus) => {
-		setServices(prev => prev.map(s => s.id === id ? { ...s, status: newStatus } : s));
-		setFilteredServices(prev => prev.map(s => s.id === id ? { ...s, status: newStatus } : s));
+		setServices(prev => prev.map(s => (s.id === id || s._id === id) ? { ...s, status: newStatus } : s));
+		setFilteredServices(prev => prev.map(s => (s.id === id || s._id === id) ? { ...s, status: newStatus } : s));
 	};
 
 	const handleUpdateSchedule = (id, newDate, newTime) => {
-		setServices(prev => prev.map(s => s.id === id ? { ...s, installationDate: newDate, installationTime: newTime } : s));
-		setFilteredServices(prev => prev.map(s => s.id === id ? { ...s, installationDate: newDate, installationTime: newTime } : s));
+		setServices(prev => prev.map(s => (s.id === id || s._id === id) ? { ...s, installationDate: newDate, installationTime: newTime } : s));
+		setFilteredServices(prev => prev.map(s => (s.id === id || s._id === id) ? { ...s, installationDate: newDate, installationTime: newTime } : s));
 	};
 
 	const handleAssignTechnician = (id, technician) => {
-		setServices(prev => prev.map(s => s.id === id ? { ...s, technician } : s));
-		setFilteredServices(prev => prev.map(s => s.id === id ? { ...s, technician } : s));
+		setServices(prev => prev.map(s => (s.id === id || s._id === id) ? { ...s, technician } : s));
+		setFilteredServices(prev => prev.map(s => (s.id === id || s._id === id) ? { ...s, technician } : s));
 	};
 
-	// const listServices = async () => {
-	// 	try {
-	// 		const { data } = await axios.get(`${backend}/api/admin/getAllServices`)
-	// 		if (data.success) {
-	// 			setServices(data.services)
-	// 			setFilteredServices(data.servi)
-	// 		}
-	// 	} catch (error) {
-	// 		console.error('Error loading services', error)
-	// 		// toast.error('Failed to connect to server')
-	// 	}
-	// }
+	const listServices = async () => {
+		try {
+			const { data } = await axios.get(`${backend}/api/admin/getAllServices`)
+			if (data.success) {
+				setServices(data.services)
+				setFilteredServices(data.services)
+			}
+		} catch (error) {
+			console.error('Error loading services', error)
+			// toast.error('Failed to connect to server')
+		}
+	}
 
-	// useEffect(() => {
-	// 	listServices()
-	// }, [])
+	useEffect(() => {
+		listServices()
+	}, [])
 
-	const handleDelete = id => {
+	const handleDelete = async id => {
 		if (window.confirm('Are you sure you want to delete this service?')) {
-			setServices(prev => prev.filter(s => s.id !== id));
-			setFilteredServices(prev => prev.filter(s => s.id !== id));
-			setSelectedServiceId(null);
+			try {
+				// Find the service to get the correct _id if possible
+				const service = services.find(s => s._id === id || s.id === id);
+				const deleteId = service && service._id ? service._id : id;
+				await axios.delete(`${backend}/api/admin/deleteService/${deleteId}`);
+				setServices(prev => prev.filter(s => s.id !== id && s._id !== id));
+				setFilteredServices(prev => prev.filter(s => s.id !== id && s._id !== id));
+				setSelectedServiceId(null);
+			} catch (error) {
+				console.error('Failed to delete service', error);
+				// Optionally show a toast or alert here
+			}
 		}
 	};
 
@@ -174,11 +199,11 @@ const ServicesPage = () => {
 		// eslint-disable-next-line
 	}, [serviceTypeFilter, statusFilter, services]);
 
-	const selectedService = services.find(s => s.id === selectedServiceId);
+	const selectedService = services.find(s => s.id === selectedServiceId || s._id === selectedServiceId);
 
 	return (
 		<div className="min-h-full bg-gradient-to-br from-blue-50 to-white">
-			<Header />
+			<Header onLogout={onLogout} />
 			<main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
 				{!selectedServiceId ? (
 					<>
@@ -217,6 +242,7 @@ const ServicesPage = () => {
 						onUpdateSchedule={handleUpdateSchedule}
 						onAssignTechnician={handleAssignTechnician}
 						onDelete={handleDelete}
+						onSave={handleSaveServiceDetails}
 					/>
 				)}
 			</main>
@@ -225,5 +251,3 @@ const ServicesPage = () => {
 };
 
 export default ServicesPage;
-
-

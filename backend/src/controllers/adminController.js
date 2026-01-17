@@ -20,12 +20,30 @@ const adminLogin = async (req, res) => {
     }
 }
 
+const adminLogout = (req, res) => {
+  res.clearCookie('accessToken', { path: '/' });
+  res.json({ success: true, message: 'Logged out' });
+};
+
 const getAllOrders = async (req, res) => {
     try {
         const orders = await Order.find({}).sort({ createdAt: -1 });
         return res.json({ success: true, orders });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Something went wrong" });
+    }
+};
+
+const deleteService = async (req, res) => {
+    const {servicesId} = req.params
+    try {
+        const deleted = await Service.findByIdAndDelete(servicesId);
+        if (!deleted) {
+            return res.status(404).json({ success: false, message: 'Service not found' });
+        }
+      return  res.json({ success: true, message: 'Service deleted' });
+    } catch (error) {
+       return res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
 };
 
@@ -73,5 +91,40 @@ const getAllServices = async(req,res)=>{
     }
 }
 
-export {adminLogin,getAllOrders,getAllContacts,deleteOrder,deleteContact,getAllServices}
+const updateService = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const update = req.body;
+    // Only update allowed fields for security
+    const allowedFields = [
+      'status',
+      'installationDate',
+      'installationTime',
+      'notes',
+      'technician',
+      'priority',
+      'serviceType',
+      'customerName',
+      'phone',
+      'email',
+      'street',
+      'city',
+      'pincode',
+      'bookingDate',
+      'address',
+      'pinCode',
+    ];
+    const filteredUpdate = {};
+    for (const key of allowedFields) {
+      if (update[key] !== undefined) filteredUpdate[key] = update[key];
+    }
+    const service = await Service.findByIdAndUpdate(id, filteredUpdate, { new: true });
+    if (!service) return res.status(404).json({ success: false, message: 'Service not found' });
+    res.json({ success: true, service });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Update failed', error: error.message });
+  }
+};
+
+export {adminLogin,adminLogout,getAllOrders,getAllContacts,deleteOrder,deleteContact,getAllServices,deleteService,updateService}
 

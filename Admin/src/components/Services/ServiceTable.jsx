@@ -43,10 +43,10 @@ const ServiceTable = ({ services, onView, onUpdate, onDelete }) => (
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {services.map(service => {
+          {services.map((service, index) => {
             const priorityClass = service.priority === 'urgent' ? 'urgent-badge' : '';
             return (
-              <tr key={service.id} className={`table-row ${priorityClass}`}>
+              <tr key={service.id || service._id || index} className={`table-row ${priorityClass}`}>
                 <td className="px-4 py-3 whitespace-nowrap">
                   <div className="text-sm font-medium text-water-blue">{service.id}</div>
                   <div className="text-xs text-gray-500">{formatDate(service.bookingDate)}</div>
@@ -54,10 +54,10 @@ const ServiceTable = ({ services, onView, onUpdate, onDelete }) => (
                 <td className="px-4 py-3">
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <span className="text-water-blue font-semibold text-sm">{service.customerName.charAt(0)}</span>
+                      <span className="text-water-blue font-semibold text-sm">{(service.customerName || service.name || '?').charAt(0)}</span>
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{service.customerName}</div>
+                      <div className="text-sm font-medium text-gray-900">{service.customerName || service.name || 'Unknown'}</div>
                       <div className="text-xs text-gray-500">{service.phone}</div>
                     </div>
                   </div>
@@ -77,9 +77,9 @@ const ServiceTable = ({ services, onView, onUpdate, onDelete }) => (
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex space-x-2">
-                    <button onClick={() => onView(service.id)} className="bg-water-blue hover:bg-deep-water text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">View</button>
-                    <button onClick={() => onUpdate(service.id)} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">Update</button>
-                    <button onClick={() => onDelete(service.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">Delete</button>
+                    <button onClick={() => onView(service.id || service._id)} className="bg-water-blue hover:bg-deep-water text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">View</button>
+                    <button onClick={() => onUpdate(service.id || service._id)} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">Update</button>
+                    <button onClick={() => onDelete(service._id || service.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition-all duration-200">Delete</button>
                   </div>
                 </td>
               </tr>

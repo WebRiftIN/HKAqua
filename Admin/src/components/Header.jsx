@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import './Header.css';
 import logo from '../assets/logo.png';
+import { backend } from '../App';
 
-const Header = () => {
+const Header = ({ onLogout }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -12,10 +14,14 @@ const Header = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
 
-    const logout = () => {
+    const logout = async () => {
         if (window.confirm('Are you sure you want to logout?')) {
-            alert('Logged out successfully!');
-            // In a real application, this would redirect to login page
+            try {
+                await axios.post(`${backend}/api/admin/logout`, {}, { withCredentials: true });
+            } catch (err) {}
+            localStorage.removeItem('isAdmin');
+            if (onLogout) onLogout();
+            window.location.href = '/login'; // Force full reload to ensure state is cleared
         }
     };
 
@@ -42,28 +48,28 @@ const Header = () => {
                             <img
                                 src={logo}
                                 alt="hK aquafresh Logo"
-                                className="w-auto h-13  shadow-md object-cover"
+                                className="w-auto h-13 shadow-md object-cover"
                             />
                         </div>
                     </div>
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center space-x-1">
-                        {navigationItems.map((item, index) => (
+                        {navigationItems && navigationItems.map((item, index) => (
                             <button
                                 key={index}
                                 onClick={() => handleNavigation(item.path)}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${item.active
-                                        ? 'bg-sky-600 bg-opacity-20 text-white'
-                                        : 'text-white hover:bg-sky-600 hover:bg-opacity-20'
-                                    }`}
+                                    ? 'bg-sky-600 bg-opacity-20 text-white'
+                                    : 'text-white hover:bg-sky-600 hover:bg-opacity-20'
+                                }`}
                             >
                                 {item.name}
                             </button>
                         ))}
                         <button
                             onClick={logout}
-                            className="text-white hover:bg-red-500 hover:bg-opacity-30 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border border-white border-opacity-30"
+                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
                         >
                             Logout
                         </button>
@@ -86,14 +92,14 @@ const Header = () => {
             {/* Mobile Menu */}
             <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:hidden bg-deep-water bg-opacity-90 backdrop-blur-sm`}>
                 <div className="px-4 pt-2 pb-3 space-y-1">
-                    {navigationItems.map((item, index) => (
+                    {navigationItems && navigationItems.map((item, index) => (
                         <button
                             key={index}
                             onClick={() => handleNavigation(item.path)}
                             className={`block px-3 py-2 rounded-lg text-base font-medium w-full text-left transition-all duration-200 ${item.active
-                                    ? 'bg-sky-900 bg-opacity-50 text-white'
-                                    : 'text-white hover:bg-sky-900 hover:bg-opacity-50'
-                                }`}
+                                ? 'bg-sky-900 bg-opacity-50 text-white'
+                                : 'text-white hover:bg-sky-900 hover:bg-opacity-50'
+                            }`}
                         >
                             {item.name}
                         </button>
