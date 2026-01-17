@@ -10,6 +10,7 @@ import Booking from './pages/Booking'
 import About from './pages/About'
 import Login from './components/Account/Login'
 import Register from './components/Account/Register'
+import ScrollToTop from './components/ScrollToTop'
 import Products from './pages/Products'
 import SingleProduct from './pages/SingleProduct'
 import NotFound from './pages/NotFound'
@@ -22,6 +23,7 @@ function App() {
   return (
     <>
       <Header />
+      <ScrollToTop />
       <Routes>
         <Route path="/contact" element={<Contact />} />
         <Route path="/services" element={<Services />} />
