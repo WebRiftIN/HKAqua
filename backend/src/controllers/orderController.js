@@ -110,21 +110,17 @@ const placeOrder = async (req, res) => {
 
 const getOrder = async(req,res) =>{
   try {
-    const {userId} = req.params;
-    console.log("Fetching orders for userId:", userId);
+          const {userId} = req.params;
 
     if(!userId){
       return res.json({success:false,message:"User ID is required"})
     }
     const orders = await Order.find({userId}).sort({createdAt:-1}).populate('items.productId', 'name image discountedPrice originalPrice');
-    console.log("Orders before population:", JSON.stringify(orders, null, 2));
     if(!orders || orders.length===0){
       return res.json({success:false,message:"No orders found"})
     }
-    console.log("Orders after population:", JSON.stringify(orders, null, 2));
     return res.json({success:true,orders})
   } catch (error) {
-    console.log("Error in getOrder:", error);
     return res.json({success:false,message:error.message})
   }
 }

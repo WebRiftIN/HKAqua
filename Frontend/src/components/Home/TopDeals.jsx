@@ -24,7 +24,6 @@ const TopDeals = () => {
     e.preventDefault();
     e.stopPropagation();
     // replace with your actual addToCart logic / context action
-    console.log('Add to cart:', product);
     // optionally notify global listener:
     window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }));
   };

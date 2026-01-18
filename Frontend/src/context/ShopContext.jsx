@@ -27,7 +27,7 @@ export const AppProvider = ({ children }) => {
         }
     })
     const user_Id = user?._id || "";
-    // console.log(products);   
+    //
     
 
     const addToCart = async (itemId) => {

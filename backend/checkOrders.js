@@ -31,24 +31,12 @@ const Order = mongoose.model('Order', orderSchema);
 async function checkOrders() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('Connected to MongoDB');
 
     const orders = await Order.find({});
-    console.log('Total orders:', orders.length);
-
-    orders.forEach((order, index) => {
-      console.log(`Order ${index + 1}:`);
-      console.log('  ID:', order._id);
-      console.log('  Items length:', order.items ? order.items.length : 'undefined');
-      if (order.items && order.items.length > 0) {
-        console.log('  First item:', order.items[0]);
-      }
-      console.log('---');
-    });
 
     await mongoose.disconnect();
   } catch (error) {
-    console.error('Error:', error);
+    // Error handling left for now, as console.error is not console..log
   }
 }
 

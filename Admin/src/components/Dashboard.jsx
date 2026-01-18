@@ -104,9 +104,8 @@ const Dashboard = () => {
     ];
 
     const handleQuickAction = (action) => {
-        console.log(`${action} clicked`);
         // Add navigation or action logic here
-    };
+     };
 
     return (
         <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">

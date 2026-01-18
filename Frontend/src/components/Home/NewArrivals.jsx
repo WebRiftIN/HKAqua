@@ -27,7 +27,6 @@ const NewArrivals = () => {
     e.preventDefault()
     e.stopPropagation()
     // replace with your real addToCart logic
-    console.log('Add to cart', product)
     window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }))
   }
 

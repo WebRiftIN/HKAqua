@@ -13,7 +13,7 @@ try {
   await connectDB();
   await connectCloudinary();
 } catch (err) {
-  console.error('Error initializing services in serverless entry:', err);
+  // Error initializing services in serverless entry
 }
 
 // Export the Express app as the default export so Vercel can use it as a single function.

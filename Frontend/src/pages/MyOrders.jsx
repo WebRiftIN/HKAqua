@@ -117,7 +117,6 @@ function MyOrders() {
   const handleGetSupport = (orderId) => {
     showNotification(`Connecting you with support for order ${orderId}...`, 'info')
     // In a real app, this would open chat or redirect to support
-    console.log(`Getting support for order: ${orderId}`)
   }
 
   const showNotification = (message, type) => {

@@ -120,7 +120,6 @@ export default function ListedProduct() {
     }
   }
 
-// console.log(products);
 
   // Helper to reset form
   const resetForm = () => {
@@ -158,7 +157,6 @@ export default function ListedProduct() {
       toast.error('Product not found');
       return;
     }
-    console.log('Editing product:', product);
     setEditId(id);
     setForm({
       name: product.name || "",
@@ -178,13 +176,13 @@ export default function ListedProduct() {
     });
     setPreview(product.image || null);
     setShowForm(true);
-    console.log('Edit mode activated with ID:', id);
+
   };
 
   // Delete product
   const handleDelete = async (id) => {
     const product = await products.find((p) => p._id === id);
-    console.log(id);
+
     
     if (!product) return;
     if (window.confirm(`⚠️ Are you sure you want to delete "${product.name}"?\n\nThis action cannot be undone.`)) {
@@ -246,7 +244,7 @@ export default function ListedProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    console.log('Submitting form. Edit mode:', !!editId, 'Edit ID:', editId);
+
 
     const formData = new FormData();
     formData.append('name', form.name);
@@ -267,7 +265,7 @@ export default function ListedProduct() {
     try {
       if (editId) {
         // Update existing product
-        console.log('Updating product with ID:', editId);
+       
         const { data } = await axios.put(`${backend}/api/product/update/${editId}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
@@ -281,7 +279,6 @@ export default function ListedProduct() {
         }
       } else {
         // Add new product
-        console.log('Adding new product');
         const { data } = await axios.post(`${backend}/api/product/addProduct`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });

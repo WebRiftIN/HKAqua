@@ -148,6 +148,7 @@ const adminDashboard = async (req, res) => {
 
         return res.status(200).json({ success: true, dashboard: { totalOrders, totalServices, totalContacts, totalRevenue } })
     } catch (error) {
+
         res.status(500).json({
             success: false,
             message: error.message

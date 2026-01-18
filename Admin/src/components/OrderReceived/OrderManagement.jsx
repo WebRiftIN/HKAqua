@@ -13,7 +13,6 @@ function OrderManagement() {
   const getOrders = async () => {
     try {
       const { data } = await axios.get(backend + "/api/admin/getAllOrders")
-      console.log(data.orders);
 
       if (data.success) {
         setOrders(data.orders.map(order => {
@@ -36,7 +35,6 @@ function OrderManagement() {
 
   const selectedOrder = useMemo(() => {
     const order = orders.find(o => (o._id || o.id) === selectedOrderId);
-    console.log('Selected Order:', order);
     return order || null;
   }, [orders, selectedOrderId])
 
