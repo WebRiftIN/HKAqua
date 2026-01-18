@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from './Pages/Dashboard';
-import ContactPage from './Pages/ContactPage';
-import AddProductPage from './Pages/AddProduct';
+import Dashboard from '../src/Pages/Dashboard';
+import ContactPage from '../src/Pages/ContactPage';
+import AddProductPage from '../src/Pages/AddProduct';
 import './App.css';
-import NotFound from './Pages/NotFound';
-import ProductListed from './Pages/ProductList';
-import OrderReceivedPage from './Pages/OrderReceived';
-import ServicesPage from './Pages/ServicesPage';
-import AdminLogin from './Pages/AdminLogin';
+import NotFound from '../src/Pages/NotFound';
+import ProductListed from '../src/Pages/ProductList';
+import OrderReceivedPage from '../src/Pages/OrderReceived';
+import ServicesPage from '../src/Pages/ServicesPage';
+import AdminLogin from '../src/Pages/AdminLogin';
 
 export const backend = import.meta.env.VITE_BACKEND_URL;
 
@@ -52,6 +52,13 @@ function App() {
           <Navigate to="/login" replace />
         )
       } />
+      <Route path="/" element={<Dashboard />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/add-product" element={<AddProductPage />} />
+        <Route path="/listed-product" element={<ProductListed />} />
+        <Route path="/orders" element={<OrderReceivedPage />} />
+  <Route path="/services" element={<ServicesPage />} />
+        <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
