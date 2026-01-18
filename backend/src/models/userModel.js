@@ -36,12 +36,7 @@ userSchema.methods.isPasswordCorrect = async function(password) {
 }
 
 userSchema.methods.generateAccessToken = function(){
-    return jwt.sign(
-        {
-            _id:this._id
-        },
-        process.env.JWT_SECRET_TOKEN
-    )
+    return jwt.sign({_id:this._id},process.env.JWT_SECRET_TOKEN)
 }
 
 export const User = mongoose.model("User",userSchema)

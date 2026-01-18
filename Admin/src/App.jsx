@@ -26,17 +26,17 @@ function App() {
     localStorage.setItem('isAdmin', 'true');
   };
 
-    const navigate = useNavigate();
-    const handleLogout = async () => {
-      try {
-        await axios.post('/api/admin/logout');
-      } catch (err) {
-        // Ignore errors, just proceed
-      }
-      setAdmin(null);
-      localStorage.removeItem('isAdmin');
-      navigate('/');
-    };
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/admin/logout');
+    } catch (err) {
+      // Ignore errors, just proceed
+    }
+    setAdmin(null);
+    localStorage.removeItem('isAdmin');
+    navigate('/');
+  };
 
   return (
     <Routes>
@@ -53,12 +53,12 @@ function App() {
         )
       } />
       <Route path="/" element={<Dashboard />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/add-product" element={<AddProductPage />} />
-        <Route path="/listed-product" element={<ProductListed />} />
-        <Route path="/orders" element={<OrderReceivedPage />} />
-  <Route path="/services" element={<ServicesPage />} />
-        <Route path="*" element={<NotFound />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/add-product" element={<AddProductPage />} />
+      <Route path="/listed-product" element={<ProductListed />} />
+      <Route path="/orders" element={<OrderReceivedPage />} />
+      <Route path="/services" element={<ServicesPage />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
