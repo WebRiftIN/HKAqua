@@ -12,7 +12,8 @@ import dotenv from 'dotenv';
 
 
 const app = express();
-dotenv.config();
+// dotenv.config();
+dotenv.config({ quiet: true });
 
 app.use(cors({
     origin: function(origin, callback) {
