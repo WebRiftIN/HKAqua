@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+// Send cookies with all requests (needed for admin auth cookie)
+axios.defaults.withCredentials = true;
 import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from '../src/Pages/Dashboard';
 import ContactPage from '../src/Pages/ContactPage';
