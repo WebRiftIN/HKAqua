@@ -65,4 +65,13 @@ const loginUser = async (req,res)=>{
     res.cookie("accessToken", token, options).json({ success: true, message: "user loggedIn", token, user: safeUser});
 }
 
-export {registerUser,loginUser}
+const logout = async(req,res) =>{
+    try {
+        res.clearCookie("accessToken",{httpOnly:true,sameSite:"lax",secure:false})
+        return res.status(200).json({success:true,message:"logout successfully"})
+    } catch (error) {
+        return res.status(401).json({success:false,message:"something went wrong"})
+    }
+}
+
+export {registerUser,loginUser,logout}

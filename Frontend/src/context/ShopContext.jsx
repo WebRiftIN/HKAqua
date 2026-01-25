@@ -4,13 +4,14 @@ import axios from 'axios'
 import toast from "react-hot-toast"
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
+axios.defaults.withCredentials = true;
 
 const AppContext = createContext()
 
 export const AppProvider = ({ children }) => {
 
     // const navigate = useNavigate()
-    const [orders,setOrders] = useState([])
+    const [orders, setOrders] = useState([])
     const [token, setToken] = useState();
     const [products, setProducts] = useState([])
     const [cartItems, setCartItems] = useState({})
@@ -28,7 +29,7 @@ export const AppProvider = ({ children }) => {
     })
     const user_Id = user?._id || "";
     //
-    
+
 
     const addToCart = async (itemId) => {
         if (!token || !user_Id) {
@@ -47,7 +48,7 @@ export const AppProvider = ({ children }) => {
         }
         setCartItems(cartData)
         try {
-              await axios.post('/api/cart/addToCart', { userId:user_Id, itemId })
+            await axios.post('/api/cart/addToCart', { userId: user_Id, itemId })
             // Refresh cart data after adding
             fetchCart()
             getCartAmount()
@@ -147,12 +148,12 @@ export const AppProvider = ({ children }) => {
         setCartTotal(totalAmount);
     };
 
-    const getAllOrders = async() =>{
+    const getAllOrders = async () => {
         try {
-            const {data} = await axios.get(`/api/order/${user_Id}`)
-            if(data.success){
+            const { data } = await axios.get(`/api/order/${user_Id}`)
+            if (data.success) {
                 setOrders(data.orders)
-            }else{
+            } else {
                 toast.error(data.message)
             }
         } catch (error) {
@@ -191,15 +192,24 @@ export const AppProvider = ({ children }) => {
         getCartAmount()
     }, [cartItems, products]);
 
-    const logout = () => {
+    const logout = async () => {
         try {
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
-        } catch { }
-        setToken(undefined)
-        setUser(null)
-        delete axios.defaults.headers.common['Authorization']
-        toast.success('Logged out')
+            const { data } = await axios.post('/api/user/logout')
+            if (data && data.success) {
+                localStorage.removeItem('token')
+                localStorage.removeItem('user')
+                setToken(undefined)
+                setUser(null)
+                delete axios.defaults.headers.common['Authorization']
+                toast.success('Logged out')
+                // redirect to home or login page
+                window.location.href = '/'
+            } else {
+                toast.error(data?.message || 'Logout failed')
+            }
+        } catch (error){
+            toast.error(error?.response?.data?.message || error.message)
+        }
     }
 
     const value = {

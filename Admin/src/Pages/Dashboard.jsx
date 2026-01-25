@@ -23,6 +23,7 @@ const Dashboard = () => {
                 const url = backend.endsWith('/') ? backend : backend + '/';
                 // Fetch dashboard stats
                 const statsRes = await axios.get(url + 'api/admin/getAdminDashboard', { withCredentials: true });
+                
                 if (statsRes.data.success) {
                     setStats(statsRes.data.dashboard);
                 }
