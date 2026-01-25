@@ -22,6 +22,9 @@ const userSchema = new Schema({
     cartData:{
         type: Object,
         default:{}
+    },
+    refreshToken:{
+        type:String
     }
 },{timestamps:true})
 
@@ -36,7 +39,11 @@ userSchema.methods.isPasswordCorrect = async function(password) {
 }
 
 userSchema.methods.generateAccessToken = function(){
-    return jwt.sign({_id:this._id},process.env.JWT_SECRET_TOKEN)
+    return jwt.sign({_id:this._id},process.env.JWT_SECRET_TOKEN,{expiresIn:"30m"})
+}
+
+userSchema.methods.generateRefreshToken =function(){
+    return jwt.sign({_id:this._id},process.env.JWT_REFRESH_TOKEN,{expiresIn:"7d"})
 }
 
 export const User = mongoose.model("User",userSchema)
